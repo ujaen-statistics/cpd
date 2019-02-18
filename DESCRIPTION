@@ -1,0 +1,18 @@
+Package: cpd
+Type: Package
+Title: Complex Pearson Distributions
+Version: 0.1.0
+Date: 2018-10-18
+Author: Silverio Vilchez-Lopez [aut, cre],
+        Maria Jose Olmo-Jimenez [aut]
+Authors@R: c(person("Silverio", "Vilchez-Lopez", role = c("aut", "cre"), email = "svilchez@ujaen.es"),
+    person("Maria Jose", "Olmo-Jimenez", role = "aut")
+    )
+Maintainer: Silverio Vilchez-Lopez <svilchez@ujaen.es>
+Description: Complex Pearson Distribution ... .
+Depends: R (>= 2.5.0)
+Imports: fAsianOptions
+License: GPL (>= 2)
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
