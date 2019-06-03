@@ -3,33 +3,34 @@
 #' @export
 #'
 #' @examples
+#' # Examples for the function pctp
 #' pctp(3,1,2,3)
 #' pctp(c(3,4),1,2,3)
 
-pctp <- function(x, a, b, g, lower.tail = TRUE) {
-  if ( mode(c(x,a,b,g)) != "numeric")
+pctp <- function(q, a, b, gamma, lower.tail = TRUE) {
+  if ( mode(c(q,a,b,gamma)) != "numeric")
     stop( "non-numeric argument to mathematical function" )
 
-  if( g <= 2 * a )
+  if( gamma <= 2 * a )
     stop( "gamma must be greater than 2a" )
 
-  x<-as.vector(x)
-  maxX=x[1]
-  n<-length(x)
+  q<-as.vector(q)
+  maxX=q[1]
+  n<-length(q)
   for ( i in 1:n ){
-    x[i] = floor( x[i] )
-    if (x[i] > maxX)
-      maxX=x[i]
+    q[i] = floor( q[i] )
+    if (q[i] > maxX)
+      maxX=q[i]
   }
   icomplex <- sqrt(as.complex(-1))
-  lf0 <- 2 * Re(cgamma(g - a + b * icomplex, log = TRUE)) - lgamma(g) - lgamma(g - 2 * a)
+  lf0 <- 2 * Re(cgamma(gamma - a + b * icomplex, log = TRUE)) - lgamma(gamma) - lgamma(gamma - 2 * a)
   pmfAux<-exp(lf0)
   i=1
   Fd <-c(pmfAux)
   #Generating distribution function
   digits=options()$digit
   while( i <= maxX+1 && Fd[i]<(1-10^-digits)){
-    pmfAux <- exp(log(pmfAux)+log(((a+i-1)^2+b^2))-log((g+i-1))-log(i))
+    pmfAux <- exp(log(pmfAux)+log(((a+i-1)^2+b^2))-log((gamma+i-1))-log(i))
     Fd <- c( Fd, Fd[[i]] + pmfAux )
     print(paste(i,Fd[i],pmfAux,sep=":"))
     i <- i + 1
@@ -37,10 +38,10 @@ pctp <- function(x, a, b, g, lower.tail = TRUE) {
 
   result<-vector(mode="numeric",length=n)
   for ( i in 1:n ){
-    if ( x[i] < 0 )
+    if ( q[i] < 0 )
       result[i]=0
     else
-      result[i]=Fd[x[i]+1]
+      result[i]=Fd[q[i]+1]
 
     if (! lower.tail){
       result[i]<-1-result[i]
@@ -56,42 +57,43 @@ pctp <- function(x, a, b, g, lower.tail = TRUE) {
 #'
 #'
 #' @examples
+#' # Examples for the function pcbp
 #' pcbp(3,2,3)
 #' pcbp(c(3,4),2,3)
 
-pcbp <- function(x, b, g, lower.tail = TRUE ) {
-  if ( mode(c(x,b,g)) != "numeric")
+pcbp <- function(q, b, gamma, lower.tail = TRUE ) {
+  if ( mode(c(q,b,gamma)) != "numeric")
     stop( "non-numeric argument to mathematical function" )
 
-  if( g <= 0 )
+  if( gamma <= 0 )
     stop( "gamma must be greater than 0" )
 
-  x<-as.vector(x)
-  maxX=x[1]
-  n<-length(x)
+  q<-as.vector(q)
+  maxX=q[1]
+  n<-length(q)
   for ( i in 1:n ){
-    x[i] = floor( x[i] )
-    if (x[i] > maxX)
-      maxX=x[i]
+    q[i] = floor( q[i] )
+    if (q[i] > maxX)
+      maxX=q[i]
   }
   icomplex <- sqrt(as.complex(-1))
-  lf0 <- 2 * Re(cgamma(g  + b * icomplex, log = TRUE)) - lgamma(g) - lgamma(g )
+  lf0 <- 2 * Re(cgamma(gamma  + b * icomplex, log = TRUE)) - lgamma(gamma) - lgamma(gamma )
   pmfAux<-exp(lf0)
   i=1
   Fd <-c(pmfAux)
   #Generating distribution function
   while( i <= maxX+1 ){
-    pmfAux <- exp(log(pmfAux)+log(((i-1)^2+b^2))-log((g+i-1))-log(i))
+    pmfAux <- exp(log(pmfAux)+log(((i-1)^2+b^2))-log((gamma+i-1))-log(i))
     Fd <- c( Fd, Fd[[i]] + pmfAux )
     i <- i + 1
   }
 
   result<-vector(mode="numeric",length=n)
   for ( i in 1:n ){
-    if ( x[i] < 0 )
+    if ( q[i] < 0 )
       result[i]=0
     else
-      result[i]=Fd[x[i]+1]
+      result[i]=Fd[q[i]+1]
 
     if (! lower.tail){
       result[i]<-1-result[i]

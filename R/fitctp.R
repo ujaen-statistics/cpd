@@ -1,25 +1,57 @@
-#Ajuste por maxima-verosimilitud de la distribucion CTP(a,b,gamma)
-#a partir de un conjunto de datos SIN AGRUPAR
-#a y b son reales, gamma > 0
-#' Maximum likelihood estimation fit for CTP(a,b,gamma)
+#' Maximum-likelihood fitting of the CTP distribution
 #'
-#' @param x A param x
-#' @param astart A param astart
-#' @param bstart A param bstart
-#' @param gammastart A param gammastart
-#' @param method A param method ......
-#' @param moments A param TRUE FALSE that say if we want to use initial values generating for moments method if posible.
-#' @param hessian A param hessian TRUE FALSE
-#' @param control A param control
-#' @param ...  other params
+#' @description
+#' Maximum-likelihood fitting of the CTP distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}. 
 #'
-#' @return la salida del ...
+#' @usage
+#' fitctp(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments = FALSE, hessian = TRUE, control = list(), ...)
+#'
+#' @param x A numeric vector of length at least one containing only finite values.
+#' @param astart An starting value for the parameter \eqn{a}; by default 0.
+#' @param bstart An starting value for the parameter \eqn{b}; by default 1.
+#' @param gammastart An starting value for the parameter \eqn{\gamma}; by default 1.1.
+#' @param method The method to be used in fitting the model. The default method is "L-BFGS-B" (optim).
+#' @param moments If \code{TRUE} the estimates of \eqn{a}, \eqn{b} and \eqn{\gamma} by the method of moments are used as starting values (if it is posible). By default this argument is \code{FALSE}.
+#' @param hessian If \code{TRUE} the hessian of the objective function at the minimum is returned.
+#' @param control A list of parameters for controlling the fitting process.
+#' @param ...  Additional parameters.
+#'
+#' @return An object of class "fitctp" is a list containing the following components:
+#'
+#' \itemize{
+#' \item \code{n}, the number of observations,
+#' \item \code{initialValues}, a vector with the starting values used,
+#' \item \code{coefficients}, the parameter ML estimates of the CTP distribution,
+#' \item \code{se}, a vector of the standard error estimates,
+#' \item \code{hessian}, a symmetric matrix giving an estimate of the Hessian at the solution found in the optimization of the log-likelihood function,
+#' \item \code{cov}, an estimate of the covariance matrix of the model coefficients,
+#' \item \code{corr}, an estimate of the correlation matrix of the model estimates,
+#' \item \code{loglik}, the maximized log-likelihood,
+#' \item \code{aic}, Akaike Information Criterion, minus twice the maximized log-likelihood plus twice the number of parameters,
+#' \item \code{bic}, Bayesian Information Criterion, minus twice the maximized log-likelihood plus twice the number of parameters,
+#' \item \code{code}, a code that indicates successful convergence of the fitter function used (see nlm and optim helps),
+#' \item \code{converged},  logical value that indicates if the optimization algorithms succesfull,
+#' \item \code{method}, the name of the fitter function used.
+#' }
+#' 
+#' @importFrom stats nlm optim coef runif
 #' @export
+#' @references 
+#' 
+#' \insertRef{RCSO2004}{cpd}
+#' 
+#' \insertRef{ROC2018}{cpd}
+#' 
+#' @seealso
+#' Maximum-likelihood fitting for the CBP distribution: \code{\link{fitcbp}}.
 #'
 #' @examples
-#'x<-c(3,5,7,2,6,9,7,5)
-#'fitctp(x,1,1.1,3)
-#'
+#' set.seed(123)
+#' x <- rctp(500, -0.5, 1, 2)
+#' fitctp(x)
+#' fitctp(x, astart = 1, bstart = 1.1, gammastart = 3)
+#' fitctp(x, moments = TRUE)
+
 fitctp <- function(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments=FALSE, hessian = TRUE, control = list(), ...)
 {
 
@@ -59,10 +91,10 @@ fitctp <- function(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS
     }
 
   }
-  #Unidad imaginaria
+  #Imaginary unit
   i<-sqrt(as.complex(-1))
 
-  #Definimos la log-verosimilitud
+  #Log-likelihood
   if (method != "L-BFGS-B") {
     logL <- function(p){
             a <- p[1]
@@ -86,8 +118,7 @@ fitctp <- function(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS
       pstart <- c(astart,bstart,gammastart)
     }
 
-
-  #Optimizamos la log-verosimilitud
+  #Optimization process
 
   if (method == "nlm") {
     fit <- nlm(logL, p = pstart, hessian = hessian, iterlim = control$maxit, print.level = control$trace)
@@ -126,8 +157,7 @@ fitctp <- function(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS
     dimnames(coef.table)<-list("",c("a","b","gamma"))
   }
 
-
-  #Result
+  #Results
   results<-list(
     x = x,
     n=length(x),
@@ -151,25 +181,59 @@ fitctp <- function(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS
 }
 
 
-#' Maximum likelihood estimation fit for CBP(b,gamma)
+#' Maximum-likelihood fitting of the CBP distribution
 #'
-#' @param x A param x
-#' @param bstart A param bstart
-#' @param gammastart A param gammastart
-#' @param method A param method ......
-#' @param moments A param TRUE FALSE that say if we want to use initial values generating for moments method if posible.
-#' @param hessian A param hessian TRUE FALSE
-#' @param control A param control
-#' @param ...  other params
+#' @description
+#' Maximum-likelihood fitting of the CBP distribution with parameters \eqn{b} and \eqn{\gamma}. 
 #'
-#' @return la salida del ...
+#' @usage
+#' fitcbp(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments = FALSE, hessian = TRUE, control = list(), ...)
+#' 
+#' @param x A numeric vector of length at least one containing only finite values.
+#' @param bstart An starting value for the parameter \eqn{b}; by default 1.
+#' @param gammastart An starting value for the parameter \eqn{\gamma}; by default 1.1.
+#' @param method The method to be used in fitting the model. The default method is "L-BFGS-B" (optim).
+#' @param moments If \code{TRUE} the estimates of \eqn{b} and \eqn{\gamma} by the method of moments are used as starting values (if it is posible). By default this argument is \code{FALSE}.
+#' @param hessian If \code{TRUE} the hessian of the objective function at the minimum is returned.
+#' @param control A list of parameters for controlling the fitting process.
+#' @param ...  Additional parameters.
+#'
+#' @return An object of class "fitcbp" is a list containing the following components:
+#'
+#' \itemize{
+#' \item \code{n}, the number of observations,
+#' \item \code{initialValues}, a vector with the starting values used,
+#' \item \code{coefficients}, the parameter ML estimates of the CTP distribution,
+#' \item \code{se}, a vector of the standard error estimates,
+#' \item \code{hessian}, a symmetric matrix giving an estimate of the Hessian at the solution found in the optimization of the log-likelihood function,
+#' \item \code{cov}, an estimate of the covariance matrix of the model coefficients,
+#' \item \code{corr}, an estimate of the correlation matrix of the model estimates,
+#' \item \code{loglik}, the maximized log-likelihood,
+#' \item \code{aic}, Akaike Information Criterion, minus twice the maximized log-likelihood plus twice the number of parameters,
+#' \item \code{bic}, Bayesian Information Criterion, minus twice the maximized log-likelihood plus twice the number of parameters,
+#' \item \code{code}, a code that indicates successful convergence of the fitter function used (see nlm and optim helps),
+#' \item \code{converged},  logical value that indicates if the optimization algorithms succesfull,
+#' \item \code{method}, the name of the fitter function used.
+#' }
+#' 
+#' @importFrom stats nlm optim coef runif
 #' @export
+#' 
+#' @references 
+#' 
+#' \insertRef{RCS2003}{cpd}
+#' 
+#' @seealso
+#' Maximum-likelihood fitting for the CTP distribution: \code{\link{fitctp}}.
 #'
 #' @examples
-#'x<-c(3,5,7,2,6,9,7,5)
-#'fitcbp(x,1.1,3)
-#'
-fitcbp <- function(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments=FALSE, hessian = TRUE, control = list(), ...)
+#' set.seed(123)
+#' x <- rcbp(500, 1.75, 3.5)
+#' fitcbp(x)
+#' fitcbp(x, bstart = 1.1, gammastart = 3)
+#' fitcbp(x, moments = TRUE)
+
+fitcbp <- function(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments = FALSE, hessian = TRUE, control = list(), ...)
 {
 
   #Checking
@@ -199,11 +263,12 @@ fitcbp <- function(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments
       gammastart <- bstart ^ 2 / m1 +1
     }
   }
-  #Unidad imaginaria
-  i<-sqrt(as.complex(-1))
+  
+  #Imaginary unit
+    i<-sqrt(as.complex(-1))
 
-  #Definimos la log-verosimilitud
-  if (method != "L-BFGS-B") {
+  #Log-likelihood
+    if (method != "L-BFGS-B") {
     logL <- function(p){
       b <- p[1]
       gama <- exp(p[2])
@@ -224,9 +289,7 @@ fitcbp <- function(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments
     pstart <- c(bstart,gammastart)
   }
 
-
-  #Optimizamos la log-verosimilitud
-
+  #Optimization process
   if (method == "nlm") {
     fit <- nlm(logL, p = pstart, hessian = hessian, iterlim = control$maxit, print.level = control$trace)
     fit$value <- fit$minimum
@@ -264,8 +327,7 @@ fitcbp <- function(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments
     dimnames(coef.table)<-list("",c("b","gamma"))
   }
 
-
-  #Result
+  #Results
   results<-list(
     x = x,
     n=length(x),
@@ -284,13 +346,9 @@ fitcbp <- function(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments
     initialValues=c(bstart,gammastart),
     method = methodText
   )
-  class(results) <- "fitCTP"
+  class(results) <- "fitCBP"
   return(results)
 }
-
-
-
-
 
 #' @export
 logLik.fitCTP <- function (object, ...){
@@ -311,6 +369,31 @@ print.fitCTP<-function (x, digits = getOption("digits"), ...) {
   }
   else cat("No coefficients\n\n")
 
+  if(!x$converged){
+    cat("Error of convergence")
+  }
+  invisible(x)
+}
+
+#' @export
+logLik.fitCBP <- function (object, ...){
+  val <- object$loglik
+  attr(val, "nobs") <- object$n
+  attr(val, "df") <- length(coef(object))
+  class(val) <- "logLik"
+  val
+}
+
+#' @method print fitCBP
+#' @export
+print.fitCBP<-function (x, digits = getOption("digits"), ...) {
+  if (length(coef(x))) {
+    cat("Coefficients")
+    cat(":\n")
+    print.default(format(coef(x), digits = digits), print.gap = 2, quote = FALSE)
+  }
+  else cat("No coefficients\n\n")
+  
   if(!x$converged){
     cat("Error of convergence")
   }

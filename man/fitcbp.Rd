@@ -2,36 +2,59 @@
 % Please edit documentation in R/fitctp.R
 \name{fitcbp}
 \alias{fitcbp}
-\title{Maximum likelihood estimation fit for CBP(b,gamma)}
+\title{Maximum-likelihood fitting of the CBP distribution}
 \usage{
-fitcbp(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B",
-  moments = FALSE, hessian = TRUE, control = list(), ...)
+fitcbp(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments = FALSE, hessian = TRUE, control = list(), ...)
 }
 \arguments{
-\item{x}{A param x}
+\item{x}{A numeric vector of length at least one containing only finite values.}
 
-\item{bstart}{A param bstart}
+\item{bstart}{An starting value for the parameter \eqn{b}; by default 1.}
 
-\item{gammastart}{A param gammastart}
+\item{gammastart}{An starting value for the parameter \eqn{\gamma}; by default 1.1.}
 
-\item{method}{A param method ......}
+\item{method}{The method to be used in fitting the model. The default method is "L-BFGS-B" (optim).}
 
-\item{moments}{A param TRUE FALSE that say if we want to use initial values generating for moments method if posible.}
+\item{moments}{If \code{TRUE} the estimates of \eqn{b} and \eqn{\gamma} by the method of moments are used as starting values (if it is posible). By default this argument is \code{FALSE}.}
 
-\item{hessian}{A param hessian TRUE FALSE}
+\item{hessian}{If \code{TRUE} the hessian of the objective function at the minimum is returned.}
 
-\item{control}{A param control}
+\item{control}{A list of parameters for controlling the fitting process.}
 
-\item{...}{other params}
+\item{...}{Additional parameters.}
 }
 \value{
-la salida del ...
+An object of class "fitcbp" is a list containing the following components:
+
+\itemize{
+\item \code{n}, the number of observations,
+\item \code{initialValues}, a vector with the starting values used,
+\item \code{coefficients}, the parameter ML estimates of the CTP distribution,
+\item \code{se}, a vector of the standard error estimates,
+\item \code{hessian}, a symmetric matrix giving an estimate of the Hessian at the solution found in the optimization of the log-likelihood function,
+\item \code{cov}, an estimate of the covariance matrix of the model coefficients,
+\item \code{corr}, an estimate of the correlation matrix of the model estimates,
+\item \code{loglik}, the maximized log-likelihood,
+\item \code{aic}, Akaike Information Criterion, minus twice the maximized log-likelihood plus twice the number of parameters,
+\item \code{bic}, Bayesian Information Criterion, minus twice the maximized log-likelihood plus twice the number of parameters,
+\item \code{code}, a code that indicates successful convergence of the fitter function used (see nlm and optim helps),
+\item \code{converged},  logical value that indicates if the optimization algorithms succesfull,
+\item \code{method}, the name of the fitter function used.
+}
 }
 \description{
-Maximum likelihood estimation fit for CBP(b,gamma)
+Maximum-likelihood fitting of the CBP distribution with parameters \eqn{b} and \eqn{\gamma}.
 }
 \examples{
-x<-c(3,5,7,2,6,9,7,5)
-fitcbp(x,1.1,3)
-
+set.seed(123)
+x <- rcbp(500, 1.75, 3.5)
+fitcbp(x)
+fitcbp(x, bstart = 1.1, gammastart = 3)
+fitcbp(x, moments = TRUE)
+}
+\references{
+\insertRef{RCS2003}{cpd}
+}
+\seealso{
+Maximum-likelihood fitting for the CTP distribution: \code{\link{fitctp}}.
 }

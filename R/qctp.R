@@ -2,16 +2,16 @@
 #' @importFrom fAsianOptions cgamma
 #' @export
 #'
-#' @export
-#'
 #' @examples
+#' # Examples for the function qctp
 #' qctp(0.5,1,2,3)
 #' qctp(c(.8,.9),1,2,3)
-qctp <- function(p, a, b, g, lower.tail = TRUE ){
-  if ( mode(c(p,a,b,g)) != "numeric")
+
+qctp <- function(p, a, b, gamma, lower.tail = TRUE ){
+  if ( mode(c(p,a,b,gamma)) != "numeric")
     stop( "non-numeric argument to mathematical function")
 
-  if( g <= 2 * a )
+  if( gamma <= 2 * a )
     stop("gamma must be greater than 2a")
 
   icomplex <- sqrt(as.complex(-1))
@@ -23,13 +23,13 @@ qctp <- function(p, a, b, g, lower.tail = TRUE ){
   n=length(p)
   result<-vector(mode="numeric",length=n)
 
-  lf0 <- 2 * Re(cgamma(g - a + b * icomplex, log = TRUE)) - lgamma(g) - lgamma(g - 2 * a)
+  lf0 <- 2 * Re(cgamma(gamma - a + b * icomplex, log = TRUE)) - lgamma(gamma) - lgamma(gamma - 2 * a)
   pmfAux<-exp(lf0)
   i=1
   Fd <-c(pmfAux)
   #Generating Density Distribution
   while( Fd[[i]] < maxP ){
-    pmfAux <- exp(log(pmfAux)+log(((a+i-1)^2+b^2))-log((g+i-1))-log(i))
+    pmfAux <- exp(log(pmfAux)+log(((a+i-1)^2+b^2))-log((gamma+i-1))-log(i))
     Fd <- c( Fd, Fd[[i]] + pmfAux )
     i <- i + 1
   }
@@ -65,14 +65,15 @@ qctp <- function(p, a, b, g, lower.tail = TRUE ){
 #' @export
 #'
 #' @examples
+#' # Examples for the function qcbp
 #' qcbp(0.5,2,3)
 #' qcbp(c(.8,.9),2,3)
-qcbp <- function(p, b, g, lower.tail = TRUE)  {
+qcbp <- function(p, b, gamma, lower.tail = TRUE)  {
 
-  if ( mode(c(p,b,g)) != "numeric")
+  if ( mode(c(p,b,gamma)) != "numeric")
     stop( "non-numeric argument to mathematical function")
 
-  if( g <= 0 )
+  if( gamma <= 0 )
     stop("gamma must be greater than 0")
 
   icomplex <- sqrt(as.complex(-1))
@@ -85,13 +86,13 @@ qcbp <- function(p, b, g, lower.tail = TRUE)  {
   n=length(p)
   result<-vector(mode="numeric",length=n)
 
-  lf0 <- 2 * Re(cgamma(g  + b * icomplex, log = TRUE)) - lgamma(g) - lgamma(g )
+  lf0 <- 2 * Re(cgamma(gamma  + b * icomplex, log = TRUE)) - lgamma(gamma) - lgamma(gamma )
   pmfAux<-exp(lf0)
   i=1
   Fd <-c(pmfAux)
   #Generating Density Distribution
   while( Fd[[i]] < maxP ){
-    pmfAux <- exp(log(pmfAux)+log(((i-1)^2+b^2))-log((g+i-1))-log(i))
+    pmfAux <- exp(log(pmfAux)+log(((i-1)^2+b^2))-log((gamma+i-1))-log(i))
     Fd <- c( Fd, Fd[[i]] + pmfAux )
     i <- i + 1
   }

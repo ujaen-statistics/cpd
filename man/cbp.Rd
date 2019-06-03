@@ -6,57 +6,75 @@
 \alias{pcbp}
 \alias{qcbp}
 \alias{rcbp}
-\title{The Complex Triparametric Pearson (CTP) Distribution}
-\source{
-Rodr\'iguez-Avi, J., S\'aez-Castillo, A. J., Conde-Sánchez, A. and Olmo-Jim\'enez, M. J. (2004). A triparametric discrete distribution with complex parameters. Statistical Papers, 45 (1), 81-95.
-Olmo-Jim\'enez, M. J., Rodr\'iguez-Avi, J. and Cueva-López, V. (2018). A review of the CTP distribution: a comparison with other over- and underdispersed count data models. Journal of Statistical Computation and Simulation, 88 (14), 2684-2706.
-}
+\title{The Complex Biparametric Pearson (CBP) Distribution}
 \usage{
-dcbp(x, b, g)
+dcbp(x, b, gamma)
 
-pcbp(x, b, g, lower.tail = TRUE)
+pcbp(q, b, gamma, lower.tail = TRUE)
 
-qcbp(p, b, g, lower.tail = TRUE)
+qcbp(p, b, gamma, lower.tail = TRUE)
 
-rcbp(n, b, g)
+rcbp(n, b, gamma)
+
+pcbp(q, b, gamma, lower.tail = TRUE)
+
+qcbp(p, b, gamma, lower.tail = TRUE)
+
+rcbp(n, b, gamma)
 }
 \arguments{
-\item{x}{vector of (non-negative integer) quantiles}
+\item{x}{vector of (non-negative integer) quantiles.}
 
 \item{b}{parameter b (real)}
 
-\item{g}{parameter gamma (positive)}
+\item{gamma}{parameter gamma (positive)}
 
-\item{lower.tail}{A param g}
+\item{q}{vector of quantiles.}
 
-\item{p}{vector of (non-negative integer) probabilities}
+\item{lower.tail}{if TRUE (default), probabilities are \eqn{P(X<=x)}, otherwise, \eqn{P(X>x)}.}
 
-\item{n}{number of observations. If length(n) > 1, the length is
-taken to be the number required.}
+\item{p}{vector of probabilities.}
+
+\item{n}{number of observations. If \code{length(n) > 1}, the length is taken to be the number required.}
 }
 \value{
-The CTP distribution with parameters a, b and gamma has pmf
-\eqn{f(x|a,b,\gamma)=f_0\frac{(a+ib)_x(a-ib)_x}{(\gamma)_x}\frac{1}{x!},\quad x=0,1,...}
-with \eqn{f_0=\frac{\Gamma(\gamma-a-ib)\Gamma(\gamma-a+ib)}{\Gamma(\gamma)\Gamma(\gamma-2a)}} the normalizing constant.
-If a=0 the CTP is a Complex Biparametric Pearson (CBP) distribution, so the pmf of the CBP distribution is obtained.
+\code{dcbp} gives the pmf, \code{pcbp} gives the distribution function, \code{qcbp} gives the quantile function and \code{rcbp} generates random values.
 }
 \description{
-Probability mass function for the Complex Triparametric Pearson (CTP) distribution with parameters a, b and gamma.
+Probability mass function, distribution function, quantile function and random generation for the CBP distribution with parameters \eqn{b} and \eqn{\gamma}.
 }
 \details{
-bla blala lakj akj j fkjlh jakh bjksh jkh ajbh akjh kajsh jb ajbfd
-  alskjfdaj sdfhlaskjhf lasdkjhf kjasdhfkjadshfkjahds fkjh asdkjfh asdjkhf
-  kajf sdhlkasjdhf lkasdjhf lkasdjhf kasdjh flkasjh flksajdh flkasjhd jhasdf l
+The CBP distribution with parameters \eqn{b} and \eqn{\gamma} has pmf
+\deqn{f(x|b,\gamma) = C \Gamma(ib+x) \Gamma(-ib+x) / (\Gamma(\gamma+x) x!), x=0,1,2,...} 
+where \eqn{i} is the imaginary unit, \eqn{\Gamma(·)} the gamma function and 
+\deqn{C = \Gamma(\gamma-ib) \Gamma(\gamma+ib) / (\Gamma(\gamma) \Gamma(ib) \Gamma(-ib))}
+the normalizing constant.
+
+The CBP is a particular case of the CTP when \eqn{a=0}.
+
+The mean and the variance of the CBP distribution are
+\eqn{E(X)=\mu=b^2/(\gamma-1)} and \eqn{Var(X)=\mu(\mu+\gamma-1)/(\gamma-2)}
+so \eqn{\gamma > 2}.
+
+It is always overdispersed.
 }
 \examples{
-#Ejemplo uso dctp
-dcbp(3,2,3)
-dcbp(c(3,4),2,3)
+# Examples for the function dcbp
+dcbp(3,2,5)
+dcbp(c(3,4),2,5)
 
-
+# Examples for the function pcbp
 pcbp(3,2,3)
 pcbp(c(3,4),2,3)
+# Examples for the function qcbp
 qcbp(0.5,2,3)
 qcbp(c(.8,.9),2,3)
-rcbp(4,1,3)
+# Examples for the function rcbp(4,1,3)
+}
+\references{
+\insertRef{RCS2003}{cpd}
+}
+\seealso{
+Probability mass function, distribution function, quantile function and random generation for the CTP distribution: \code{\link{dctp}}, \code{\link{pctp}}, \code{\link{qctp}} and \code{\link{rctp}}.
+Functions for maximum-likelihood fitting of the CBP distribution: \code{\link{fitcbp}}.
 }
