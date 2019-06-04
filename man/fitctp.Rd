@@ -4,7 +4,8 @@
 \alias{fitctp}
 \title{Maximum-likelihood fitting of the CTP distribution}
 \usage{
-fitctp(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments = FALSE, hessian = TRUE, control = list(), ...)
+fitctp(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", 
+       moments = FALSE, hessian = TRUE, control = list(), ...)
 }
 \arguments{
 \item{x}{A numeric vector of length at least one containing only finite values.}

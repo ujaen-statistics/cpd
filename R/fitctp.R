@@ -4,7 +4,8 @@
 #' Maximum-likelihood fitting of the CTP distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}. 
 #'
 #' @usage
-#' fitctp(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments = FALSE, hessian = TRUE, control = list(), ...)
+#' fitctp(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", 
+#'        moments = FALSE, hessian = TRUE, control = list(), ...)
 #'
 #' @param x A numeric vector of length at least one containing only finite values.
 #' @param astart An starting value for the parameter \eqn{a}; by default 0.
@@ -187,7 +188,8 @@ fitctp <- function(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS
 #' Maximum-likelihood fitting of the CBP distribution with parameters \eqn{b} and \eqn{\gamma}. 
 #'
 #' @usage
-#' fitcbp(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments = FALSE, hessian = TRUE, control = list(), ...)
+#' fitcbp(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", 
+#'        moments = FALSE, hessian = TRUE, control = list(), ...)
 #' 
 #' @param x A numeric vector of length at least one containing only finite values.
 #' @param bstart An starting value for the parameter \eqn{b}; by default 1.

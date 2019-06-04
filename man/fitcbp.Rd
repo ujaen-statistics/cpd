@@ -4,7 +4,8 @@
 \alias{fitcbp}
 \title{Maximum-likelihood fitting of the CBP distribution}
 \usage{
-fitcbp(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments = FALSE, hessian = TRUE, control = list(), ...)
+fitcbp(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", 
+       moments = FALSE, hessian = TRUE, control = list(), ...)
 }
 \arguments{
 \item{x}{A numeric vector of length at least one containing only finite values.}
