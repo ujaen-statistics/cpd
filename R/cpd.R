@@ -3,7 +3,7 @@
 #' @name
 #' cpd
 #' @details
-#' The CTP distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma} has pmf
+#' The Complex Triparametric Pearson (CTP) distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma} has pmf
 #' \deqn{f(x|a,b,\gamma) = C \Gamma(a+ib+x) \Gamma(a-ib+x) / (\Gamma(\gamma+x) x!), x=0,1,2,...} 
 #' where \eqn{i} is the imaginary unit, \eqn{\Gamma(·)} the gamma function and 
 #' \deqn{C = \Gamma(\gamma-a-ib) \Gamma(\gamma-a+ib) / (\Gamma(\gamma-2a) \Gamma(a+ib) \Gamma(a-ib))}

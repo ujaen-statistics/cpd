@@ -45,7 +45,7 @@ rctp(n, a, b, gamma)
 If \eqn{a = 0} the probability mass function, distribution function, quantile function and random generation function for the CBP distribution arise.
 }
 \description{
-Probability mass function, distribution function, quantile function and random generation for the CTP distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}.
+Probability mass function, distribution function, quantile function and random generation for the Complex Triparametric Pearson (CTP) distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}.
 }
 \details{
 The CTP distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma} has pmf

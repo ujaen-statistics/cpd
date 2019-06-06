@@ -1,7 +1,7 @@
 #' The Complex Triparametric Pearson (CTP) Distribution
 #'
 #' @description
-#' Probability mass function, distribution function, quantile function and random generation for the CTP distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}. 
+#' Probability mass function, distribution function, quantile function and random generation for the Complex Triparametric Pearson (CTP) distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}. 
 #'
 #' @usage
 #' dctp(x, a, b, gamma)
@@ -100,7 +100,7 @@ dctp <- function(x, a, b, gamma) {
 #' The Complex Biparametric Pearson (CBP) Distribution
 #'
 #' @description
-#' Probability mass function, distribution function, quantile function and random generation for the CBP distribution with parameters \eqn{b} and \eqn{\gamma}. 
+#' Probability mass function, distribution function, quantile function and random generation for the Complex Biparametric Pearson (CBP) distribution with parameters \eqn{b} and \eqn{\gamma}. 
 #'
 #' @usage
 #' dcbp(x, b, gamma)

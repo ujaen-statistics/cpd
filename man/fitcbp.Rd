@@ -2,7 +2,7 @@
 % Please edit documentation in R/fitctp.R
 \name{fitcbp}
 \alias{fitcbp}
-\title{Maximum-likelihood fitting of the CBP distribution}
+\title{Maximum-likelihood fitting of the Complex Biparametric Pearson (CBP) distribution}
 \usage{
 fitcbp(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", 
        moments = FALSE, hessian = TRUE, control = list(), ...)
@@ -44,7 +44,7 @@ An object of class "fitcbp" is a list containing the following components:
 }
 }
 \description{
-Maximum-likelihood fitting of the CBP distribution with parameters \eqn{b} and \eqn{\gamma}.
+Maximum-likelihood fitting of the Complex Biparametric Pearson (CBP) distribution with parameters \eqn{b} and \eqn{\gamma}.
 }
 \examples{
 set.seed(123)

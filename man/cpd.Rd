@@ -6,10 +6,10 @@
 \alias{cpd-package}
 \title{The Complex Triparametric Pearson (CTP) Distribution}
 \description{
-Probability mass function, distribution function, quantile function and random generation for the CTP distribution.
+Probability mass function, distribution function, quantile function and random generation for the Complex Triparametric Pearson (CTP) and Complex Biparametric Pearson (CBP) distributions developed by Rodriguez-Avi et al (2003) <doi:10.1007/s00362-002-0134-7>, Rodriguez-Avi et al (2004) <doi:10.1007/BF02778271> and Olmo-Jimenez et al (2018) <doi:10.1080/00949655.2018.1482897>. The package also contains maximum-likelihood fitting functions for these models.
 }
 \details{
-The CTP distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma} has pmf
+The Complex Triparametric Pearson (CTP) distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma} has pmf
 \deqn{f(x|a,b,\gamma) = C \Gamma(a+ib+x) \Gamma(a-ib+x) / (\Gamma(\gamma+x) x!), x=0,1,2,...} 
 where \eqn{i} is the imaginary unit, \eqn{\Gamma(·)} the gamma function and 
 \deqn{C = \Gamma(\gamma-a-ib) \Gamma(\gamma-a+ib) / (\Gamma(\gamma-2a) \Gamma(a+ib) \Gamma(a-ib))}

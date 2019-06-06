@@ -41,7 +41,7 @@ rcbp(n, b, gamma)
 \code{dcbp} gives the pmf, \code{pcbp} gives the distribution function, \code{qcbp} gives the quantile function and \code{rcbp} generates random values.
 }
 \description{
-Probability mass function, distribution function, quantile function and random generation for the CBP distribution with parameters \eqn{b} and \eqn{\gamma}.
+Probability mass function, distribution function, quantile function and random generation for the Complex Biparametric Pearson (CBP) distribution with parameters \eqn{b} and \eqn{\gamma}.
 }
 \details{
 The CBP distribution with parameters \eqn{b} and \eqn{\gamma} has pmf

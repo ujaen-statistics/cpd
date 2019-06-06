@@ -2,7 +2,7 @@
 % Please edit documentation in R/fitctp.R
 \name{fitctp}
 \alias{fitctp}
-\title{Maximum-likelihood fitting of the CTP distribution}
+\title{Maximum-likelihood fitting of the Complex Triparametric Pearson (CTP) distribution}
 \usage{
 fitctp(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", 
        moments = FALSE, hessian = TRUE, control = list(), ...)
@@ -46,7 +46,7 @@ An object of class "fitctp" is a list containing the following components:
 }
 }
 \description{
-Maximum-likelihood fitting of the CTP distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}.
+Maximum-likelihood fitting of the Complex Triparametric Pearson (CTP) distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}.
 }
 \examples{
 set.seed(123)

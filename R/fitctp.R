@@ -1,7 +1,7 @@
-#' Maximum-likelihood fitting of the CTP distribution
+#' Maximum-likelihood fitting of the Complex Triparametric Pearson (CTP) distribution
 #'
 #' @description
-#' Maximum-likelihood fitting of the CTP distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}. 
+#' Maximum-likelihood fitting of the Complex Triparametric Pearson (CTP) distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}. 
 #'
 #' @usage
 #' fitctp(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", 
@@ -182,10 +182,10 @@ fitctp <- function(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS
 }
 
 
-#' Maximum-likelihood fitting of the CBP distribution
+#' Maximum-likelihood fitting of the Complex Biparametric Pearson (CBP) distribution
 #'
 #' @description
-#' Maximum-likelihood fitting of the CBP distribution with parameters \eqn{b} and \eqn{\gamma}. 
+#' Maximum-likelihood fitting of the Complex Biparametric Pearson (CBP) distribution with parameters \eqn{b} and \eqn{\gamma}. 
 #'
 #' @usage
 #' fitcbp(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", 
