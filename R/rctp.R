@@ -53,8 +53,6 @@ rctp<-function(n, a, b, gamma){
 #' @importFrom fAsianOptions cgamma
 #' @export
 #'
-#' @export
-#'
 #' @examples
 #' # Examples for the function rcbp(4,1,3)
 
