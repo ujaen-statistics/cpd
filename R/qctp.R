@@ -79,7 +79,7 @@ qcbp <- function(p, b, gamma, lower.tail = TRUE)  {
 
   icomplex <- sqrt(as.complex(-1))
 
-  auxP=p[p!=1]
+  auxP=p[p<1 & p>0]
   if (length(auxP)>0)
     maxP <- max(auxP)
   else
@@ -102,7 +102,10 @@ qcbp <- function(p, b, gamma, lower.tail = TRUE)  {
     pMin=1
     pMax=length(Fd)
 
-    if (p[i]==1){
+    if (p[i]>1 || p[i]<0){
+      warning( paste ("p[[", i, "]] must be a probability", sep = ""))
+      result[[i]]=NaN
+    }else if (p[i]==1){
       result[[i]]=Inf
     }else{
       while (Fd[pMin] < p[i]){
