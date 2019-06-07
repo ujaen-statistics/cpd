@@ -6,12 +6,6 @@
 #' @usage
 #' dctp(x, a, b, gamma)
 #'
-#' pctp(q, a, b, gamma, lower.tail = TRUE)
-#'
-#' qctp(p, a, b, gamma, lower.tail = TRUE)
-#'
-#' rctp(n, a, b, gamma)
-#'
 #' @param x vector of (non-negative integer) quantiles.
 #' @param q vector of quantiles.
 #' @param p vector of probabilities.
@@ -104,12 +98,6 @@ dctp <- function(x, a, b, gamma) {
 #'
 #' @usage
 #' dcbp(x, b, gamma)
-#'
-#' pcbp(q, b, gamma, lower.tail = TRUE)
-#'
-#' qcbp(p, b, gamma, lower.tail = TRUE)
-#'
-#' rcbp(n, b, gamma)
 #'
 #' @param x vector of (non-negative integer) quantiles.
 #' @param q vector of quantiles.
