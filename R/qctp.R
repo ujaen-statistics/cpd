@@ -15,7 +15,7 @@ qctp <- function(p, a, b, gamma, lower.tail = TRUE ){
     stop("gamma must be greater than 2a")
 
   icomplex <- sqrt(as.complex(-1))
-  auxP=p[p!=1]
+  auxP=p[p<1 & p>0]
   if (length(auxP)>0)
       maxP <- max(auxP)
   else
@@ -38,7 +38,10 @@ qctp <- function(p, a, b, gamma, lower.tail = TRUE ){
     pMin=1
     pMax=length(Fd)
 
-    if (p[i]==1){
+    if (p[i]>1 || p[i]<0){
+      warning( paste ("p[[", i, "]] must be a probability", sep = ""))
+      result[[i]]=NaN
+    }else if (p[i]==1){
       result[[i]]=Inf
     }else{
       while (Fd[pMin] < p[i]){
@@ -60,8 +63,6 @@ qctp <- function(p, a, b, gamma, lower.tail = TRUE ){
 
 #' @rdname cbp
 #' @importFrom fAsianOptions cgamma
-#' @export
-#'
 #' @export
 #'
 #' @examples
