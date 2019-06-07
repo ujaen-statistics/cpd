@@ -15,12 +15,6 @@ pcbp(q, b, gamma, lower.tail = TRUE)
 qcbp(p, b, gamma, lower.tail = TRUE)
 
 rcbp(n, b, gamma)
-
-pcbp(q, b, gamma, lower.tail = TRUE)
-
-qcbp(p, b, gamma, lower.tail = TRUE)
-
-rcbp(n, b, gamma)
 }
 \arguments{
 \item{x}{vector of (non-negative integer) quantiles.}

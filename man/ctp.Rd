@@ -15,12 +15,6 @@ pctp(q, a, b, gamma, lower.tail = TRUE)
 qctp(p, a, b, gamma, lower.tail = TRUE)
 
 rctp(n, a, b, gamma)
-
-pctp(q, a, b, gamma, lower.tail = TRUE)
-
-qctp(p, a, b, gamma, lower.tail = TRUE)
-
-rctp(n, a, b, gamma)
 }
 \arguments{
 \item{x}{vector of (non-negative integer) quantiles.}
