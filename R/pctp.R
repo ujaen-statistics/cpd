@@ -32,7 +32,6 @@ pctp <- function(q, a, b, gamma, lower.tail = TRUE) {
   while( i <= maxX+1 && Fd[i]<(1-10^-digits)){
     pmfAux <- exp(log(pmfAux)+log(((a+i-1)^2+b^2))-log((gamma+i-1))-log(i))
     Fd <- c( Fd, Fd[[i]] + pmfAux )
-    print(paste(i,Fd[i],pmfAux,sep=":"))
     i <- i + 1
   }
 
