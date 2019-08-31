@@ -365,10 +365,12 @@ logLik.fitCTP <- function (object, ...){
 #' @export
 print.fitCTP<-function (x, digits = getOption("digits"), ...) {
   if (length(coef(x))) {
-    ans=rbind(x$coefficients,sapply(x$se,function(v){paste("(",v,")",sep="")}))
-    print.default(format(coef(x), digits = digits), print.gap = 2, quote = FALSE)
-    se<-rbind(x$se,deparse.level = 0)
-    print.default(format(se, digits = digits), print.gap = 2, quote = FALSE)
+    ans=format(rbind(dimnames(x$coefficients)[[2L]],
+                     format(x$coefficients,digits = digits),
+              sapply(format(x$se,digits = digits),function(v){paste("(",v,")",sep="")})),justify = "centre")
+    colnames(ans)<-ans[1,]
+    ans<-ans[2:3,]
+    print.default(ans, print.gap = 2, quote = FALSE)
   }
   else cat("No coefficients\n\n")
 
@@ -391,9 +393,12 @@ logLik.fitCBP <- function (object, ...){
 #' @export
 print.fitCBP<-function (x, digits = getOption("digits"), ...) {
   if (length(coef(x))) {
-    cat("Coefficients")
-    cat(":\n")
-    print.default(format(coef(x), digits = digits), print.gap = 2, quote = FALSE)
+    ans=format(rbind(dimnames(x$coefficients)[[2L]],
+                     format(x$coefficients,digits = digits),
+                     sapply(format(x$se,digits = digits),function(v){paste("(",v,")",sep="")})),justify = "centre")
+    colnames(ans)<-ans[1,]
+    ans<-ans[2:3,]
+    print.default(ans, print.gap = 2, quote = FALSE)
   }
   else cat("No coefficients\n\n")
   
