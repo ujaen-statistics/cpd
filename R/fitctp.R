@@ -322,12 +322,12 @@ fitcbp <- function(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments
 
   if (method != "L-BFGS-B") {
     coef.table<-rbind(fit$par,deparse.level=0)
-    dimnames(coef.table)<-list("",c("b","log(gamma)"))
+    dimnames(coef.table)<-list("  ",c("b","log(gamma)"))
   }
   else {
     coef.table<-rbind(fit$par,deparse.level=0)
-    dimnames(coef.table)<-list("",c("b","gamma"))
-  }
+    dimnames(coef.table)<-list("  ",c("b","gamma"))
+    }
 
   #Results
   results<-list(
@@ -365,9 +365,10 @@ logLik.fitCTP <- function (object, ...){
 #' @export
 print.fitCTP<-function (x, digits = getOption("digits"), ...) {
   if (length(coef(x))) {
-    cat("Coefficients")
-    cat(":\n")
+    ans=rbind(x$coefficients,sapply(x$se,function(v){paste("(",v,")",sep="")}))
     print.default(format(coef(x), digits = digits), print.gap = 2, quote = FALSE)
+    se<-rbind(x$se,deparse.level = 0)
+    print.default(format(se, digits = digits), print.gap = 2, quote = FALSE)
   }
   else cat("No coefficients\n\n")
 

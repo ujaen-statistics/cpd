@@ -6,6 +6,7 @@
 #' # Examples for the function qctp
 #' qctp(0.5,1,2,3)
 #' qctp(c(.8,.9),1,2,3)
+#' 
 
 qctp <- function(p, a, b, gamma, lower.tail = TRUE ){
   if ( mode(c(p,a,b,gamma)) != "numeric")
@@ -69,6 +70,7 @@ qctp <- function(p, a, b, gamma, lower.tail = TRUE ){
 #' # Examples for the function qcbp
 #' qcbp(0.5,2,3)
 #' qcbp(c(.8,.9),2,3)
+#' 
 qcbp <- function(p, b, gamma, lower.tail = TRUE)  {
 
   if ( mode(c(p,b,gamma)) != "numeric")

@@ -65,11 +65,14 @@ dctp(c(3,4),1,2,5)
 # Examples for the function pctp
 pctp(3,1,2,3)
 pctp(c(3,4),1,2,3)
+
 # Examples for the function qctp
 qctp(0.5,1,2,3)
 qctp(c(.8,.9),1,2,3)
+
 # Examples for the function rctp
 rctp(4,1,1,3)
+
 }
 \references{
 \insertRef{RCS2003}{cpd}

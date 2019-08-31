@@ -5,6 +5,7 @@
 #' @examples
 #' # Examples for the function rctp
 #' rctp(4,1,1,3)
+#' 
 
 rctp<-function(n, a, b, gamma){
   if ( mode(c(n,a,b,gamma)) != "numeric")
@@ -54,7 +55,9 @@ rctp<-function(n, a, b, gamma){
 #' @export
 #'
 #' @examples
-#' # Examples for the function rcbp(4,1,3)
+#' # Examples for the function rcbp
+#' rcbp(4,1,3)
+#' 
 
 rcbp<-function(n, b, gamma){
   if ( mode(c(n,b,gamma)) != "numeric")

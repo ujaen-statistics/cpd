@@ -6,6 +6,7 @@
 #' # Examples for the function pctp
 #' pctp(3,1,2,3)
 #' pctp(c(3,4),1,2,3)
+#' 
 
 pctp <- function(q, a, b, gamma, lower.tail = TRUE) {
   if ( mode(c(q,a,b,gamma)) != "numeric")
@@ -59,6 +60,7 @@ pctp <- function(q, a, b, gamma, lower.tail = TRUE) {
 #' # Examples for the function pcbp
 #' pcbp(3,2,3)
 #' pcbp(c(3,4),2,3)
+#' 
 
 pcbp <- function(q, b, gamma, lower.tail = TRUE ) {
   if ( mode(c(q,b,gamma)) != "numeric")
