@@ -18,9 +18,14 @@ qctp <- function(p, a, b, gamma, lower.tail = TRUE ){
   icomplex <- sqrt(as.complex(-1))
   auxP=p[p<1 & p>0]
   if (length(auxP)>0)
-      maxP <- max(auxP)
+     if (lower.tail){
+       maxP <- max(auxP)
+     }else{
+       maxP <- 1-min(auxP)
+     }
   else
      maxP=0
+  
   n=length(p)
   result<-vector(mode="numeric",length=n)
 
@@ -38,7 +43,12 @@ qctp <- function(p, a, b, gamma, lower.tail = TRUE ){
   for (i in 1:n){
     pMin=1
     pMax=length(Fd)
-
+    
+    if (! lower.tail){
+      p[i]<-1-p[i]
+    }
+    
+    
     if (p[i]>1 || p[i]<0){
       warning( paste ("p[[", i, "]] must be a probability", sep = ""))
       result[[i]]=NaN
@@ -83,7 +93,11 @@ qcbp <- function(p, b, gamma, lower.tail = TRUE)  {
 
   auxP=p[p<1 & p>0]
   if (length(auxP)>0)
-    maxP <- max(auxP)
+    if (lower.tail){
+      maxP <- max(auxP)
+    }else{
+      maxP <- 1-min(auxP)
+    }
   else
     maxP=0
   n=length(p)
@@ -104,6 +118,10 @@ qcbp <- function(p, b, gamma, lower.tail = TRUE)  {
     pMin=1
     pMax=length(Fd)
 
+    if (! lower.tail){
+      p[i]<-1-p[i]
+    }
+    
     if (p[i]>1 || p[i]<0){
       warning( paste ("p[[", i, "]] must be a probability", sep = ""))
       result[[i]]=NaN
