@@ -407,3 +407,103 @@ print.fitCBP<-function (x, digits = getOption("digits"), ...) {
   }
   invisible(x)
 }
+
+
+#' @method summary fitCBP
+#' @importFrom stats pchisq pnorm stepfun
+#' @importFrom dgof ks.test
+#' @export
+summary.fitCBP<-function (x, ...) {
+  digits = getOption("digits")
+  if ("fitCBP" %in% class(x)){
+    myfun <- stepfun(0:max(x$x), c(0, pcbp(0:max(x$x), b = x$coefficients[1], gamma = x$coefficients[2])))
+    x$kstest <- dgof::ks.test(x$x,myfun , simulate.p.value=TRUE, B=1000)
+    
+    xmax<-max(x$x)
+    p.esp<-dcbp(0:(xmax-1),x$coefficients[1],x$coefficients[2])
+    p.esp[xmax]<-1-sum(p.esp[0:(xmax-1)])
+    
+    coefName<-rbind("",cbind(dimnames(x$coefficients)[[2L]]))
+    coefValu<-rbind("Estimate",cbind(as.vector(format(x$coefficients,digits = digits))))
+    se<-rbind("Std. Error",cbind(as.vector(format(x$se,digits = digits))))
+    x$zvalue<-x$coefficients/x$se
+    zvalue<-rbind("z-value",cbind(as.vector(format(x$zvalue,digits = digits))))
+    x$pvalue<- 2 * pnorm(abs(x$zvalue),lower.tail = FALSE)
+    prz<-rbind("Pr(>|z|)",cbind(as.vector(format(x$pvalue,digits = digits))))
+    ans<-cbind(format(cbind(coefValu,se,zvalue,prz),justify = "centre"))
+      
+    cat("Parameters:")
+    prmatrix(ans, rowlab=coefName, collab=rep("",4),quote=FALSE)
+    cat(paste("\nLoglikelihood: ",round(x$loglik,2),"   AIC: ",round(x$aic,2),"   BIC: ",round(x$bic,2),"\n",sep=""))
+    cat("\nGoodness-of-fit test:\n")
+    cat(paste("Chi-2: ",x$chi2," (",x$chi2p,")   Kolmogorov-Smirnov: ",format(x$kstest$statistic,digits=digits)," (p-value: ",x$kstest$p.value,")\n",sep=""))
+    cat("\nCorrelation Matrix:\n")
+    prmatrix(x$corr, rowlab=dimnames(x$coefficients)[[2L]], collab=dimnames(x$coefficients)[[2L]],quote=FALSE)
+  }
+  invisible(x)
+}
+
+
+
+
+
+#Pearson's Chi-squared Test for Count Data 
+chisq2.test <- function (obs, p.esp, npar = NULL, grouping = TRUE) {
+  
+  if (length(obs) != length(p.esp)) 
+    stop("'obs' and 'p.esp' must have the same length")
+  if (any(obs < 0) || anyNA(obs)) 
+    stop("all entries of 'obs' must be nonnegative and finite")
+  if ((n <- sum(obs)) == 0) 
+    stop("at least one entry of 'obs' must be positive")
+  if (sum(p.esp) < 0.9999999999999999) 
+    stop("expected probabilities must sum 1")
+  
+  n <- sum(obs)
+  m <- length(obs)
+  
+  esp <- n * p.esp
+  
+  nesp <- c()
+  nobs <- c()
+  i <- 1
+  j <- 1
+  suma.e <- 0
+  suma.o <- 0
+  
+  if(grouping == TRUE){
+    while(i <= length(esp)){
+      suma.e <- suma.e + esp[i]
+      suma.o <- suma.o + obs[i]
+      if(suma.e >= 5){
+        nesp[j] <- suma.e
+        nobs[j] <- suma.o
+        j <- j+1
+        suma.e <- 0
+        suma.o <- 0
+      }
+      i <- i+1
+    }
+    if (suma.e > 0){
+      nesp[j-1] <- nesp[j-1] + suma.e
+      nobs[j-1] <- nobs[j-1] + suma.o
+    }
+  }
+  else{
+    nesp <- esp
+    nobs <- obs
+  }
+  
+  if(is.null(npar)){
+    DF <- length(nesp) - 1
+  }
+  else DF <- length(nesp) - npar - 1
+  if(DF <= 0) DF <- NaN
+  
+  STATISTIC <- sum((nobs - nesp) ^ 2 / nesp)
+  
+  PVALUE <- pchisq(STATISTIC, DF, lower.tail = FALSE)
+  
+  structure(list(statistic = STATISTIC, df = DF, p.value = PVALUE, observed = obs, observed.grouped = nobs,
+                 expected = esp, expected.grouped = nesp, residuals = sqrt(STATISTIC)))
+}
