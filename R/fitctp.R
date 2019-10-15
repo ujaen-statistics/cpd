@@ -1,5 +1,5 @@
 #' Maximum-likelihood fitting of the Complex Triparametric Pearson (CTP) distribution
-#'
+#' 
 #' @description
 #' Maximum-likelihood fitting of the Complex Triparametric Pearson (CTP) distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}. 
 #'
