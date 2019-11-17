@@ -1,5 +1,5 @@
 #' Maximum-likelihood fitting of the Complex Triparametric Pearson (CTP) distribution
-#' 
+#'
 #' @description
 #' Maximum-likelihood fitting of the Complex Triparametric Pearson (CTP) distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}. 
 #'
@@ -409,6 +409,56 @@ print.fitCBP<-function (x, digits = getOption("digits"), ...) {
 }
 
 
+#' @method summary fitCTP
+#' @importFrom stats pchisq pnorm stepfun
+#' @importFrom dgof ks.test
+#' @export
+summary.fitCTP<-function (object, ...) {
+  if (!("fitCTP" %in% class(object))){ 
+    stop("This method only works with fitCTP objects")
+  }
+  myfun <- stepfun(0:max(object$x), c(0, pctp(0:max(object$x), a = object$coefficients[1], b = object$coefficients[2], gamma = object$coefficients[3])))
+  t <- proc.time()
+  object$kstest <- ks.test(object$x,myfun , simulate.p.value=TRUE, B=1000)
+  print(proc.time()-t)
+  object$zvalue<-object$coefficients/object$se
+  object$pvalue<- 2 * pnorm(abs(object$zvalue),lower.tail = FALSE)
+  xmax<-max(object$x)
+  p.esp<-dctp(0:(xmax-1),object$coefficients[1],object$coefficients[2],object$coefficients[3])
+  p.esp[xmax+1]<-1-sum(p.esp[1:(xmax)])
+  obs<-rep(0,xmax+1)
+  for (i in 1:length(object$x))
+    obs[object$x[i]+1]<-obs[object$x[i]+1]+1
+  t <- proc.time()
+  object$chi2test=chisq2.test(obs, p.esp, npar = 3, grouping = TRUE)
+  print(proc.time()-t)
+  class(object) <- "summary.fitCTP"
+  object
+}
+
+
+#' @method print summary.fitCTP
+#' @export
+print.summary.fitCTP <- function(x, digits = getOption("digits"), ...){
+  if (!("summary.fitCTP" %in% class(x))){ 
+    stop("This method only works with fitCTP objects")
+  }
+  coefName<-rbind("",cbind(dimnames(x$coefficients)[[2L]]))
+  coefValu<-rbind("Estimate",cbind(as.vector(format(x$coefficients,digits = digits))))
+  se<-rbind("Std. Error",cbind(as.vector(format(x$se,digits = digits))))
+  zvalue<-rbind("z-value",cbind(as.vector(format(x$zvalue,digits = digits))))
+  prz<-rbind("Pr(>|z|)",cbind(as.vector(format(x$pvalue,digits = digits))))
+  ans<-cbind(format(cbind(coefValu,se,zvalue,prz),justify = "centre"))
+  cat("Parameters:")
+  prmatrix(ans, rowlab=coefName, collab=rep("",4),quote=FALSE)
+  cat(paste("\nLoglikelihood: ",round(x$loglik,2),"   AIC: ",round(x$aic,2),"   BIC: ",round(x$bic,2),"\n",sep=""))
+  cat("\nGoodness-of-fit test:\n")
+  cat(paste("Chi-2: ", format(x$chi2test$statistic,digits=digits)," (p-value: ",x$chi2test$p.value,")   Kolmogorov-Smirnov: ",format(x$kstest$statistic,digits=digits)," (p-value: ",x$kstest$p.value,")\n",sep=""))
+  cat("\nCorrelation Matrix:\n")
+  prmatrix(x$corr, rowlab=dimnames(x$coefficients)[[2L]], collab=dimnames(x$coefficients)[[2L]],quote=FALSE)
+  invisible(x)
+}
+
 #' @method summary fitCBP
 #' @importFrom stats pchisq pnorm stepfun
 #' @importFrom dgof ks.test
@@ -425,18 +475,18 @@ summary.fitCBP<-function (object, ...) {
   p.esp<-dcbp(0:(xmax-1),object$coefficients[1],object$coefficients[2])
   p.esp[xmax+1]<-1-sum(p.esp[1:(xmax)])
   obs<-rep(0,xmax+1)
-  for (i in 1:(xmax+1))
-    obs[object$x[i]]<-obs[object$x[i]]+1
-  object$chi2test=chisq2.test ()
+  for (i in 1:length(object$x))
+    obs[object$x[i]+1]<-obs[object$x[i]+1]+1
+  object$chi2test=chisq2.test(obs, p.esp, npar = 2, grouping = TRUE)
   class(object) <- "summary.fitCBP"
-  return(object)
+  object
 }
 
 
 #' @method print summary.fitCBP
 #' @export
 print.summary.fitCBP <- function(x, digits = getOption("digits"), ...){
-  if (!("fitCBP" %in% class(object))){ 
+  if (!("summary.fitCBP" %in% class(x))){ 
     stop("This method only works with fitCBP objects")
   }
   coefName<-rbind("",cbind(dimnames(x$coefficients)[[2L]]))
@@ -449,10 +499,120 @@ print.summary.fitCBP <- function(x, digits = getOption("digits"), ...){
   prmatrix(ans, rowlab=coefName, collab=rep("",4),quote=FALSE)
   cat(paste("\nLoglikelihood: ",round(x$loglik,2),"   AIC: ",round(x$aic,2),"   BIC: ",round(x$bic,2),"\n",sep=""))
   cat("\nGoodness-of-fit test:\n")
-  cat(paste("Chi-2: ",x$chi2," (",x$chi2p,")   Kolmogorov-Smirnov: ",format(x$kstest$statistic,digits=digits)," (p-value: ",x$kstest$p.value,")\n",sep=""))
+  cat(paste("Chi-2: ", format(x$chi2test$statistic,digits=digits)," (p-value: ",x$chi2test$p.value,")   Kolmogorov-Smirnov: ",format(x$kstest$statistic,digits=digits)," (p-value: ",x$kstest$p.value,")\n",sep=""))
   cat("\nCorrelation Matrix:\n")
   prmatrix(x$corr, rowlab=dimnames(x$coefficients)[[2L]], collab=dimnames(x$coefficients)[[2L]],quote=FALSE)
   invisible(x)
 }
 
 
+
+#' @method plot fitCBP
+#' @export
+plot.fitCBP <- function(x,plty="CDF",maxValue=NULL,...){
+  if (!("fitCBP" %in% class(x))){ 
+    stop("This method only works with fitCBP objects")
+  }
+  hLimit<-max(x$x)
+  if (is.numeric(maxValue) && maxValue%%1==0){
+    if (maxValue>hLimit || maxValue < 0){
+      warning("maxValue can't be greater than maximum value neither negative. maxValue will be ignored")
+      maxValue=hLimit
+    }
+  }else{
+    maxValue=hLimit
+  }
+  values<-0:hLimit;
+  
+  p<-pcbp(values,x$coefficients[1],x$coefficients[2] )
+  freq<-rep(0,hLimit+1)
+  for (i in 1:x$n)
+    freq[x$x[i]+1]<-freq[x$x[i]+1]+1
+  cumFreq=cumsum(freq)
+  cumFreq=cumFreq/x$n
+  if (plty=="PP"){
+    plot(range(0, 1), range(0, 1), type = "n", xlab = "Empirical Cumulative Probabilities", 
+         ylab = "Theorical Cumulative Pobalilities",main="PP plot",...)
+    points(cumFreq,p,col="black",pch=19)
+    abline(0,1, col = "blue", lty = 2)
+  } else if(plty=="CDF") {
+    plot(range(0, maxValue), range(0, 1), type = "n", xlab = "Values", 
+         ylab = "Cumulative probability",main="Empirical and Theoretical CDF")
+    cFreq<-cumFreq[values+1]
+    points(values,p,col="blue",pch=19)
+    points(values,cFreq,col="red",pch=19)
+    segments(values[-length(values)], cumFreq[-length(cumFreq)], values[-1], cumFreq[-length(cumFreq)], col= 'red')
+    segments(values[-length(values)], p[-length(p)], values[-1], p[-length(p)], col= 'blue')
+    abline(h = c(0, 1), col = "gray", lty = 2)
+    legend(hLimit/2,0.3, legend=c("Empirical", "Theorical"),
+           col=c("red", "blue"), lty=1, cex=0.8)
+  } else{
+    n.esp<-dcbp(values,x$coefficients[1],x$coefficients[2] )*x$n
+    fLimit <- max(n.esp,freq)
+    plot(range(0, maxValue), range(0, fLimit), type = "n", xlab = "Values", 
+         ylab = "Frequencies",main="Observed & Theoretical Frequencies")
+    points(values,n.esp,col="blue",pch=19)
+    points(values,freq,col="red",pch=19)
+    segments(values[-length(values)], freq[-length(freq)], values[-1], freq[-1], col= 'red',lty=2)
+    segments(values[-length(values)], n.esp[-length(n.esp)], values[-1], n.esp[-1], col= 'blue',lty=2)
+    abline(h = 0, col = "gray", lty = 2)
+    legend(hLimit/2,fLimit/2, legend=c("Observed", "Theorical"),
+           col=c("red", "blue"), lty=2, cex=0.8)
+  }
+}
+
+
+
+#' @method plot fitCTP
+#' @export
+plot.fitCTP <- function(x,plty="CDF",maxValue=NULL,...){
+  if (!("fitCTP" %in% class(x))){ 
+    stop("This method only works with fitCTP objects")
+  }
+  hLimit<-max(x$x)
+  if (is.numeric(maxValue) && maxValue%%1==0){
+    if (maxValue>hLimit || maxValue < 0){
+      warning("maxValue can't be greater than maximum value neither negative. maxValue will be ignored")
+      maxValue=hLimit
+    }
+  }else{
+    maxValue=hLimit
+  }
+  values<-0:hLimit;
+  
+  p<-pctp(values,x$coefficients[1],x$coefficients[2],x$coefficients[3] )
+  freq<-rep(0,hLimit+1)
+  for (i in 1:x$n)
+    freq[x$x[i]+1]<-freq[x$x[i]+1]+1
+  cumFreq=cumsum(freq)
+  cumFreq=cumFreq/x$n
+  if (plty=="PP"){
+    plot(range(0, 1), range(0, 1), type = "n", xlab = "Empirical Cumulative Probabilities", 
+         ylab = "Theorical Cumulative Pobalilities",main="PP plot",...)
+    points(cumFreq,p,col="black",pch=19)
+    abline(0,1, col = "blue", lty = 2)
+  } else if(plty=="CDF") {
+    plot(range(0, maxValue), range(0, 1), type = "n", xlab = "Values", 
+         ylab = "Cumulative probability",main="Empirical and Theoretical CDF")
+    cFreq<-cumFreq[values+1]
+    points(values,p,col="blue",pch=19)
+    points(values,cFreq,col="red",pch=19)
+    segments(values[-length(values)], cumFreq[-length(cumFreq)], values[-1], cumFreq[-length(cumFreq)], col= 'red')
+    segments(values[-length(values)], p[-length(p)], values[-1], p[-length(p)], col= 'blue')
+    abline(h = c(0, 1), col = "gray", lty = 2)
+    legend(maxValue/2,0.3, legend=c("Empirical", "Theorical"),
+           col=c("red", "blue"), lty=1, cex=0.8)
+  } else{
+    n.esp<-dctp(values,x$coefficients[1],x$coefficients[2],x$coefficients[3] )*x$n
+    fLimit <- max(n.esp,freq)
+    plot(range(0, maxValue), range(0, fLimit), type = "n", xlab = "Values", 
+         ylab = "Frequencies",main="Observed & Theoretical Frequencies")
+    points(values,n.esp,col="blue",pch=19)
+    points(values,freq,col="red",pch=19)
+    segments(values[-length(values)], freq[-length(freq)], values[-1], freq[-1], col= 'red',lty=2)
+    segments(values[-length(values)], n.esp[-length(n.esp)], values[-1], n.esp[-1], col= 'blue',lty=2)
+    abline(h = 0, col = "gray", lty = 2)
+    legend(maxValue*2/3,fLimit*2/3, legend=c("Observed", "Theorical"),
+           col=c("red", "blue"), lty=2, cex=0.8)
+  }
+}
