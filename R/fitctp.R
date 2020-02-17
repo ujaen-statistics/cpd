@@ -532,19 +532,19 @@ plot.fitCBP <- function(x,plty="CDF",maxValue=NULL,...){
   cumFreq=cumFreq/x$n
   if (plty=="PP"){
     plot(range(0, 1), range(0, 1), type = "n", xlab = "Empirical Cumulative Probabilities", 
-         ylab = "Theorical Cumulative Pobalilities",main="PP plot",...)
+         ylab = "Theoretical Cumulative Pobabilities",main="PP plot",...)
     points(cumFreq,p,col="black",pch=19)
     abline(0,1, col = "blue", lty = 2)
   } else if(plty=="CDF") {
     plot(range(0, maxValue), range(0, 1), type = "n", xlab = "Values", 
-         ylab = "Cumulative probability",main="Empirical and Theoretical CDF")
+         ylab = "Cumulative probability",main="Empirical and Theoretical CDFs")
     cFreq<-cumFreq[values+1]
     points(values,p,col="blue",pch=19)
     points(values,cFreq,col="red",pch=19)
     segments(values[-length(values)], cumFreq[-length(cumFreq)], values[-1], cumFreq[-length(cumFreq)], col= 'red')
     segments(values[-length(values)], p[-length(p)], values[-1], p[-length(p)], col= 'blue')
     abline(h = c(0, 1), col = "gray", lty = 2)
-    legend(hLimit/2,0.3, legend=c("Empirical", "Theorical"),
+    legend(hLimit/2,0.3, legend=c("Empirical", "Theoretical"),
            col=c("red", "blue"), lty=1, cex=0.8)
   } else{
     n.esp<-dcbp(values,x$coefficients[1],x$coefficients[2] )*x$n
@@ -556,7 +556,7 @@ plot.fitCBP <- function(x,plty="CDF",maxValue=NULL,...){
     segments(values[-length(values)], freq[-length(freq)], values[-1], freq[-1], col= 'red',lty=2)
     segments(values[-length(values)], n.esp[-length(n.esp)], values[-1], n.esp[-1], col= 'blue',lty=2)
     abline(h = 0, col = "gray", lty = 2)
-    legend(hLimit/2,fLimit/2, legend=c("Observed", "Theorical"),
+    legend(hLimit/2,fLimit/2, legend=c("Observed", "Theoretical"),
            col=c("red", "blue"), lty=2, cex=0.8)
   }
 }
@@ -588,7 +588,7 @@ plot.fitCTP <- function(x,plty="CDF",maxValue=NULL,...){
   cumFreq=cumFreq/x$n
   if (plty=="PP"){
     plot(range(0, 1), range(0, 1), type = "n", xlab = "Empirical Cumulative Probabilities", 
-         ylab = "Theorical Cumulative Pobalilities",main="PP plot",...)
+         ylab = "Theoretical Cumulative Probalilities",main="PP plot",...)
     points(cumFreq,p,col="black",pch=19)
     abline(0,1, col = "blue", lty = 2)
   } else if(plty=="CDF") {
@@ -600,7 +600,7 @@ plot.fitCTP <- function(x,plty="CDF",maxValue=NULL,...){
     segments(values[-length(values)], cumFreq[-length(cumFreq)], values[-1], cumFreq[-length(cumFreq)], col= 'red')
     segments(values[-length(values)], p[-length(p)], values[-1], p[-length(p)], col= 'blue')
     abline(h = c(0, 1), col = "gray", lty = 2)
-    legend(maxValue/2,0.3, legend=c("Empirical", "Theorical"),
+    legend(maxValue/2,0.3, legend=c("Empirical", "Theoretical"),
            col=c("red", "blue"), lty=1, cex=0.8)
   } else{
     n.esp<-dctp(values,x$coefficients[1],x$coefficients[2],x$coefficients[3] )*x$n
@@ -612,7 +612,7 @@ plot.fitCTP <- function(x,plty="CDF",maxValue=NULL,...){
     segments(values[-length(values)], freq[-length(freq)], values[-1], freq[-1], col= 'red',lty=2)
     segments(values[-length(values)], n.esp[-length(n.esp)], values[-1], n.esp[-1], col= 'blue',lty=2)
     abline(h = 0, col = "gray", lty = 2)
-    legend(maxValue*2/3,fLimit*2/3, legend=c("Observed", "Theorical"),
+    legend(maxValue*2/3,fLimit*2/3, legend=c("Observed", "Theoretical"),
            col=c("red", "blue"), lty=2, cex=0.8)
   }
 }
