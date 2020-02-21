@@ -6,6 +6,27 @@
 \usage{
 fitcbp(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", 
        moments = FALSE, hessian = TRUE, control = list(), ...)
+       
+## S3 method for class 'fitcbp'
+print(x, ...)        
+
+## S3 method for class 'fitcbp'
+summary(fit, ...)        
+
+## S3 method for class 'fitcbp'
+coef(fit, ...) 
+
+## S3 method for class 'fitcbp'
+logLik(fit, ...) 
+
+## S3 method for class 'fitcbp'
+AIC(fit, ...)  
+      
+## S3 method for class 'fitcbp'
+BIC(fit, ...)        
+
+## S3 method for class 'fitcbp'
+plot(fit, plty = "FREQ", ...)
 }
 \arguments{
 \item{x}{A numeric vector of length at least one containing only finite values.}
@@ -23,6 +44,10 @@ fitcbp(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B",
 \item{control}{A list of parameters for controlling the fitting process.}
 
 \item{...}{Additional parameters.}
+
+\item{fit}{An object of class "fitcbp".}
+
+\item{plty}{Plot type to be shown. Default is \code{"FREQ"} which shows the observed and theoretical frequencies for each value of the variable; \code{"CDF"} and \code{"PP"} are also available for plotting the empirical and theoretical cumulative distribution functions or the theoretical cumulative probabilities against the empirical cumulative probabilities, respectively.}
 }
 \value{
 An object of class "fitcbp" is a list containing the following components:
@@ -42,9 +67,23 @@ An object of class "fitcbp" is a list containing the following components:
 \item \code{converged},  logical value that indicates if the optimization algorithms succesfull,
 \item \code{method}, the name of the fitter function used.
 }
+
+Generic functions:
+
+\itemize{
+\item \code{print}: The print of a \code{'fitcbp'} object shows the ML parameter estimates and their standard errors in parenthesis.
+\item \code{summary}: The summary provides the ML parameter estimates, their standard errors and the statistic and p-value of the Wald test to check if the parameters are significant.
+This summary also shows the loglikelihood, AIC and BIC values, as well as the results for the chi-squared goodness-of-fit test and the Kolmogorov-Smirnov test for discrete variables. Finally, the correlation matrix between parameter estimates appears.
+\item \code{coef}: It extracts the fitted coefficients from a \code{'fitcbp'} object.
+\item \code{logLik}: It extracts the estimated log-likelihood from a \code{'fitcbp'} object.
+\item \code{AIC}: It extracts the value of the Akaike Information Criterion from a \code{'fitcbp'} object.
+\item \code{BIC}: It extracts the value of the Bayesian Information Criterion from a \code{'fitcbp'} object.
+\item \code{plot}: It shows the plot of a \code{'fitcbp'} object. Observed and theoretical probabitilies, empirical and theoretical cumulative distribution functions or empirical cumulative probabilities against theoretical cumulative probabilities are the three plot types.
+}
 }
 \description{
-Maximum-likelihood fitting of the Complex Biparametric Pearson (CBP) distribution with parameters \eqn{b} and \eqn{\gamma}.
+Maximum-likelihood fitting of the Complex Biparametric Pearson (CBP) distribution with parameters \eqn{b} and \eqn{\gamma}. Generic
+methods are \code{print}, \code{summary}, \code{coef}, \code{logLik}, \code{AIC}, \code{BIC} and \code{plot}.
 }
 \examples{
 set.seed(123)

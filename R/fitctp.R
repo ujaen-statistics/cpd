@@ -1,11 +1,33 @@
 #' Maximum-likelihood fitting of the Complex Triparametric Pearson (CTP) distribution
 #'
 #' @description
-#' Maximum-likelihood fitting of the Complex Triparametric Pearson (CTP) distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}. 
+#' Maximum-likelihood fitting of the Complex Triparametric Pearson (CTP) distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}. Generic
+#' methods are \code{print}, \code{summary}, \code{coef}, \code{logLik}, \code{AIC}, \code{BIC} and \code{plot}. 
 #'
 #' @usage
 #' fitctp(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", 
 #'        moments = FALSE, hessian = TRUE, control = list(), ...)
+#'        
+#' ## S3 method for class 'fitctp'
+#' print(fit, ...)        
+#' 
+#' ## S3 method for class 'fitctp'
+#' summary(fit, ...)        
+#' 
+#' ## S3 method for class 'fitctp'
+#' coef(fit, ...) 
+#' 
+#' ## S3 method for class 'fitctp'
+#' logLik(fit, ...) 
+#' 
+#' ## S3 method for class 'fitctp'
+#' AIC(fit, ...)  
+#'       
+#' ## S3 method for class 'fitctp'
+#' BIC(fit, ...)        
+#'
+#' ## S3 method for class 'fitctp'
+#' plot(fit, plty = "FREQ", ...)        
 #'
 #' @param x A numeric vector of length at least one containing only finite values.
 #' @param astart An starting value for the parameter \eqn{a}; by default 0.
@@ -15,6 +37,8 @@
 #' @param moments If \code{TRUE} the estimates of \eqn{a}, \eqn{b} and \eqn{\gamma} by the method of moments are used as starting values (if it is posible). By default this argument is \code{FALSE}.
 #' @param hessian If \code{TRUE} the hessian of the objective function at the minimum is returned.
 #' @param control A list of parameters for controlling the fitting process.
+#' @param fit An object of class \code{'fitctp'}
+#' @param plty Plot type to be shown. Default is \code{"FREQ"} which shows the observed and theoretical frequencies for each value of the variable; \code{"CDF"} and \code{"PP"} are also available for plotting the empirical and theoretical cumulative distribution functions or the theoretical cumulative probabilities against the empirical cumulative probabilities, respectively.
 #' @param ...  Additional parameters.
 #'
 #' @return An object of class "fitctp" is a list containing the following components:
@@ -33,6 +57,19 @@
 #' \item \code{code}, a code that indicates successful convergence of the fitter function used (see nlm and optim helps),
 #' \item \code{converged},  logical value that indicates if the optimization algorithms succesfull,
 #' \item \code{method}, the name of the fitter function used.
+#' }
+#' 
+#' Generic functions:
+#'
+#' \itemize{
+#' \item \code{print}: The print of a \code{'fitctp'} object shows the ML parameter estimates and their standard errors in parenthesis.
+#' \item \code{summary}: The summary provides the ML parameter estimates, their standard errors and the statistic and p-value of the Wald test to check if the parameters are significant.
+#' This summary also shows the loglikelihood, AIC and BIC values, as well as the results for the chi-squared goodness-of-fit test and the Kolmogorov-Smirnov test for discrete variables. Finally, the correlation matrix between parameter estimates appears.
+#' \item \code{coef}: It extracts the fitted coefficients from a \code{'fitctp'} object.
+#' \item \code{logLik}: It extracts the estimated log-likelihood from a \code{'fitctp'} object.
+#' \item \code{AIC}: It extracts the value of the Akaike Information Criterion from a \code{'fitctp'} object.
+#' \item \code{BIC}: It extracts the value of the Bayesian Information Criterion from a \code{'fitctp'} object.
+#' \item \code{plot}: It shows the plot of a \code{'fitctp'} object. Observed and theoretical probabitilies, empirical and theoretical cumulative distribution functions or empirical cumulative probabilities against theoretical cumulative probabilities are the three plot types.
 #' }
 #' 
 #' @importFrom stats nlm optim coef runif
@@ -185,11 +222,34 @@ fitctp <- function(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS
 #' Maximum-likelihood fitting of the Complex Biparametric Pearson (CBP) distribution
 #'
 #' @description
-#' Maximum-likelihood fitting of the Complex Biparametric Pearson (CBP) distribution with parameters \eqn{b} and \eqn{\gamma}. 
+#' Maximum-likelihood fitting of the Complex Biparametric Pearson (CBP) distribution with parameters \eqn{b} and \eqn{\gamma}. Generic
+#' methods are \code{print}, \code{summary}, \code{coef}, \code{logLik}, \code{AIC}, \code{BIC} and \code{plot}. 
 #'
 #' @usage
 #' fitcbp(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", 
 #'        moments = FALSE, hessian = TRUE, control = list(), ...)
+#'        
+#' ## S3 method for class 'fitcbp'
+#' print(x, ...)        
+#' 
+#' ## S3 method for class 'fitcbp'
+#' summary(fit, ...)        
+#' 
+#' ## S3 method for class 'fitcbp'
+#' coef(fit, ...) 
+#' 
+#' ## S3 method for class 'fitcbp'
+#' logLik(fit, ...) 
+#' 
+#' ## S3 method for class 'fitcbp'
+#' AIC(fit, ...)  
+#'       
+#' ## S3 method for class 'fitcbp'
+#' BIC(fit, ...)        
+#'
+#' ## S3 method for class 'fitcbp'
+#' plot(fit, plty = "FREQ", ...)
+#' 
 #' 
 #' @param x A numeric vector of length at least one containing only finite values.
 #' @param bstart An starting value for the parameter \eqn{b}; by default 1.
@@ -198,6 +258,8 @@ fitctp <- function(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS
 #' @param moments If \code{TRUE} the estimates of \eqn{b} and \eqn{\gamma} by the method of moments are used as starting values (if it is posible). By default this argument is \code{FALSE}.
 #' @param hessian If \code{TRUE} the hessian of the objective function at the minimum is returned.
 #' @param control A list of parameters for controlling the fitting process.
+#' @param fit An object of class "fitcbp".
+#' @param plty Plot type to be shown. Default is \code{"FREQ"} which shows the observed and theoretical frequencies for each value of the variable; \code{"CDF"} and \code{"PP"} are also available for plotting the empirical and theoretical cumulative distribution functions or the theoretical cumulative probabilities against the empirical cumulative probabilities, respectively.
 #' @param ...  Additional parameters.
 #'
 #' @return An object of class "fitcbp" is a list containing the following components:
@@ -216,6 +278,19 @@ fitctp <- function(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS
 #' \item \code{code}, a code that indicates successful convergence of the fitter function used (see nlm and optim helps),
 #' \item \code{converged},  logical value that indicates if the optimization algorithms succesfull,
 #' \item \code{method}, the name of the fitter function used.
+#' }
+#' 
+#' Generic functions:
+#'
+#' \itemize{
+#' \item \code{print}: The print of a \code{'fitcbp'} object shows the ML parameter estimates and their standard errors in parenthesis.
+#' \item \code{summary}: The summary provides the ML parameter estimates, their standard errors and the statistic and p-value of the Wald test to check if the parameters are significant.
+#' This summary also shows the loglikelihood, AIC and BIC values, as well as the results for the chi-squared goodness-of-fit test and the Kolmogorov-Smirnov test for discrete variables. Finally, the correlation matrix between parameter estimates appears.
+#' \item \code{coef}: It extracts the fitted coefficients from a \code{'fitcbp'} object.
+#' \item \code{logLik}: It extracts the estimated log-likelihood from a \code{'fitcbp'} object.
+#' \item \code{AIC}: It extracts the value of the Akaike Information Criterion from a \code{'fitcbp'} object.
+#' \item \code{BIC}: It extracts the value of the Bayesian Information Criterion from a \code{'fitcbp'} object.
+#' \item \code{plot}: It shows the plot of a \code{'fitcbp'} object. Observed and theoretical probabitilies, empirical and theoretical cumulative distribution functions or empirical cumulative probabilities against theoretical cumulative probabilities are the three plot types.
 #' }
 #' 
 #' @importFrom stats nlm optim coef runif
@@ -418,9 +493,7 @@ summary.fitCTP<-function (object, ...) {
     stop("This method only works with fitCTP objects")
   }
   myfun <- stepfun(0:max(object$x), c(0, pctp(0:max(object$x), a = object$coefficients[1], b = object$coefficients[2], gamma = object$coefficients[3])))
-  t <- proc.time()
   object$kstest <- ks.test(object$x,myfun , simulate.p.value=TRUE, B=1000)
-  print(proc.time()-t)
   object$zvalue<-object$coefficients/object$se
   object$pvalue<- 2 * pnorm(abs(object$zvalue),lower.tail = FALSE)
   xmax<-max(object$x)
@@ -429,9 +502,7 @@ summary.fitCTP<-function (object, ...) {
   obs<-rep(0,xmax+1)
   for (i in 1:length(object$x))
     obs[object$x[i]+1]<-obs[object$x[i]+1]+1
-  t <- proc.time()
   object$chi2test=chisq2.test(obs, p.esp, npar = 3, grouping = TRUE)
-  print(proc.time()-t)
   class(object) <- "summary.fitCTP"
   object
 }
@@ -452,7 +523,7 @@ print.summary.fitCTP <- function(x, digits = getOption("digits"), ...){
   cat("Parameters:")
   prmatrix(ans, rowlab=coefName, collab=rep("",4),quote=FALSE)
   cat(paste("\nLoglikelihood: ",round(x$loglik,2),"   AIC: ",round(x$aic,2),"   BIC: ",round(x$bic,2),"\n",sep=""))
-  cat("\nGoodness-of-fit test:\n")
+  cat("\nGoodness-of-fit tests:\n")
   cat(paste("Chi-2: ", format(x$chi2test$statistic,digits=digits)," (p-value: ",x$chi2test$p.value,")   Kolmogorov-Smirnov: ",format(x$kstest$statistic,digits=digits)," (p-value: ",x$kstest$p.value,")\n",sep=""))
   cat("\nCorrelation Matrix:\n")
   prmatrix(x$corr, rowlab=dimnames(x$coefficients)[[2L]], collab=dimnames(x$coefficients)[[2L]],quote=FALSE)
@@ -498,7 +569,7 @@ print.summary.fitCBP <- function(x, digits = getOption("digits"), ...){
   cat("Parameters:")
   prmatrix(ans, rowlab=coefName, collab=rep("",4),quote=FALSE)
   cat(paste("\nLoglikelihood: ",round(x$loglik,2),"   AIC: ",round(x$aic,2),"   BIC: ",round(x$bic,2),"\n",sep=""))
-  cat("\nGoodness-of-fit test:\n")
+  cat("\nGoodness-of-fit tests:\n")
   cat(paste("Chi-2: ", format(x$chi2test$statistic,digits=digits)," (p-value: ",x$chi2test$p.value,")   Kolmogorov-Smirnov: ",format(x$kstest$statistic,digits=digits)," (p-value: ",x$kstest$p.value,")\n",sep=""))
   cat("\nCorrelation Matrix:\n")
   prmatrix(x$corr, rowlab=dimnames(x$coefficients)[[2L]], collab=dimnames(x$coefficients)[[2L]],quote=FALSE)
@@ -509,7 +580,7 @@ print.summary.fitCBP <- function(x, digits = getOption("digits"), ...){
 
 #' @method plot fitCBP
 #' @export
-plot.fitCBP <- function(x,plty="CDF",maxValue=NULL,...){
+plot.fitCBP <- function(x,plty="FREQ",maxValue=NULL,...){
   if (!("fitCBP" %in% class(x))){ 
     stop("This method only works with fitCBP objects")
   }
@@ -565,7 +636,7 @@ plot.fitCBP <- function(x,plty="CDF",maxValue=NULL,...){
 
 #' @method plot fitCTP
 #' @export
-plot.fitCTP <- function(x,plty="CDF",maxValue=NULL,...){
+plot.fitCTP <- function(x,plty="FREQ",maxValue=NULL,...){
   if (!("fitCTP" %in% class(x))){ 
     stop("This method only works with fitCTP objects")
   }
