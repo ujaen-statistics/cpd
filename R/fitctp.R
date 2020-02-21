@@ -502,7 +502,7 @@ summary.fitCTP<-function (object, ...) {
   obs<-rep(0,xmax+1)
   for (i in 1:length(object$x))
     obs[object$x[i]+1]<-obs[object$x[i]+1]+1
-  object$chi2test=chisq2.test(obs, p.esp, npar = 3, grouping = TRUE)
+  object$chi2test=chisq.test2(obs, p.esp, npar = 3)
   class(object) <- "summary.fitCTP"
   object
 }
@@ -548,7 +548,7 @@ summary.fitCBP<-function (object, ...) {
   obs<-rep(0,xmax+1)
   for (i in 1:length(object$x))
     obs[object$x[i]+1]<-obs[object$x[i]+1]+1
-  object$chi2test=chisq2.test(obs, p.esp, npar = 2, grouping = TRUE)
+  object$chi2test=chisq.test2(obs, p.esp, npar = 2)
   class(object) <- "summary.fitCBP"
   object
 }
