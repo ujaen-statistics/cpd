@@ -1,8 +1,8 @@
 Package: cpd
 Type: Package
 Title: Complex Pearson Distributions
-Version: 0.1.0
-Date: 2019-05-28
+Version: 0.2.0
+Date: 2020-02-26
 Authors@R: c(person("Silverio", "Vilchez-Lopez", role = c("aut", "cre"), email = "svilchez@ujaen.es"),
     person("Maria Jose", "Olmo-Jimenez", role = "aut", email = "mjolmo@ujaen.es"),
     person("Jose", "Rodriguez-Avi", role = "aut", email = "jravi@ujaen.es")

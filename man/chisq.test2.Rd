@@ -30,5 +30,5 @@ A list with class \code{"htest"} containing the following components:
 }
 }
 \description{
-\code{chisq2.test} performs Pearson chi-squared goodness-of-fit test for count data
+\code{chisq.test2} performs Pearson chi-squared goodness-of-fit test for count data
 }
