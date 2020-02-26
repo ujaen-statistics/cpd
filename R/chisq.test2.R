@@ -19,8 +19,8 @@
 #' }
 #' @importFrom stats pchisq
 #' @export
-#' 
-#' #' @examples
+
+#' @examples
 #' set.seed(123)
 #' x <- rctp(500, -1.5, 1, 2)
 #' table(x)
