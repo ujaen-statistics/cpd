@@ -382,15 +382,6 @@ fitcbp <- function(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments
   results
 }
 
-
-
-
-
-
-
-
-
-
 #' Maximum-likelihood fitting of the EBW distribution
 #'
 #' @description
