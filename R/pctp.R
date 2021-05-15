@@ -78,7 +78,7 @@ pcbp <- function(q, b, gamma, lower.tail = TRUE ) {
       maxX=q[i]
   }
   icomplex <- sqrt(as.complex(-1))
-  lf0 <- 2 * Re(cgamma(gamma  + b * icomplex, log = TRUE)) - lgamma(gamma) - lgamma(gamma )
+  lf0 <- 2 * ( Re(cgamma(gamma  + b * icomplex, log = TRUE)) - lgamma(gamma))
   pmfAux<-exp(lf0)
   i=1
   Fd <-c(pmfAux)
@@ -102,4 +102,89 @@ pcbp <- function(q, b, gamma, lower.tail = TRUE ) {
   }
 
   return (result)
+}
+
+#' @rdname ebw
+#' @importFrom fAsianOptions cgamma
+#' @export
+#'
+#'
+#' @examples
+#' # Examples for the function pcbp
+#' pebw(3,2,rho=5)
+#' pebw(c(3,4),2,rho=5)
+#' 
+
+pebw <- function(q,alpha,gamma,rho, lower.tail = TRUE ) {
+  if (!missing(gamma) & !missing(rho))
+    stop("Specify only 'gamma' or 'rho'")
+  
+  if (missing(gamma) & missing(rho))
+    stop("Specify 'gamma' or 'rho'")
+  
+  if ( !((missing(rho) && (mode(c(q,alpha,gamma)) == "numeric")) | 
+         (missing(gamma) && (mode(c(q,alpha,rho)) == "numeric"))))
+    stop( "non-numeric argument to mathematical function" )
+  
+  if (!missing(gamma)){
+    
+    if (alpha>0){
+      warning("The usual parametrization when alpha>0 is ('alpha','rho')")
+      if (gamma <= 2*alpha)
+        stop("gamma must be greater than 2a")
+    } else{
+      if (gamma <= 0)
+        stop("gamma must be positive")  
+    }
+  }
+  
+  if (!missing(rho)){
+    if (alpha<0)
+      stop("In the parametrization ('alpha','rho'), 'alpha' must be positive")
+    if (rho<=0)
+      stop (("rho must be positive") )
+  }
+  
+  if (alpha>0 && !missing(rho)){
+    auxgamma=2*alpha+rho
+  }else{
+    auxgamma=gamma
+  }
+
+  q<-as.vector(q)
+  maxX=q[1]
+  n<-length(q)
+  for ( i in 1:n ){
+    q[i] = floor( q[i] )
+    if (q[i] > maxX)
+      maxX=q[i]
+  }
+
+  lf0 <- 2 * lgamma(auxgamma-alpha)-lgamma(auxgamma-2*alpha)-lgamma(auxgamma)
+  pmfAux<-exp(lf0)
+  i=1
+  Fd <-c(pmfAux)
+  
+
+  #Generating distribution function
+  while( i <= maxX+1 ){
+    pmfAux <- exp(log(pmfAux)+2*log(alpha+i-1)-log(auxgamma+i-1)-log(i))
+    Fd <- c( Fd, Fd[[i]] + pmfAux )
+    i <- i + 1
+  }
+  
+  result<-vector(mode="numeric",length=n)
+  for ( i in 1:n ){
+    if ( q[i] < 0 )
+      result[i]=0
+    else
+      result[i]=Fd[q[i]+1]
+    
+    if (! lower.tail){
+      result[i]<-1-result[i]
+    }
+  }
+  
+  return (result)
+  
 }

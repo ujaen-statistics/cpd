@@ -6,27 +6,6 @@
 \usage{
 fitcbp(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", 
        moments = FALSE, hessian = TRUE, control = list(), ...)
-       
-## S3 method for class 'fitcbp'
-print(x, ...)        
-
-## S3 method for class 'fitcbp'
-summary(fit, ...)        
-
-## S3 method for class 'fitcbp'
-coef(fit, ...) 
-
-## S3 method for class 'fitcbp'
-logLik(fit, ...) 
-
-## S3 method for class 'fitcbp'
-AIC(fit, ...)  
-      
-## S3 method for class 'fitcbp'
-BIC(fit, ...)        
-
-## S3 method for class 'fitcbp'
-plot(fit, plty = "FREQ", ...)
 }
 \arguments{
 \item{x}{A numeric vector of length at least one containing only finite values.}
@@ -44,10 +23,6 @@ plot(fit, plty = "FREQ", ...)
 \item{control}{A list of parameters for controlling the fitting process.}
 
 \item{...}{Additional parameters.}
-
-\item{fit}{An object of class "fitcbp".}
-
-\item{plty}{Plot type to be shown. Default is \code{"FREQ"} which shows the observed and theoretical frequencies for each value of the variable; \code{"CDF"} and \code{"PP"} are also available for plotting the empirical and theoretical cumulative distribution functions or the theoretical cumulative probabilities against the empirical cumulative probabilities, respectively.}
 }
 \value{
 An object of class "fitcbp" is a list containing the following components:

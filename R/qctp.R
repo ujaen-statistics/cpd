@@ -143,3 +143,103 @@ qcbp <- function(p, b, gamma, lower.tail = TRUE)  {
   }
   return (result)
 }
+
+#' @rdname ebw
+#' @importFrom fAsianOptions cgamma
+#' @export
+#'
+#'
+#' @examples
+#' # Examples for the function pcbp
+#' qebw(0.5,2,rho=5)
+#' qebw(c(.8,.9),2,rho=5)
+#' 
+
+qebw <- function(p,alpha,gamma,rho, lower.tail = TRUE ) {
+  if (!missing(gamma) & !missing(rho))
+    stop("Specify only 'gamma' or 'rho'")
+  
+  if (missing(gamma) & missing(rho))
+    stop("Specify 'gamma' or 'rho'")
+  
+  if ( !((missing(rho) && (mode(c(p,alpha,gamma)) == "numeric")) | 
+         (missing(gamma) && (mode(c(p,alpha,rho)) == "numeric"))))
+    stop( "non-numeric argument to mathematical function" )
+  
+  if (!missing(gamma)){
+    
+    if (alpha>0){
+      warning("The usual parametrization when alpha>0 is ('alpha','rho')")
+      if (gamma <= 2*alpha)
+        stop("gamma must be greater than 2a")
+    } else{
+      if (gamma <= 0)
+        stop("gamma must be positive")  
+    }
+  }
+  
+  if (!missing(rho)){
+    if (alpha<0)
+      stop("In the parametrization ('alpha','rho'), 'alpha' must be positive")
+    if (rho<=0)
+      stop (("rho must be positive") )
+  }
+  
+  if (alpha>0 && !missing(rho)){
+    auxgamma=2*alpha+rho
+  }else{
+    auxgamma=gamma
+  }
+
+  auxP=p[p<1 & p>0]
+  if (length(auxP)>0)
+    if (lower.tail){
+      maxP <- max(auxP)
+    }else{
+      maxP <- 1-min(auxP)
+    }
+  else
+    maxP=0
+  n=length(p)
+  result<-vector(mode="numeric",length=n)
+  
+  lf0  <- 2 * lgamma(auxgamma-alpha)-lgamma(auxgamma-2*alpha)-lgamma(auxgamma)
+  pmfAux<-exp(lf0)
+  i=1
+  Fd <-c(pmfAux)
+  #Generating Density Distribution
+  while( Fd[[i]] < maxP ){
+    pmfAux <- exp(log(pmfAux)+2*log(alpha+i-1)-log(auxgamma+i-1)-log(i))
+    Fd <- c( Fd, Fd[[i]] + pmfAux )
+    i <- i + 1
+  }
+  #Searching values
+  for (i in 1:n){
+    pMin=1
+    pMax=length(Fd)
+    
+    if (! lower.tail){
+      p[i]<-1-p[i]
+    }
+    
+    if (p[i]>1 || p[i]<0){
+      warning( paste ("p[[", i, "]] must be a probability", sep = ""))
+      result[[i]]=NaN
+    }else if (p[i]==1){
+      result[[i]]=Inf
+    }else{
+      while (Fd[pMin] < p[i]){
+        mitad = floor ((pMin + pMax)/2)
+        if (Fd[mitad] <= p[i] && Fd[mitad+1] >= p[i])
+          pMin = mitad + 1
+        else if (Fd[mitad] <= p[i])
+          pMin = mitad
+        else
+          pMax = mitad
+      }
+      
+      result[[i]]=pMin-1
+    }
+  }
+  return (result)
+}

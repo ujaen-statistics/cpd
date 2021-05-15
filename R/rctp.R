@@ -102,3 +102,85 @@ rcbp<-function(n, b, gamma){
   return (result)
 }
 
+
+
+#' @rdname ebw
+#' @importFrom fAsianOptions cgamma
+#' @export
+#'
+#'
+#' @examples
+#' # Examples for the function rebw
+#' rebw(4,2,rho=5)
+
+#' 
+
+rebw <- function(n,alpha,gamma,rho, lower.tail = TRUE ) {
+  if (!missing(gamma) & !missing(rho))
+    stop("Specify only 'gamma' or 'rho'")
+  
+  if (missing(gamma) & missing(rho))
+    stop("Specify 'gamma' or 'rho'")
+  
+  if ( !((missing(rho) && (mode(c(n,alpha,gamma)) == "numeric")) | 
+         (missing(gamma) && (mode(c(n,alpha,rho)) == "numeric"))))
+    stop( "non-numeric argument to mathematical function" )
+  
+  if (!missing(gamma)){
+    
+    if (alpha>0){
+      warning("The usual parametrization when alpha>0 is ('alpha','rho')")
+      if (gamma <= 2*alpha)
+        stop("gamma must be greater than 2a")
+    } else{
+      if (gamma <= 0)
+        stop("gamma must be positive")  
+    }
+  }
+  
+  if (!missing(rho)){
+    if (alpha<0)
+      stop("In the parametrization ('alpha','rho'), 'alpha' must be positive")
+    if (rho<=0)
+      stop (("rho must be positive") )
+  }
+  
+  if (alpha>0 && !missing(rho)){
+    auxgamma=2*alpha+rho
+  }else{
+    auxgamma=gamma
+  }
+  
+  randoms <- runif(n, 0, 1)
+  maxRandoms <- max(randoms)
+  result<-vector(mode="numeric",length=n)
+  
+  lf0 = 2 * lgamma(auxgamma-alpha)-lgamma(auxgamma-2*alpha)-lgamma(auxgamma)
+  pmfAux<-exp(lf0)
+  i=1
+  Fd <-c(pmfAux)
+  #Generating Density Distribution
+  while( Fd[[i]] < maxRandoms ){
+    pmfAux <- exp(log(pmfAux)+2*log(alpha+i-1)-log(auxgamma+i-1)-log(i))
+    Fd <- c( Fd, Fd[[i]] + pmfAux )
+    i <- i + 1
+  }
+  #Searching values
+  for (i in 1:length(randoms)){
+    pMin=1
+    pMax=length(Fd)
+    
+    while (Fd[pMin] < randoms[i]){
+      mitad = floor ((pMin + pMax)/2)
+      if (Fd[mitad] <= randoms[i] && Fd[mitad+1] >= randoms[i])
+        pMin = mitad + 1
+      else if (Fd[mitad] <= randoms[i])
+        pMin = mitad
+      else
+        pMax = mitad
+    }
+    
+    result[[i]]=pMin-1
+  }
+  return (result)
+}

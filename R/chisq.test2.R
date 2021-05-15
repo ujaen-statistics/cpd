@@ -20,13 +20,15 @@
 #' @importFrom stats pchisq
 #' @export
 #' 
-#' #' @examples
+#' @examples
 #' set.seed(123)
 #' x <- rctp(500, -1.5, 1, 2)
 #' table(x)
 #' obs <- c(172, 264, 57, 6, 0, 1)
 #' fit <- fitctp(x)
-#' p.esp <- c(dctp(0:(length(obs)-1),fit$coefficients[1],fit$coefficients[2],fit$coefficients[3])[1:(length(obs)-1)],1-sum(dctp(0:(length(obs)-1),fit$coefficients[1],fit$coefficients[2],fit$coefficients[3])[1:(length(obs)-1)]))
+#' p.esp <- c(dctp(0:(length(obs)-1),fit$coefficients[1],fit$coefficients[2],
+#'            fit$coefficients[3])[1:(length(obs)-1)],1-sum(dctp(0:(length(obs)-1),
+#'            fit$coefficients[1],fit$coefficients[2],fit$coefficients[3])[1:(length(obs)-1)]))
 #' chisq.test2(obs, p.esp)
 #' 
 
