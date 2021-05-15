@@ -116,15 +116,19 @@ rcbp<-function(n, b, gamma){
 #' 
 
 rebw <- function(n,alpha,gamma,rho, lower.tail = TRUE ) {
+  if ( !((missing(rho) && (mode(c(n,alpha,gamma)) == "numeric")) | 
+         (missing(gamma) && (mode(c(n,alpha,rho)) == "numeric"))))
+    stop( "non-numeric argument to mathematical function" )
+  if (n<0)
+    stop( "n must be postive integer")
+  else if (trunc(n)==0)
+    return (integer(0))
+  
   if (!missing(gamma) & !missing(rho))
     stop("Specify only 'gamma' or 'rho'")
   
   if (missing(gamma) & missing(rho))
     stop("Specify 'gamma' or 'rho'")
-  
-  if ( !((missing(rho) && (mode(c(n,alpha,gamma)) == "numeric")) | 
-         (missing(gamma) && (mode(c(n,alpha,rho)) == "numeric"))))
-    stop( "non-numeric argument to mathematical function" )
   
   if (!missing(gamma)){
     
@@ -161,7 +165,8 @@ rebw <- function(n,alpha,gamma,rho, lower.tail = TRUE ) {
   Fd <-c(pmfAux)
   #Generating Density Distribution
   while( Fd[[i]] < maxRandoms ){
-    pmfAux <- exp(log(pmfAux)+2*log(alpha+i-1)-log(auxgamma+i-1)-log(i))
+    pmfAux <- exp(log(pmfAux)+log((alpha+i-1)^2)-log(auxgamma+i-1)-log(i))
+    #pmfAux <- pmfAux * (alpha+i-1)^2 / ((auxgamma+i-1) *i)
     Fd <- c( Fd, Fd[[i]] + pmfAux )
     i <- i + 1
   }

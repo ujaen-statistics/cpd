@@ -209,7 +209,8 @@ qebw <- function(p,alpha,gamma,rho, lower.tail = TRUE ) {
   Fd <-c(pmfAux)
   #Generating Density Distribution
   while( Fd[[i]] < maxP ){
-    pmfAux <- exp(log(pmfAux)+2*log(alpha+i-1)-log(auxgamma+i-1)-log(i))
+    pmfAux <- exp(log(pmfAux)+log((alpha+i-1)^2)-log(auxgamma+i-1)-log(i))
+    #pmfAux <- pmfAux * (alpha+i-1)^2 / ((auxgamma+i-1) *i)
     Fd <- c( Fd, Fd[[i]] + pmfAux )
     i <- i + 1
   }

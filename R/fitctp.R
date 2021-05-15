@@ -398,14 +398,15 @@ fitcbp <- function(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments
 #' methods are \code{print}, \code{summary}, \code{coef}, \code{logLik}, \code{AIC}, \code{BIC} and \code{plot}. 
 #'
 #' @usage
-#' fitebw(x, alphastart = NULL, rhostart = NULL, method = "L-BFGS-B", 
+#' fitebw(x, alphastart = 0.1, rhostart = 2.1, method = "L-BFGS-B", moments = FALSE,
 #'           hessian = TRUE, control = list(),...)
 
 #'        
 #' @param x A numeric vector of length at least one containing only finite values.
 #' @param alphastart An starting value for the parameter \eqn{a}; by default NULL.
-#' @param gamma An starting value for the parameter \eqn{ro}; by default NULL.
+#' @param rhostart An starting value for the parameter \eqn{ro}; by default NULL.
 #' @param method The method to be used in fitting the model. The default method is "L-BFGS-B" (optim).
+#' @param moments If is used the moments method for initial values.
 #' @param hessian If \code{TRUE} the hessian of the objective function at the minimum is returned.
 #' @param control A list of parameters for controlling the fitting process.
 #' @param ...  Additional parameters.
@@ -455,13 +456,11 @@ fitcbp <- function(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments
 #'
 #' @examples
 #' set.seed(123)
-#' x <- rebw(500, 2,gamma=3)
-#' fitebw(x)
-#' fitebw(x, alphastart = 1, gamma = 3)
-fitebw <- function(x, alphastart = NULL, gammastart = NULL, rhostart = NULL, param="rho", method = "L-BFGS-B", moments = FALSE, hessian = TRUE, control = list(), ...)  
+#' x <- rebw(500, 2,rho=5)
+#' fitebw(x,moments=TRUE)
+#' fitebw(x, alphastart = 1, rhostart = 5)
+fitebw <- function(x, alphastart = 0.1, rhostart = 2.1, method = "L-BFGS-B", moments = FALSE, hessian = TRUE, control = list(), ...)  
 {
-  #not finish
-  stop("Working to finish this function")
   
   #Checking
   if ( mode(x) != "numeric")
@@ -477,13 +476,6 @@ fitebw <- function(x, alphastart = NULL, gammastart = NULL, rhostart = NULL, par
     stop( "maximum number of iterations must be > 0" )
   
   if (moments){
-  
-  }
-  Y <- x
- 
-  #Consideramos como valores iniciales las estimaciones del metodo de momentos
-  
-  if(is.null(alphastart)||is.null(rhostart)){
     m1 <- mean(x)
     m2 <- var(x)
     alphastart1 <- (m1 +sqrt(m1 * m2 *((m1 - 1) * m1 + m2)))/(m2 - m1)
@@ -506,67 +498,113 @@ fitebw <- function(x, alphastart = NULL, gammastart = NULL, rhostart = NULL, par
         alphastart <- alphastart2
       }
     }
-    rhostart <- alphastart^2/m1 + 1
-  }
-  else{
+    rhostart <- alphastart^2/m1 + 1 
+  } else{
     if((alphastart < 0) && (alphastart%%1==0))
       stop("'alpha' cannot be a negative integer")
     
-    if (rhostart < 0)
-      stop("'rho' must be positive")
-    
-    if (rhostart < 0)
-      stop("'rho' must be positive")
-    
-    if ((alphastart < 0) && (rhostart <= - 2 * alphastart)) 
-      stop("'rhostart' must be greater than '- 2 * alphastart'")
+    if (rhostart <= 0)
+      stop("'rhostart'  must be positive")
   }
   
-  
-  #Definimos la log-verosimilitud
-  logL <- function(p){
-    alpha <- p[1]
-    gama <- p[2]
-    #rho <- p[2] 
-    respuesta <- - sum(2 * lgamma(gama - alpha) + 2 * lgamma(alpha + x) - 2 * lgamma(alpha) - lgamma(gama - 2 * alpha) - lgamma(gama + x))
-    return(respuesta)
-  }
+  Y <- x
   
   control<-list(maxit=10000,trace=0)
   
+  if (alphastart >0){
+    #Definimos la log-verosimilitud en función de rho
+    logL <- function(p){
+      alpha <- p[1]
+      rho <- p[2] 
+      respuesta <- - sum(2 * lgamma(rho + alpha) + 2 * lgamma(alpha + x) - 2 * lgamma(alpha) - lgamma(rho) - lgamma(rho + 2 * alpha + x))
+      return(respuesta)
+    }
+    
+    pstart <- c(alphastart, rhostart)
+    
+  } else {
+    #Definimos la log-verosimilitud de gamma
+    logL <- function(p){
+      alpha <- p[1]
+      gamma <- p[2] + 2 * alpha 
+      respuesta <- - sum(2 * lgamma(gamma - alpha) + 2 * lgamma(alpha + x) - 2 * lgamma(alpha) - lgamma(gamma - 2 * alpha) - lgamma(gamma + x))
+      return(respuesta)
+    }
+    
+    pstart <- c(alphastart, rhostart + 2 * alphastart)
+  }
+    
+  
+  # #Definimos la log-verosimilitud
+  # logL <- function(p){
+  #   alpha <- p[1]
+  #   rho <- p[2] 
+  #   respuesta <- - sum(2 * lgamma(rho + alpha) + 2 * lgamma(alpha + x) - 2 * lgamma(alpha) - lgamma(rho) - lgamma(rho + 2 * alpha + x))
+  #   return(respuesta)
+  # }
+  
+  
   #Optimizamos la log-verosimilitud
   
-  pstart <- c(alphastart, 2 * alphastart + rhostart)
+
   fit <- optim(pstart, logL, method = "L-BFGS-B", lower = c(-Inf,1e-10), upper = c(Inf,Inf), hessian = hessian, control = list(maxit = control$maxit, trace = control$trace))
   methodText <- method
-  if (fit$convergence == 0) 
+  if (fit$convergence == 0){
     fit$converged = TRUE
-  else fit$converged = FALSE
+    #coef.table<-rbind(fit$par,deparse.level=0)
+    #dimnames(coef.table)<-list("",c("alpha","gamma"))
+    #gamma parametrization
+    if (alphastart>0){
+      coef.table<-rbind(c(fit$par,fit$par[2]+2*fit$par[1]),deparse.level=0)
+      dimnames(coef.table)<-list("",c("alpha","rho","gamma"))
+      se<-solve(fit$hessian)
+      se<-rbind(sqrt(c(diag(se),se[2,2]+4*se[1,1]+4*se[1,2])),deparse.level=0)
+      dimnames(se)<-list("",c("std error alpha","std error rho","std error gamma"))
+    } else {
+      coef.table<-rbind(fit$par,deparse.level=0)
+      dimnames(coef.table)<-list("",c("alpha","gamma"))
+      se = sqrt(diag(solve(fit$hessian)))
+      dimnames(se)<-list("",c("std error alpha","std error gamma"))
+    }
+    #Result
+    results<-list(
+      x = x,
+      n=length(x),
+      call = call,
+      loglik = - (fit$value + sum(lfactorial(x))),
+      aic = 2 * (fit$value + sum(lfactorial(x))) + 4,
+      bic = 2 * (fit$value + sum(lfactorial(x))) + 2 * log(length(x)),
+      coefficients = coef.table,
+      #expected.frequencies=length(data)*dctp(0:max(data),fit$par[1],fit$par[2],fit$par[3]),
+      hessian = fit$hessian,
+      cov = solve(fit$hessian),
+      se = se, 
+      corr = solve(fit$hessian)/(sqrt(diag(solve(fit$hessian))) %o% 
+                                   sqrt(diag(solve(fit$hessian)))), 
+      code = fit$convergence, 
+      converged = fit$converged,
+      method = methodText
+    )
+    
+} else {
+      fit$converged = FALSE  
+      warning("fitebw have not converged")
+      results<-list(
+        x = x,
+        n=length(x),
+        call = call,
+        loglik = - (fit$value + sum(lfactorial(x))),
+        aic = 2 * (fit$value + sum(lfactorial(x))) + 4,
+        bic = 2 * (fit$value + sum(lfactorial(x))) + 2 * log(length(x)),
+        hessian = fit$hessian,
+        code = fit$convergence, 
+        converged = fit$converged,
+        method = methodText
+      )
+         
+}
   
-  coef.table<-rbind(fit$par,deparse.level=0)
-  dimnames(coef.table)<-list("",c("alpha","rho"))
-  
-  
-  #Result
-  results<-list(
-    x = x,
-    n=length(x),
-    call = call,
-    loglik = - (fit$value + sum(lfactorial(x))),
-    aic = 2 * (fit$value + sum(lfactorial(x))) + 4,
-    bic = 2 * (fit$value + sum(lfactorial(x))) + 2 * log(length(x)),
-    coefficients = coef.table,
-    #expected.frequencies=length(data)*dctp(0:max(data),fit$par[1],fit$par[2],fit$par[3]),
-    code = fit$convergence,
-    hessian = fit$hessian,
-    cov = solve(fit$hessian),
-    se = sqrt(diag(solve(fit$hessian))), 
-    corr = solve(fit$hessian)/(sqrt(diag(solve(fit$hessian))) %o% 
-                                 sqrt(diag(solve(fit$hessian)))), 
-    code = fit$convergence, 
-    converged = fit$converged,
-    method = methodText
-  )
+
   class(results)<-"fitEBW"
   return(results)
 }
@@ -944,8 +982,10 @@ plot.fitEBW <- function(x,plty="FREQ",maxValue=NULL,...){
     maxValue=hLimit
   }
   values<-0:hLimit;
-  
-  p<-pebw(values,alpha=x$coefficients[1],rho=x$coefficients[2])
+  if (x$coefficients[1]>0) #rho parametrization
+    p<-pebw(values,alpha=x$coefficients[1],rho=x$coefficients[2])
+  else
+    p<-pebw(values,alpha=x$coefficients[1],gamma=x$coefficients[3])
   freq<-rep(0,hLimit+1)
   for (i in 1:x$n)
     freq[x$x[i]+1]<-freq[x$x[i]+1]+1
@@ -968,7 +1008,10 @@ plot.fitEBW <- function(x,plty="FREQ",maxValue=NULL,...){
     legend(maxValue/2,0.3, legend=c("Empirical", "Theoretical"),
            col=c("red", "blue"), lty=1, cex=0.8)
   } else{
-    n.esp<-debw(values,alpha=x$coefficients[1],rho=x$coefficients[2])*x$n
+    if (x$coefficients[1]>0) #rho parametrization
+      n.esp<-debw(values,alpha=x$coefficients[1],rho=x$coefficients[2])*x$n
+    else
+      n.esp<-debw(values,alpha=x$coefficients[1],gamma=x$coefficients[3])*x$n
     fLimit <- max(n.esp,freq)
     plot(range(0, maxValue), range(0, fLimit), type = "n", xlab = "Values", 
          ylab = "Frequencies",main="Observed & Theoretical Frequencies")
