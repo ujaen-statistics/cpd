@@ -4,19 +4,21 @@
 \alias{fitebw}
 \title{Maximum-likelihood fitting of the EBW distribution}
 \usage{
-fitebw(x, alphastart = 0.1, rhostart = 2.1, method = "L-BFGS-B", moments = FALSE,
-          hessian = TRUE, control = list(),...)
+fitebw(x, alphastart = NULL, gammastart=NULL, rhostart = NULL, method = "L-BFGS-B",
+          moments = TRUE, hessian = TRUE, control = list(),...)
 }
 \arguments{
 \item{x}{A numeric vector of length at least one containing only finite values.}
 
 \item{alphastart}{An starting value for the parameter \eqn{a}; by default NULL.}
 
+\item{gammastart}{An starting value for the parameter \eqn{ro}; by default NULL.}
+
 \item{rhostart}{An starting value for the parameter \eqn{ro}; by default NULL.}
 
 \item{method}{The method to be used in fitting the model. The default method is "L-BFGS-B" (optim).}
 
-\item{moments}{If is used the moments method for initial values.}
+\item{moments}{If is used the moments method for initial values; by default TRUE}
 
 \item{hessian}{If \code{TRUE} the hessian of the objective function at the minimum is returned.}
 
@@ -63,8 +65,8 @@ methods are \code{print}, \code{summary}, \code{coef}, \code{logLik}, \code{AIC}
 \examples{
 set.seed(123)
 x <- rebw(500, 2,rho=5)
-fitebw(x,moments=TRUE)
-fitebw(x, alphastart = 1, rhostart = 5)
+fitebw(x)
+fitebw(x, alphastart = 1, rhostart = 5, moments=FALSE)
 }
 \references{
 \insertRef{RCSO2004}{cpd}

@@ -389,15 +389,16 @@ fitcbp <- function(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments
 #' methods are \code{print}, \code{summary}, \code{coef}, \code{logLik}, \code{AIC}, \code{BIC} and \code{plot}. 
 #'
 #' @usage
-#' fitebw(x, alphastart = 0.1, rhostart = 2.1, method = "L-BFGS-B", moments = FALSE,
-#'           hessian = TRUE, control = list(),...)
+#' fitebw(x, alphastart = NULL, gammastart=NULL, rhostart = NULL, method = "L-BFGS-B",
+#'           moments = TRUE, hessian = TRUE, control = list(),...)
 
 #'        
 #' @param x A numeric vector of length at least one containing only finite values.
 #' @param alphastart An starting value for the parameter \eqn{a}; by default NULL.
+#' @param gammastart An starting value for the parameter \eqn{ro}; by default NULL.
 #' @param rhostart An starting value for the parameter \eqn{ro}; by default NULL.
 #' @param method The method to be used in fitting the model. The default method is "L-BFGS-B" (optim).
-#' @param moments If is used the moments method for initial values.
+#' @param moments If is used the moments method for initial values; by default TRUE
 #' @param hessian If \code{TRUE} the hessian of the objective function at the minimum is returned.
 #' @param control A list of parameters for controlling the fitting process.
 #' @param ...  Additional parameters.
@@ -448,11 +449,12 @@ fitcbp <- function(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments
 #' @examples
 #' set.seed(123)
 #' x <- rebw(500, 2,rho=5)
-#' fitebw(x,moments=TRUE)
-#' fitebw(x, alphastart = 1, rhostart = 5)
-fitebw <- function(x, alphastart = 0.1, rhostart = 2.1, method = "L-BFGS-B", moments = FALSE, hessian = TRUE, control = list(), ...)  
+#' fitebw(x)
+#' fitebw(x, alphastart = 1, rhostart = 5, moments=FALSE)
+fitebw <- function(x, alphastart = NULL, gammastart=NULL, rhostart = NULL, method = "L-BFGS-B", 
+                   moments = TRUE, hessian = TRUE, control = list(), ...)  
 {
-  
+   
   #Checking
   if ( mode(x) != "numeric")
     stop( paste ("non-numeric argument to mathematical function", sep = ""))
@@ -465,37 +467,41 @@ fitebw <- function(x, alphastart = 0.1, rhostart = 2.1, method = "L-BFGS-B", mom
   
   if ( !is.numeric(control$maxit) || control$maxit <= 0 )
     stop( "maximum number of iterations must be > 0" )
-  
   if (moments){
     m1 <- mean(x)
     m2 <- var(x)
     alphastart1 <- (m1 +sqrt(m1 * m2 *((m1 - 1) * m1 + m2)))/(m2 - m1)
     alphastart2 <- 2*m1/(m2 - m1) -alphastart1
     
-    #Caso infradisperso
-    if(m1 > m2){
-      if(alphastart1 < 0){
+    if ((m1 > m2)&&((m1>=1 && (m2 <= (m1-m1^2+sqrt(m1^3*(m1-1)))/2)) || (m1 <1 && m2 <= m1*(1-m1)))) { #infradisperso y region critica
+        stop("Method of moments does not provide appropriate estimates. Introduce initial values for the parameters")
+    } else{
         alphastart <- alphastart1
-      }
-      else{
-        alphastart <- alphastart2
-      }
+        if (alphastart >0){
+          rhostart <-alphastart^2/m1^2  +1 
+        } else {
+          gammastart <- alphastart^2/m1^2 + 2 *alphastart +1 
+        }
     }
-    else{
-      if(alphastart1 > 0){
-        alphastart <- alphastart1
-      }
-      else{
-        alphastart <- alphastart2
-      }
-    }
-    rhostart <- alphastart^2/m1 + 1 
   } else{
+    if (missing(alphastart)){
+      stop("Introduce 'alphastart' and 'rhostart' if 'alphastart'>0 or 'alphastart' and 'gammastart' if 'alphastart'<0")
+    }
     if((alphastart < 0) && (alphastart%%1==0))
       stop("'alpha' cannot be a negative integer")
-    
+    if (alphastart<0 && missing(gammastart)){
+      stop("Introduce 'gammastart'")
+    }
+    if (alphastart>0 && missing(rhostart)){
+      stop("Introduce 'rhostart'")
+    }
     if (rhostart <= 0)
       stop("'rhostart'  must be positive")
+    
+    #Test if data are over or underdispersed
+    #m1 <- mean(x)
+    #m2 <- var(x)
+    #if (m1<m2 && )
   }
   
   Y <- x
@@ -517,12 +523,12 @@ fitebw <- function(x, alphastart = 0.1, rhostart = 2.1, method = "L-BFGS-B", mom
     #Definimos la log-verosimilitud de gamma
     logL <- function(p){
       alpha <- p[1]
-      gamma <- p[2] + 2 * alpha 
+      gamma <- p[2] 
       respuesta <- - sum(2 * lgamma(gamma - alpha) + 2 * lgamma(alpha + x) - 2 * lgamma(alpha) - lgamma(gamma - 2 * alpha) - lgamma(gamma + x))
       return(respuesta)
     }
     
-    pstart <- c(alphastart, rhostart + 2 * alphastart)
+    pstart <- c(alphastart, gammastart)
   }
     
   
