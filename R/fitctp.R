@@ -1,7 +1,7 @@
 #' Maximum-likelihood fitting of the Complex Triparametric Pearson (CTP) distribution
 #'
 #' @description
-#' Maximum-likelihood fitting of the Complex Triparametric Pearson (CTP) distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}. Generic
+#' Maximum-likelihood  fitting of the Complex Triparametric Pearson (CTP) distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}. Generic
 #' methods are \code{print}, \code{summary}, \code{coef}, \code{logLik}, \code{AIC}, \code{BIC} and \code{plot}. 
 #'
 #' @usage
