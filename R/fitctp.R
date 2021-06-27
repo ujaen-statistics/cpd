@@ -1,7 +1,7 @@
 #' Maximum-likelihood fitting of the Complex Triparametric Pearson (CTP) distribution
 #'
 #' @description
-#' Maximum-likelihood  fitting of the Complex Triparametric Pearson (CTP) distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}. Generic
+#' Maximum-likelihood fitting of the Complex Triparametric Pearson (CTP) distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}. Generic
 #' methods are \code{print}, \code{summary}, \code{coef}, \code{logLik}, \code{AIC}, \code{BIC} and \code{plot}. 
 #'
 #' @usage
@@ -554,7 +554,7 @@ fitebw <- function(x, alphastart = 0.1, rhostart = 2.1, method = "L-BFGS-B", mom
     } else {
       coef.table<-rbind(fit$par,deparse.level=0)
       dimnames(coef.table)<-list("",c("alpha","gamma"))
-      se = sqrt(diag(solve(fit$hessian)))
+      se = rbind(sqrt(diag(solve(fit$hessian))))
       dimnames(se)<-list("",c("std error alpha","std error gamma"))
     }
     #Result
@@ -976,7 +976,7 @@ plot.fitEBW <- function(x,plty="FREQ",maxValue=NULL,...){
   if (x$coefficients[1]>0) #rho parametrization
     p<-pebw(values,alpha=x$coefficients[1],rho=x$coefficients[2])
   else
-    p<-pebw(values,alpha=x$coefficients[1],gamma=x$coefficients[3])
+    p<-pebw(values,alpha=x$coefficients[1],gamma=x$coefficients[2])
   freq<-rep(0,hLimit+1)
   for (i in 1:x$n)
     freq[x$x[i]+1]<-freq[x$x[i]+1]+1
@@ -1002,7 +1002,7 @@ plot.fitEBW <- function(x,plty="FREQ",maxValue=NULL,...){
     if (x$coefficients[1]>0) #rho parametrization
       n.esp<-debw(values,alpha=x$coefficients[1],rho=x$coefficients[2])*x$n
     else
-      n.esp<-debw(values,alpha=x$coefficients[1],gamma=x$coefficients[3])*x$n
+      n.esp<-debw(values,alpha=x$coefficients[1],gamma=x$coefficients[2])*x$n
     fLimit <- max(n.esp,freq)
     plot(range(0, maxValue), range(0, fLimit), type = "n", xlab = "Values", 
          ylab = "Frequencies",main="Observed & Theoretical Frequencies")
