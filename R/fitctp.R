@@ -467,69 +467,105 @@ fitebw <- function(x, alphastart = NULL, gammastart=NULL, rhostart = NULL, metho
   
   if ( !is.numeric(control$maxit) || control$maxit <= 0 )
     stop( "maximum number of iterations must be > 0" )
+  
+  m1 <- mean(x)
+  m2 <- var(x)
+  #Definimos la log-verosimilitud en función de rho
+  logL1<- function(p){
+    alpha <- p[1]
+    rho <- p[2] 
+    respuesta <- - sum(2 * lgamma(rho + alpha) + 2 * lgamma(alpha + x) - 2 * lgamma(alpha) - lgamma(rho) - lgamma(rho + 2 * alpha + x))
+    return(respuesta)
+  }
+  #Definimos la log-verosimilitud en función de gamma
+  logL2 <- function(p){
+    alpha <- p[1]
+    gamma <- p[2] 
+    respuesta <- - sum(2 * lgamma(gamma - alpha) + 2 * lgamma(alpha + x) - 2 * lgamma(alpha) - lgamma(gamma - 2 * alpha) - lgamma(gamma + x))
+    return(respuesta)
+  }
+  
+  
   if (moments){
-    m1 <- mean(x)
-    m2 <- var(x)
-    alphastart1 <- (m1 +sqrt(m1 * m2 *((m1 - 1) * m1 + m2)))/(m2 - m1)
-    alphastart2 <- 2*m1/(m2 - m1) -alphastart1
+    alphastart<-c((m1^2 +sqrt(m1 * m2 *((m1 - 1) * m1 + m2)))/(m2 - m1), 2*m1^2/(m2 - m1) -alphastart1)
+    #Method moments solutions
+    #alphastart1 <- (m1^2 +sqrt(m1 * m2 *((m1 - 1) * m1 + m2)))/(m2 - m1)
+    #alphastart2 <- 2*m1^2/(m2 - m1) -alphastart1
     
-    if ((m1 > m2)&&((m1>=1 && (m2 <= (m1-m1^2+sqrt(m1^3*(m1-1)))/2)) || (m1 <1 && m2 <= m1*(1-m1)))) { #infradisperso y region critica
-        stop("Method of moments does not provide appropriate estimates. Introduce initial values for the parameters")
-    } else{
-        alphastart <- alphastart1
-        if (alphastart >0){
-          rhostart <-alphastart^2/m1^2  +1 
-        } else {
-          gammastart <- alphastart^2/m1^2 + 2 *alphastart +1 
-        }
+    #Test if solutions are appropiate
+    if (m1>1 && alphastart2<=(-m1+sqrt(m1*(m1-1))))
+      alphastart<-alphastart[-2]
+    if (m1>1 && alphastart1>=(-m1-sqrt(m1*(m1-1))))
+      alphastart<-alphastart[-1]
+    if (length(alphastart)<1)
+      stop("The method of moments has no solution. Please introduce initial values")
+    
+    param2<-c()
+    logLVect<-c()
+    for (i in 1:length(alphastart)){
+      if (alphastart[[i]] >0){
+        param2 <- c(param2,alphastart^2/m1  +1)
+        logLVect<-c(logLVect, logL1)
+      } else {
+        param2 <- c(param2, alphastart^2/m1 + 2 *alphastart +1 )
+        logLVect<-c(logLVect, logL2)
+      }
     }
+    # if (alphastart >0){
+    #   rhostart <-alphastart^2/m1  +1 
+    # } else {
+    #   gammastart <- alphastart^2/m1 + 2 *alphastart +1 
+    # }
   } else{
     if (missing(alphastart)){
       stop("Introduce 'alphastart' and 'rhostart' if 'alphastart'>0 or 'alphastart' and 'gammastart' if 'alphastart'<0")
     }
-    if((alphastart < 0) && (alphastart%%1==0))
-      stop("'alpha' cannot be a negative integer")
-    if (alphastart<0 && missing(gammastart)){
-      stop("Introduce 'gammastart'")
+    if (alphastart < 0) {
+      if (alphastart%%1==0)
+          stop("'alpha' cannot be a negative integer")
+      if (missing(gammastart))
+          stop("Introduce 'gammastart'")
+      if (gammastart<0)
+        stop("'gammastart' must be positive")
+      param2<-c(gammastart)
+      logLVect<-c(logL2)
+    }else{ 
+      if (missing(rhostart))
+          stop("Introduce 'rhostart'")
+      if (rhostart <= 0)
+          stop("'rhostart'  must be positive")
+      param2<-c(rhostart)
+      logLVect<-c(logL1)
     }
-    if (alphastart>0 && missing(rhostart)){
-      stop("Introduce 'rhostart'")
-    }
-    if (rhostart <= 0)
-      stop("'rhostart'  must be positive")
-    
-    #Test if data are over or underdispersed
-    #m1 <- mean(x)
-    #m2 <- var(x)
-    #if (m1<m2 && )
+    alphastart<-c(alphastart)
   }
   
   Y <- x
-  
   control<-list(maxit=10000,trace=0)
   
-  if (alphastart >0){
-    #Definimos la log-verosimilitud en función de rho
-    logL <- function(p){
-      alpha <- p[1]
-      rho <- p[2] 
-      respuesta <- - sum(2 * lgamma(rho + alpha) + 2 * lgamma(alpha + x) - 2 * lgamma(alpha) - lgamma(rho) - lgamma(rho + 2 * alpha + x))
-      return(respuesta)
-    }
-    
-    pstart <- c(alphastart, rhostart)
-    
-  } else {
-    #Definimos la log-verosimilitud de gamma
-    logL <- function(p){
-      alpha <- p[1]
-      gamma <- p[2] 
-      respuesta <- - sum(2 * lgamma(gamma - alpha) + 2 * lgamma(alpha + x) - 2 * lgamma(alpha) - lgamma(gamma - 2 * alpha) - lgamma(gamma + x))
-      return(respuesta)
-    }
-    
-    pstart <- c(alphastart, gammastart)
-  }
+  
+  # if (alphastart >0){
+  #   #Definimos la log-verosimilitud en función de rho
+  #   logL <- function(p){
+  #     alpha <- p[1]
+  #     rho <- p[2] 
+  #     respuesta <- - sum(2 * lgamma(rho + alpha) + 2 * lgamma(alpha + x) - 2 * lgamma(alpha) - lgamma(rho) - lgamma(rho + 2 * alpha + x))
+  #     return(respuesta)
+  #   }
+  #   
+  #   pstart <- c(alphastart, rhostart)
+  #   
+  # } else {
+  #   #Definimos la log-verosimilitud de gamma
+  #   logL <- function(p){
+  #     alpha <- p[1]
+  #     gamma <- p[2] 
+  #     respuesta <- - sum(2 * lgamma(gamma - alpha) + 2 * lgamma(alpha + x) - 2 * lgamma(alpha) - lgamma(gamma - 2 * alpha) - lgamma(gamma + x))
+  #     return(respuesta)
+  #   }
+  #   
+  #   pstart <- c(alphastart, gammastart)
+  # }
     
   
   # #Definimos la log-verosimilitud
@@ -543,62 +579,71 @@ fitebw <- function(x, alphastart = NULL, gammastart=NULL, rhostart = NULL, metho
   
   #Optimizamos la log-verosimilitud
   
-
-  fit <- optim(pstart, logL, method = "L-BFGS-B", lower = c(-Inf,1e-10), upper = c(Inf,Inf), hessian = hessian, control = list(maxit = control$maxit, trace = control$trace))
-  methodText <- method
-  if (fit$convergence == 0){
-    fit$converged = TRUE
-    #coef.table<-rbind(fit$par,deparse.level=0)
-    #dimnames(coef.table)<-list("",c("alpha","gamma"))
-    #gamma parametrization
-    if (alphastart>0){
-      coef.table<-rbind(c(fit$par,fit$par[2]+2*fit$par[1]),deparse.level=0)
-      dimnames(coef.table)<-list("",c("alpha","rho","gamma"))
-      se<-solve(fit$hessian)
-      se<-rbind(sqrt(c(diag(se),se[2,2]+4*se[1,1]+4*se[1,2])),deparse.level=0)
-      dimnames(se)<-list("",c("std error alpha","std error rho","std error gamma"))
+#  fit <- optim(pstart, logL, method = "L-BFGS-B", lower = c(-Inf,1e-10), upper = c(Inf,Inf), hessian = hessian, control = list(maxit = control$maxit, trace = control$trace))
+  results=NULL
+  for (ind in 1:length(alphastart)){
+      #Modificar esto con un try para optimizar
+      #tambien nos podemos plantear usar paralelo
+    fit <- optim(c(alphastart[[ind]], param2[[ind]]), logLVect[[ind]], method = "L-BFGS-B", lower = c(-Inf,1e-10), upper = c(Inf,Inf), hessian = hessian, control = list(maxit = control$maxit, trace = control$trace))
+    methodText <- method
+    if (fit$convergence == 0){
+      fit$converged = TRUE
+      #coef.table<-rbind(fit$par,deparse.level=0)
+      #dimnames(coef.table)<-list("",c("alpha","gamma"))
+      #gamma parametrization
+      if (fit$par[1]>0){
+        coef.table<-rbind(c(fit$par,fit$par[2]+2*fit$par[1]),deparse.level=0)
+        dimnames(coef.table)<-list("",c("alpha","rho","gamma"))
+        se<-solve(fit$hessian)
+        se<-rbind(sqrt(c(diag(se),se[2,2]+4*se[1,1]+4*se[1,2])),deparse.level=0)
+        dimnames(se)<-list("",c("std error alpha","std error rho","std error gamma"))
+      } else {
+        coef.table<-rbind(fit$par,deparse.level=0)
+        dimnames(coef.table)<-list("",c("alpha","gamma"))
+        se = rbind(sqrt(diag(solve(fit$hessian))))
+        dimnames(se)<-list("",c("std error alpha","std error gamma"))
+      }
+      #Result
+      if (is.null(results) || results$aic > (2 * (fit$value + sum(lfactorial(x))) + 4) ){
+        results<-list(
+          x = x,
+          n=length(x),
+          call = call,
+          loglik = - (fit$value + sum(lfactorial(x))),
+          aic = 2 * (fit$value + sum(lfactorial(x))) + 4,
+          bic = 2 * (fit$value + sum(lfactorial(x))) + 2 * log(length(x)),
+          coefficients = coef.table,
+          #expected.frequencies=length(data)*dctp(0:max(data),fit$par[1],fit$par[2],fit$par[3]),
+          hessian = fit$hessian,
+          cov = solve(fit$hessian),
+          se = se, 
+          corr = solve(fit$hessian)/(sqrt(diag(solve(fit$hessian))) %o% 
+                                       sqrt(diag(solve(fit$hessian)))), 
+          code = fit$convergence, 
+          converged = fit$converged,
+          method = methodText
+        )
+      }
+      
     } else {
-      coef.table<-rbind(fit$par,deparse.level=0)
-      dimnames(coef.table)<-list("",c("alpha","gamma"))
-      se = rbind(sqrt(diag(solve(fit$hessian))))
-      dimnames(se)<-list("",c("std error alpha","std error gamma"))
+      if (is.null(results)){
+        fit$converged = FALSE  
+        warning("fitebw have not converged")
+        results<-list(
+          x = x,
+          n=length(x),
+          call = call,
+          loglik = - (fit$value + sum(lfactorial(x))),
+          aic = 2 * (fit$value + sum(lfactorial(x))) + 4,
+          bic = 2 * (fit$value + sum(lfactorial(x))) + 2 * log(length(x)),
+          hessian = fit$hessian,
+          code = fit$convergence, 
+          converged = fit$converged,
+          method = methodText
+        )
+        
+      }
     }
-    #Result
-    results<-list(
-      x = x,
-      n=length(x),
-      call = call,
-      loglik = - (fit$value + sum(lfactorial(x))),
-      aic = 2 * (fit$value + sum(lfactorial(x))) + 4,
-      bic = 2 * (fit$value + sum(lfactorial(x))) + 2 * log(length(x)),
-      coefficients = coef.table,
-      #expected.frequencies=length(data)*dctp(0:max(data),fit$par[1],fit$par[2],fit$par[3]),
-      hessian = fit$hessian,
-      cov = solve(fit$hessian),
-      se = se, 
-      corr = solve(fit$hessian)/(sqrt(diag(solve(fit$hessian))) %o% 
-                                   sqrt(diag(solve(fit$hessian)))), 
-      code = fit$convergence, 
-      converged = fit$converged,
-      method = methodText
-    )
-    
-} else {
-      fit$converged = FALSE  
-      warning("fitebw have not converged")
-      results<-list(
-        x = x,
-        n=length(x),
-        call = call,
-        loglik = - (fit$value + sum(lfactorial(x))),
-        aic = 2 * (fit$value + sum(lfactorial(x))) + 4,
-        bic = 2 * (fit$value + sum(lfactorial(x))) + 2 * log(length(x)),
-        hessian = fit$hessian,
-        code = fit$convergence, 
-        converged = fit$converged,
-        method = methodText
-      )
-         
 }
   
 
