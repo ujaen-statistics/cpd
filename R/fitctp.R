@@ -595,21 +595,31 @@ fitebw <- function(x, alphastart = NULL, gammastart = NULL, rhostart = NULL, met
     methodText <- method
     if (fit$convergence == 0){
       fit$converged <-  TRUE
-      #coef.table<-rbind(fit$par,deparse.level=0)
-      #dimnames(coef.table)<-list("",c("alpha","gamma"))
-      #gamma parametrization
+      coef.table<-rbind(fit$par,deparse.level=0)
+      se <- solve(fit$hessian)
       if (fit$par[1] > 0){
-        coef.table <- rbind(c(fit$par, fit$par[2] + 2 * fit$par[1]), deparse.level = 0)
-        dimnames(coef.table) <- list("", c("alpha", "rho", "gamma"))
-        se <- solve(fit$hessian)
-        se <- rbind(sqrt(c(diag(se), se[2,2] + 4 * se[1,1] + 4 * se[1,2])), deparse.level = 0)
-        dimnames(se) <- list("", c("std error alpha", "std error rho", "std error gamma"))
-      } else {
-        coef.table <- rbind(fit$par, deparse.level = 0)
+        dimnames(coef.table) <- list("", c("alpha", "rho"))
+        se <- rbind(sqrt(diag(se)), deparse.level = 0)
+        dimnames(se) <- list("", c("std error alpha", "std error rho"))
+      }else{
         dimnames(coef.table) <- list("", c("alpha", "gamma"))
-        se <-  rbind(sqrt(diag(solve(fit$hessian))))
+        se <- rbind(sqrt(diag(se)), deparse.level = 0)
         dimnames(se) <- list("", c("std error alpha", "std error gamma"))
       }
+      #dimnames(coef.table)<-list("",c("alpha","gamma"))
+      #gamma parametrization
+      # if (fit$par[1] > 0){
+      #   coef.table <- rbind(c(fit$par, fit$par[2] + 2 * fit$par[1]), deparse.level = 0)
+      #   dimnames(coef.table) <- list("", c("alpha", "rho", "gamma"))
+      #   se <- solve(fit$hessian)
+      #   se <- rbind(sqrt(c(diag(se), se[2,2] + 4 * se[1,1] + 4 * se[1,2])), deparse.level = 0)
+      #   dimnames(se) <- list("", c("std error alpha", "std error rho", "std error gamma"))
+      # } else {
+      #   coef.table <- rbind(fit$par, deparse.level = 0)
+      #   dimnames(coef.table) <- list("", c("alpha", "gamma"))
+      #   se <-  rbind(sqrt(diag(solve(fit$hessian))))
+      #   dimnames(se) <- list("", c("std error alpha", "std error gamma"))
+      # }
       #Result
       if (is.null(results) || results$converged == FALSE || results$aic > (2 * (fit$value + sum(lfactorial(x))) + 4) ){
         results<-list(
@@ -845,7 +855,10 @@ summary.fitEBW<-function (object, ...) {
   if (!("fitEBW" %in% class(object))){ 
     stop("This method only works with fitEBW objects")
   }
-  myfun <- stepfun(0:max(object$x), c(0, pcbp(0:max(object$x), b = object$coefficients[1], gamma = object$coefficients[2])))
+  if (object$coefficients[1]<0)
+     myfun <- stepfun(0:max(object$x), c(0, pebw(0:max(object$x), alpha = object$coefficients[1], gamma = object$coefficients[2])))
+  else
+     myfun <- stepfun(0:max(object$x), c(0, pebw(0:max(object$x), alpha = object$coefficients[1], rho = object$coefficients[2])))
   object$kstest <- ks.test(object$x, myfun, simulate.p.value = TRUE, B = 1000)
   object$zvalue <- object$coefficients / object$se
   object$pvalue <- 2 * pnorm(abs(object$zvalue), lower.tail = FALSE)
@@ -1072,5 +1085,7 @@ plot.fitEBW <- function(x, plty = "FREQ", maxValue = NULL, ...){
            col = c("red", "blue"), lty = 2, cex = 0.8)
   }
 }
+
+
 
 
