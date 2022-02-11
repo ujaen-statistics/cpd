@@ -2,7 +2,7 @@
 % Please edit documentation in R/fitctp.R
 \name{plot.fitCTP}
 \alias{plot.fitCTP}
-\title{Plots fitCTP object.}
+\title{Plot of observed and theoretical frequencies for a CTP fit}
 \usage{
 \method{plot}{fitCTP}(x, plty = "FREQ", maxValue = NULL, ...)
 }
@@ -16,5 +16,5 @@
 \item{...}{Additional parameters.}
 }
 \description{
-Plots fitCTP object.
+Plot of observed and theoretical frequencies for a CTP fit
 }

@@ -17,6 +17,9 @@ the normalizing constant.
 
 If \eqn{a=0} the CTP is a Complex Biparametric Pearson (CBP) distribution, so the pmf of the CBP distribution is obtained.
 
+If \eqn{b=0} the CTP is an Extended Biparametric Waring (EBW) distribution, so the pmf of the EBW distribution is obtained.
+In this case, \eqn{a} is call \eqn{\alpha}.
+
 The mean and the variance of the CTP distribution are
 \eqn{E(X)=\mu=(a^2+b^2)/(\gamma-2a-1)} and \eqn{Var(X)=E(X)·(E(X)+\gamma-1)/(\gamma-2a-2)}
 so \eqn{\gamma>2a+2}.
@@ -30,6 +33,8 @@ if \eqn{a>-(\mu+1)/2}. In particular, if \eqn{a>=0} the CTP is always overdisper
 \insertRef{RCSO2004}{cpd}
 
 \insertRef{ROC2018}{cpd}
+
+\insertRef{COR2021}{ebw}
 }
 \author{
 \strong{Maintainer}: Silverio Vilchez-Lopez \email{svilchez@ujaen.es}

@@ -180,10 +180,10 @@ dcbp <- function(x, b, gamma) {
 }
 
 
-#' The Extended Biparametric Waring (EBW) Distribution COMPLETAR
+#' The Extended Biparametric Waring (EBW) Distribution
 #'
 #' @description
-#' Probability mass function, distribution function, quantile function and random generation for the Complex Triparametric Pearson (CTP) distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}. 
+#' Probability mass function, distribution function, quantile function and random generation for the Extended Biparametric Waring (EBW) distribution with parameters \eqn{\alpha} and \eqn{\gamma} (or \eqn{\rho}). 
 #'
 #' @usage
 #' debw(x, alpha, gamma, rho)
@@ -193,31 +193,36 @@ dcbp <- function(x, b, gamma) {
 #' @param p vector of probabilities.
 #' @param n number of observations. If \code{length(n) > 1}, the length is taken to be the number required.
 #' @param alpha parameter alpha (real)
-#' @param rho parameter rho (real)
+#' @param rho parameter rho (positive)
 #' @param gamma parameter \eqn{\gamma} (positive)
 #' @param lower.tail if TRUE (default), probabilities are \eqn{P(X<=x)}, otherwise, \eqn{P(X>x)}.
 #'
 #' @details
-#' The CTP distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma} has pmf
-#' \deqn{f(x|a,b,\gamma) = C \Gamma(a+ib+x) \Gamma(a-ib+x) / (\Gamma(\gamma+x) x!), x=0,1,2,...} 
-#' where \eqn{i} is the imaginary unit, \eqn{\Gamma(·)} the gamma function and 
-#' \deqn{C = \Gamma(\gamma-a-ib) \Gamma(\gamma-a+ib) / (\Gamma(\gamma-2a) \Gamma(a+ib) \Gamma(a-ib))}
+#' The EBW distribution with parameters \eqn{\alpha} and \eqn{\gamma} has pmf
+#' \deqn{f(x|a,\alpha,\gamma) = C \Gamma(\alpha+x)^2 / (\Gamma(\gamma+x) x!), x=0,1,2,...} 
+#' where \eqn{\Gamma(·)} is the gamma function and 
+#' \deqn{C = \Gamma(\gamma-\alpha^2 / (\Gamma(\alpha)^2 \Gamma(\gamma-2a))}
 #' the normalizing constant.
 #' 
-#' If \eqn{a=0} the CTP is a Complex Biparametric Pearson (CBP) distribution, so the pmf of the CBP distribution is obtained.
-#'
-#' The mean and the variance of the CTP distribution are
-#' \eqn{E(X)=\mu=(a^2+b^2)/(\gamma-2a-1)} and \eqn{Var(X)=\mu(\mu+\gamma-1)/(\gamma-2a-2)}
+#' There is an alternative parametrization in terms of \eqn{\alpha} and \eqn{\rho=\gamma-2\alpha>0} 
+#' when \eqn{\alpha>0}. So, introduce only \eqn{\alpha} and \eqn{\gamma} or \eqn{\alpha} and \eqn{\rho},
+#' depending on the parametrization you wish to use.
+#' 
+#' 
+#' The mean and the variance of the EBW distribution are
+#' \eqn{E(X)=\mu=\alpha^2/(\gamma-2\alpha-1)} and \eqn{Var(X)=\mu(\mu+\gamma-1)/(\gamma-2a-2)}
 #' so \eqn{\gamma > 2a + 2}.
 #'
 #' It is underdispersed if \eqn{a < - (\mu + 1) / 2}, equidispersed if \eqn{a = - (\mu + 1) / 2} or overdispersed
-#' if \eqn{a > - (\mu + 1) / 2}. In particular, if \eqn{a >= 0} the CTP is always overdispersed.
+#' if \eqn{a > - (\mu + 1) / 2}. In particular, if \eqn{a >= 0} the EBW is always overdispersed.
 #'
 #' @return 
-#' \code{dctp} gives the pmf, \code{pctp} gives the distribution function, \code{qctp} gives the quantile function and \code{rctp} generates random values.
+#' \code{debw} gives the pmf, \code{pebw} gives the distribution function, \code{qebw} gives the quantile function and \code{rebw} generates random values.
 #'
-#' If \eqn{a = 0} the probability mass function, distribution function, quantile function and random generation function for the CBP distribution arise.
-#'
+#' If \eqn{\alpha > 0} the probability mass function, distribution function, quantile function and random generation function for the UGW\eqn{(\alpha,\alpha,\rho)} distribution arise.
+#' 
+#' If \eqn{\alpha < 0} the probability mass function, distribution function, quantile function and random generation function for the CTP\eqn{(\alpha,0,\gamma)} distribution arise.
+#' 
 #' @references 
 #' \insertRef{RCS2003}{cpd}
 #' 

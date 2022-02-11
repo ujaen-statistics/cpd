@@ -2,7 +2,7 @@
 % Please edit documentation in R/fitctp.R
 \name{fitctp}
 \alias{fitctp}
-\title{Maximum-likelihood fitting of the Complex Triparametric Pearson (CTP) distribution}
+\title{Maximum-likelihood fitting of the CTP distribution}
 \usage{
 fitctp(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", 
        moments = FALSE, hessian = TRUE, control = list(), ...)

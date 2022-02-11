@@ -2,7 +2,7 @@
 % Please edit documentation in R/fitctp.R
 \name{plot.fitCBP}
 \alias{plot.fitCBP}
-\title{Plots fitCBP object.}
+\title{Plot of observed and theoretical frequencies for a CBP fit}
 \usage{
 \method{plot}{fitCBP}(x, plty = "FREQ", maxValue = NULL, ...)
 }
@@ -16,5 +16,5 @@
 \item{...}{Additional parameters.}
 }
 \description{
-Plots fitCBP object.
+Plot of observed and theoretical frequencies for a CBP fit
 }

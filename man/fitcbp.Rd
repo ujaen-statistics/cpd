@@ -2,7 +2,7 @@
 % Please edit documentation in R/fitctp.R
 \name{fitcbp}
 \alias{fitcbp}
-\title{Maximum-likelihood fitting of the Complex Biparametric Pearson (CBP) distribution}
+\title{Maximum-likelihood fitting of the CBP distribution}
 \usage{
 fitcbp(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", 
        moments = FALSE, hessian = TRUE, control = list(), ...)
@@ -72,4 +72,5 @@ fitcbp(x, moments = TRUE)
 }
 \seealso{
 Maximum-likelihood fitting for the CTP distribution: \code{\link{fitctp}}.
+Maximum-likelihood fitting for the EBW distribution: \code{\link{fitebw}}.
 }

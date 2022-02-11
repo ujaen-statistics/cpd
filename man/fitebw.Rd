@@ -4,21 +4,23 @@
 \alias{fitebw}
 \title{Maximum-likelihood fitting of the EBW distribution}
 \usage{
-fitebw(x, alphastart = NULL, gammastart=NULL, rhostart = NULL, method = "L-BFGS-B",
+fitebw(x, alphastart = NULL, gammastart = NULL, rhostart = NULL, method = "L-BFGS-B",
           moments = TRUE, hessian = TRUE, control = list(),...)
 }
 \arguments{
 \item{x}{A numeric vector of length at least one containing only finite values.}
 
-\item{alphastart}{An starting value for the parameter \eqn{a}; by default NULL.}
+\item{alphastart}{An starting value for the parameter \eqn{\alpha}; by default NULL.}
 
-\item{gammastart}{An starting value for the parameter \eqn{ro}; by default NULL.}
+\item{gammastart}{An starting value for the parameter \eqn{\gamma}; by default NULL.}
 
-\item{rhostart}{An starting value for the parameter \eqn{ro}; by default NULL.}
+\item{rhostart}{An starting value for the parameter \eqn{\rho}; by default NULL.}
 
 \item{method}{The method to be used in fitting the model. The default method is "L-BFGS-B" (optim).}
 
-\item{moments}{If is used the moments method for initial values; by default TRUE}
+\item{moments}{The starting values for the parameters are those obtained from the method of moments; by default TRUE.
+If the starting value for \eqn{\alpha > 0}, the parametrization \eqn{(\alpha,\rho)} is used; otherwise,
+the parametrization \eqn{(\alpha,\gamma)} is used.}
 
 \item{hessian}{If \code{TRUE} the hessian of the objective function at the minimum is returned.}
 
@@ -48,31 +50,30 @@ An object of class "fitebw" is a list containing the following components:
 Generic functions:
 
 \itemize{
-\item \code{print}: The print of a \code{'fitctp'} object shows the ML parameter estimates and their standard errors in parenthesis.
+\item \code{print}: The print of a \code{'fitebw'} object shows the ML parameter estimates and their standard errors in parenthesis.
 \item \code{summary}: The summary provides the ML parameter estimates, their standard errors and the statistic and p-value of the Wald test to check if the parameters are significant.
 This summary also shows the loglikelihood, AIC and BIC values, as well as the results for the chi-squared goodness-of-fit test and the Kolmogorov-Smirnov test for discrete variables. Finally, the correlation matrix between parameter estimates appears.
-\item \code{coef}: It extracts the fitted coefficients from a \code{'fitctp'} object.
-\item \code{logLik}: It extracts the estimated log-likelihood from a \code{'fitctp'} object.
-\item \code{AIC}: It extracts the value of the Akaike Information Criterion from a \code{'fitctp'} object.
-\item \code{BIC}: It extracts the value of the Bayesian Information Criterion from a \code{'fitctp'} object.
-\item \code{plot}: It shows the plot of a \code{'fitctp'} object. Observed and theoretical probabitilies, empirical and theoretical cumulative distribution functions or empirical cumulative probabilities against theoretical cumulative probabilities are the three plot types.
+\item \code{coef}: It extracts the fitted coefficients from a \code{'fitebw'} object.
+\item \code{logLik}: It extracts the estimated log-likelihood from a \code{'fitebw'} object.
+\item \code{AIC}: It extracts the value of the Akaike Information Criterion from a \code{'fitebw'} object.
+\item \code{BIC}: It extracts the value of the Bayesian Information Criterion from a \code{'fitebw'} object.
+\item \code{plot}: It shows the plot of a \code{'fitebw'} object. Observed and theoretical probabitilies, empirical and theoretical cumulative distribution functions or empirical cumulative probabilities against theoretical cumulative probabilities are the three plot types.
 }
 }
 \description{
-Maximum-likelihood fitting of the EBW (EBW) distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}. Generic
+Maximum-likelihood fitting of the Extended Biparametric Waring (EBW) distribution with parameters \eqn{\alpha}, \eqn{\rho} and \eqn{\gamma}. Generic
 methods are \code{print}, \code{summary}, \code{coef}, \code{logLik}, \code{AIC}, \code{BIC} and \code{plot}.
 }
 \examples{
 set.seed(123)
-x <- rebw(500, 2,rho=5)
+x <- rebw(500, 2, rho = 5)
 fitebw(x)
-fitebw(x, alphastart = 1, rhostart = 5, moments=FALSE)
+fitebw(x, alphastart = 1, rhostart = 5, moments = FALSE)
 }
 \references{
-\insertRef{RCSO2004}{cpd}
-
-\insertRef{ROC2018}{cpd}
+\insertRef{COR2021}{ebw}
 }
 \seealso{
+Maximum-likelihood fitting for the CTP distribution: \code{\link{fitctp}}.
 Maximum-likelihood fitting for the CBP distribution: \code{\link{fitcbp}}.
 }
