@@ -2,12 +2,12 @@
 % Please edit documentation in R/fitctp.R
 \name{plot.fitEBW}
 \alias{plot.fitEBW}
-\title{Plots fitEBW object.}
+\title{Plot of observed and theoretical frequencies for a EBW fit}
 \usage{
 \method{plot}{fitEBW}(x, plty = "FREQ", maxValue = NULL, ...)
 }
 \arguments{
-\item{x}{An object of class \code{'fitctp'}}
+\item{x}{An object of class \code{'fitebw'}}
 
 \item{plty}{Plot type to be shown. Default is \code{"FREQ"} which shows the observed and theoretical frequencies for each value of the variable; \code{"CDF"} and \code{"PP"} are also available for plotting the empirical and theoretical cumulative distribution functions or the theoretical cumulative probabilities against the empirical cumulative probabilities, respectively.}
 
@@ -16,5 +16,5 @@
 \item{...}{Additional parameters.}
 }
 \description{
-Plots fitEBW object.
+Plot of observed and theoretical frequencies for a EBW fit
 }
