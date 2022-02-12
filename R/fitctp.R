@@ -1085,7 +1085,3 @@ plot.fitEBW <- function(x, plty = "FREQ", maxValue = NULL, ...){
            col = c("red", "blue"), lty = 2, cex = 0.8)
   }
 }
-
-
-
-
