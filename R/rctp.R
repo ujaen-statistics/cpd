@@ -112,8 +112,7 @@ rcbp<-function(n, b, gamma){
 #' @examples
 #' # Examples for the function rebw
 #' rebw(4,2,rho=5)
-
-#' 
+#' rebw(4,-2.1,gamma=5)
 #' 
 
 rebw <- function(n,alpha,gamma,rho, lower.tail = TRUE ) {
