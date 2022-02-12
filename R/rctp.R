@@ -114,6 +114,7 @@ rcbp<-function(n, b, gamma){
 #' rebw(4,2,rho=5)
 
 #' 
+#' 
 
 rebw <- function(n,alpha,gamma,rho, lower.tail = TRUE ) {
   if ( !((missing(rho) && (mode(c(n,alpha,gamma)) == "numeric")) | 
