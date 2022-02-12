@@ -34,7 +34,7 @@ if \eqn{a>-(\mu+1)/2}. In particular, if \eqn{a>=0} the CTP is always overdisper
 
 \insertRef{ROC2018}{cpd}
 
-\insertRef{COR2021}{ebw}
+\insertRef{COR2021}{cpd}
 }
 \author{
 \strong{Maintainer}: Silverio Vilchez-Lopez \email{svilchez@ujaen.es}
