@@ -442,7 +442,7 @@ fitcbp <- function(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments
 #' @export
 #' @references 
 #' 
-#' \insertRef{COR2021}{ebw}
+#' \insertRef{COR2021}{ctp}
 #'  
 #' 
 #' @seealso
