@@ -150,7 +150,9 @@ qcbp <- function(p, b, gamma, lower.tail = TRUE)  {
 #'
 #'
 #' @examples
-#' # Examples for the function pcbp
+#' # Examples for the function qebw
+#' qebw(0.5,-2.1,gamma=0.1)
+#' qebw(c(.8,.9),-2.1,gamma=0.1)
 #' qebw(0.5,2,rho=5)
 #' qebw(c(.8,.9),2,rho=5)
 #' 
