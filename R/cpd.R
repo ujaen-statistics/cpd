@@ -30,7 +30,7 @@
 #' 
 #' \insertRef{ROC2018}{cpd}
 #' 
-#' \insertRef{COR2021}{ebw}
+#' \insertRef{COR2021}{cpd}
 #' 
 #' @keywords internal
 "_PACKAGE"
