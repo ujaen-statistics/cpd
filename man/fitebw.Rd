@@ -71,7 +71,7 @@ fitebw(x)
 fitebw(x, alphastart = 1, rhostart = 5, moments = FALSE)
 }
 \references{
-\insertRef{COR2021}{ctp}
+\insertRef{COR2021}{cpd}
 }
 \seealso{
 Maximum-likelihood fitting for the CTP distribution: \code{\link{fitctp}}.
