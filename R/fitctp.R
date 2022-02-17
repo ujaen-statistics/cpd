@@ -134,63 +134,90 @@ fitctp <- function(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS
   }
   
   #Optimization process
+  converged<-FALSE
   
   if (method == "nlm") {
-    fit <- nlm(logL, p = pstart, hessian = hessian, iterlim = control$maxit, print.level = control$trace)
-    fit$value <- fit$minimum
-    fit$par <- fit$estimate
-    fit$convergence <- fit$code
-    if (fit$convergence < 3)
-      fit$converged = TRUE
-    else fit$converged = FALSE
-    methodText = "nlm"
+    fit <- try(nlm(logL, p = pstart, hessian = hessian, iterlim = control$maxit, print.level = control$trace))
+    if ('try-error' %in% class(fit)){
+      if (control$trace > 0) {
+        cat("Crashed 'nlm' initial fit", "\n")
+      }
+    }
+    else {
+      fit$value <- fit$minimum
+      fit$par <- fit$estimate
+      fit$convergence <- fit$code
+      if (fit$convergence < 3)
+        converged = TRUE
+      methodText = "nlm"
+    }
   }
   else if (any(method == c("Nelder-Mead", "BFGS", "CG", "SANN"))) {
-    fit <- optim(pstart, logL, method = method, hessian = hessian,
-                 control = list(maxit = control$maxit, trace = control$trace))
-    methodText <- method
-    if (fit$convergence == 0)
-      fit$converged = TRUE
-    else fit$converged = FALSE
+    fit <- try(optim(pstart, logL, method = method, hessian = hessian,
+                 control = list(maxit = control$maxit, trace = control$trace)))
+    if ('try-error' %in% class(fit)){
+      if (control$trace > 0) {
+        cat(paste("Crashed '",method,"' initial fit",sep=","),"\n")
+      }
+    }
+    else {
+      methodText <- method
+      if (fit$convergence == 0)
+        converged = TRUE
+    }
   }
   else if (any(method == c("L-BFGS-B"))) {
-    fit <- optim(pstart, logL, method = method, lower = c(-Inf,0,0.0000001), upper = c(Inf,Inf,Inf), hessian = hessian, control = list(maxit = control$maxit, trace = control$trace))
-    methodText <- method
-    if (fit$convergence == 0)
-      fit$converged = TRUE
-    else fit$converged = FALSE
+    fit <- try(optim(pstart, logL, method = method, lower = c(-Inf,0,0.0000001), upper = c(Inf,Inf,Inf), hessian = hessian, control = list(maxit = control$maxit, trace = control$trace)))
+    if ('try-error' %in% class(fit)){
+      if (control$trace > 0) {
+        cat(paste("Crashed '",method,"' initial fit",sep=","),"\n")
+      }
+    }
+    else {
+      methodText <- method
+      if (fit$convergence == 0)
+        converged<-TRUE
+    }
   }else{
     stop("Incorrect method")
   }
   
-  if (method != "L-BFGS-B") {
-    coef.table <- rbind(fit$par, deparse.level = 0)
-    dimnames(coef.table) <- list("", c("a", "b", "log(gamma)"))
+  if (converged){
+    if (method != "L-BFGS-B") {
+      coef.table <- rbind(fit$par, deparse.level = 0)
+      dimnames(coef.table) <- list("", c("a", "b", "log(gamma)"))
+    }
+    else {
+      coef.table <- rbind(fit$par, deparse.level = 0)
+      dimnames(coef.table) <- list("", c("a", "b", "gamma"))
+    }
+    
+    #Results
+    results <- list(
+      x = x,
+      n = length(x),
+      loglik = - (fit$value + sum(lfactorial(x))),
+      aic = 2 * (fit$value + sum(lfactorial(x))) + 6,
+      bic = 2 * (fit$value + sum(lfactorial(x))) + 2 * log(length(x)),
+      coefficients =  coef.table,
+      code = fit$convergence,
+      hessian = fit$hessian,
+      cov = solve(fit$hessian),
+      se = sqrt(diag(solve(fit$hessian))),
+      corr = solve(fit$hessian) / (sqrt(diag(solve(fit$hessian))) %o%
+                                     sqrt(diag(solve(fit$hessian)))),
+      code = fit$convergence,
+      converged = converged,
+      initialValues = c(astart, bstart, gammastart),
+      method = methodText
+    )
+  } else{
+    results <- list()
+    results$aic <- -Inf
+    results$converged <- FALSE
+    results$n <- nrow(x)
+    results$method <- methodText
   }
-  else {
-    coef.table <- rbind(fit$par, deparse.level = 0)
-    dimnames(coef.table) <- list("", c("a", "b", "gamma"))
-  }
-  
-  #Results
-  results <- list(
-    x = x,
-    n = length(x),
-    loglik = - (fit$value + sum(lfactorial(x))),
-    aic = 2 * (fit$value + sum(lfactorial(x))) + 6,
-    bic = 2 * (fit$value + sum(lfactorial(x))) + 2 * log(length(x)),
-    coefficients =  coef.table,
-    code = fit$convergence,
-    hessian = fit$hessian,
-    cov = solve(fit$hessian),
-    se = sqrt(diag(solve(fit$hessian))),
-    corr = solve(fit$hessian) / (sqrt(diag(solve(fit$hessian))) %o%
-                                   sqrt(diag(solve(fit$hessian)))),
-    code = fit$convergence,
-    converged = fit$converged,
-    initialValues = c(astart, bstart, gammastart),
-    method = methodText
-  )
   class(results) <- "fitCTP"
   results
 }
@@ -323,62 +350,89 @@ fitcbp <- function(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments
   }
   
   #Optimization process
+  converged<-FALSE
   if (method == "nlm") {
-    fit <- nlm(logL, p = pstart, hessian = hessian, iterlim = control$maxit, print.level = control$trace)
-    fit$value <- fit$minimum
-    fit$par <- fit$estimate
-    fit$convergence <- fit$code
-    if (fit$convergence < 3)
-      fit$converged = TRUE
-    else fit$converged = FALSE
-    methodText = "nlm"
+    fit <- try(nlm(logL, p = pstart, hessian = hessian, iterlim = control$maxit, print.level = control$trace))
+    if ('try-error' %in% class(fit)){
+      if (control$trace > 0) {
+        cat("Crashed 'nlm' initial fit", "\n")
+      }
+    }
+    else {
+      fit$value <- fit$minimum
+      fit$par <- fit$estimate
+      fit$convergence <- fit$code
+      if (fit$convergence < 3)
+        converged<-TRUE
+      methodText = "nlm"
+    }
   }
   else if (any(method == c("Nelder-Mead", "BFGS", "CG", "SANN"))) {
-    fit <- optim(pstart, logL, method = method, hessian = hessian,
-                 control = list(maxit = control$maxit, trace = control$trace))
-    methodText <- method
-    if (fit$convergence == 0)
-      fit$converged = TRUE
-    else fit$converged = FALSE
+    fit <- try(optim(pstart, logL, method = method, hessian = hessian,
+                 control = list(maxit = control$maxit, trace = control$trace)))
+    if ('try-error' %in% class(fit)){
+      if (control$trace > 0) {
+        cat(paste("Crashed '",method,"' initial fit",sep=","),"\n")
+      }
+    }
+    else {
+      methodText <- method
+      if (fit$convergence == 0)
+        converged = TRUE
+    }
   }
   else if (any(method == c("L-BFGS-B"))) {
-    fit<-optim(pstart, logL, method = method, lower = c(0,0.0000001), upper = c(Inf,Inf), hessian = hessian, control = list(maxit = control$maxit, trace = control$trace))
-    methodText <- method
-    if (fit$convergence == 0)
-      fit$converged = TRUE
-    else fit$converged = FALSE
+    fit<-try(optim(pstart, logL, method = method, lower = c(0,0.0000001), upper = c(Inf,Inf), hessian = hessian, control = list(maxit = control$maxit, trace = control$trace)))
+    if ('try-error' %in% class(fit)){
+      if (control$trace > 0) {
+        cat(paste("Crashed '",method,"' initial fit",sep=","),"\n")
+      }
+    }
+    else {
+      methodText <- method
+      if (fit$convergence == 0)
+        converged<-TRUE
+    }
   }else{
     stop("Incorrect method")
   }
   
-  if (method != "L-BFGS-B") {
-    coef.table <- rbind(fit$par, deparse.level = 0)
-    dimnames(coef.table) <- list("  ", c("b", "log(gamma)"))
+  if (converged){
+    if (method != "L-BFGS-B") {
+      coef.table <- rbind(fit$par, deparse.level = 0)
+      dimnames(coef.table) <- list("  ", c("b", "log(gamma)"))
+    }
+    else {
+      coef.table <- rbind(fit$par, deparse.level = 0)
+      dimnames(coef.table) <- list("  ", c("b", "gamma"))
+    }
+    
+    #Results
+    results <- list(
+      x = x,
+      n = length(x),
+      loglik = - (fit$value + sum(lfactorial(x))),
+      aic = 2 * (fit$value + sum(lfactorial(x))) + 4,
+      bic = 2 * (fit$value + sum(lfactorial(x))) + 2 * log(length(x)),
+      coefficients =  coef.table,
+      code = fit$convergence,
+      hessian = fit$hessian,
+      cov = solve(fit$hessian),
+      se = sqrt(diag(solve(fit$hessian))),
+      corr = solve(fit$hessian) / (sqrt(diag(solve(fit$hessian))) %o%
+                                     sqrt(diag(solve(fit$hessian)))),
+      code = fit$convergence,
+      converged = converged,
+      initialValues = c(bstart, gammastart),
+      method = methodText
+    )
+  }else{
+    results<-list()
+    results$aic <- -Inf
+    results$method<-methodText
+    results$converged<-FALSE
+    results$n<-nrow(x)
   }
-  else {
-    coef.table <- rbind(fit$par, deparse.level = 0)
-    dimnames(coef.table) <- list("  ", c("b", "gamma"))
-  }
-  
-  #Results
-  results <- list(
-    x = x,
-    n = length(x),
-    loglik = - (fit$value + sum(lfactorial(x))),
-    aic = 2 * (fit$value + sum(lfactorial(x))) + 4,
-    bic = 2 * (fit$value + sum(lfactorial(x))) + 2 * log(length(x)),
-    coefficients =  coef.table,
-    code = fit$convergence,
-    hessian = fit$hessian,
-    cov = solve(fit$hessian),
-    se = sqrt(diag(solve(fit$hessian))),
-    corr = solve(fit$hessian) / (sqrt(diag(solve(fit$hessian))) %o%
-                                   sqrt(diag(solve(fit$hessian)))),
-    code = fit$convergence,
-    converged = fit$converged,
-    initialValues = c(bstart, gammastart),
-    method = methodText
-  )
   class(results) <- "fitCBP"
   results
 }
@@ -540,68 +594,62 @@ fitebw <- function(x, alphastart = NULL, gammastart = NULL, rhostart = NULL, met
     alphastart <- c(alphastart)
   }
   
-  Y <- x
-  control <- list(maxit = 10000, trace = 0)
-  
   #Optimizamos la log-verosimilitud
-  
   results <- NULL
   for (ind in 1:length(alphastart)){
     #Modificar esto con un try para optimizar
     #tambien nos podemos plantear usar paralelo
-    fit <- optim(c(alphastart[[ind]], param2[[ind]]), logLVect[[ind]], method = "L-BFGS-B", lower = c(-Inf, 1e-10), upper = c(Inf, Inf), hessian = hessian, control = list(maxit = control$maxit, trace = control$trace))
-    methodText <- method
-    if (fit$convergence == 0){
-      fit$converged <-  TRUE
-      coef.table<-rbind(fit$par,deparse.level=0)
-      se <- solve(fit$hessian)
-      if (fit$par[1] > 0){
-        dimnames(coef.table) <- list("", c("alpha", "rho"))
-        se <- rbind(sqrt(diag(se)), deparse.level = 0)
-        dimnames(se) <- list("", c("std error alpha", "std error rho"))
-      }else{
-        dimnames(coef.table) <- list("", c("alpha", "gamma"))
-        se <- rbind(sqrt(diag(se)), deparse.level = 0)
-        dimnames(se) <- list("", c("std error alpha", "std error gamma"))
+    fit <- try(optim(c(alphastart[[ind]], param2[[ind]]), logLVect[[ind]], method = "L-BFGS-B", lower = c(-Inf, 1e-10), upper = c(Inf, Inf), hessian = hessian, control = list(maxit = control$maxit, trace = control$trace)))
+    if ('try-error' %in% class(fit)){
+      if (control$trace > 0) {
+        cat(paste("Crashed '",method,"' initial fit",sep=","),"\n")
       }
-
-      if (is.null(results) || results$converged == FALSE || results$aic > (2 * (fit$value + sum(lfactorial(x))) + 4) ){
-        results<-list(
-          x = x,
-          n = length(x),
-          call = call,
-          loglik = - (fit$value + sum(lfactorial(x))),
-          aic = 2 * (fit$value + sum(lfactorial(x))) + 4,
-          bic = 2 * (fit$value + sum(lfactorial(x))) + 2 * log(length(x)),
-          coefficients = coef.table,
-          #expected.frequencies = length(data) * dctp(0:max(data), fit$par[1], fit$par[2], fit$par[3]),
-          hessian = fit$hessian,
-          cov = solve(fit$hessian),
-          se = se, 
-          corr = solve(fit$hessian) / (sqrt(diag(solve(fit$hessian))) %o% 
-                                         sqrt(diag(solve(fit$hessian)))), 
-          code = fit$convergence, 
-          converged = fit$converged,
-          method = methodText
-        )
-      }
+    }
+    else {
+      methodText <- "L-BFGS-B"
+      if (fit$convergence == 0){
+        if (is.null(results) || results$converged == FALSE || results$aic > (2 * (fit$value + sum(lfactorial(x))) + 4) ){
+          fit$converged <-  TRUE
+          coef.table<-rbind(fit$par,deparse.level=0)
+          se <- solve(fit$hessian)
+          if (fit$par[1] > 0){
+            dimnames(coef.table) <- list("", c("alpha", "rho"))
+            se <- rbind(sqrt(diag(se)), deparse.level = 0)
+            dimnames(se) <- list("", c("std error alpha", "std error rho"))
+          }else{
+            dimnames(coef.table) <- list("", c("alpha", "gamma"))
+            se <- rbind(sqrt(diag(se)), deparse.level = 0)
+            dimnames(se) <- list("", c("std error alpha", "std error gamma"))
+          }
+          results<-list(
+            x = x,
+            n = length(x),
+            call = call,
+            loglik = - (fit$value + sum(lfactorial(x))),
+            aic = 2 * (fit$value + sum(lfactorial(x))) + 4,
+            bic = 2 * (fit$value + sum(lfactorial(x))) + 2 * log(length(x)),
+            coefficients = coef.table,
+            #expected.frequencies = length(data) * dctp(0:max(data), fit$par[1], fit$par[2], fit$par[3]),
+            hessian = fit$hessian,
+            cov = solve(fit$hessian),
+            se = se, 
+            corr = solve(fit$hessian) / (sqrt(diag(solve(fit$hessian))) %o% 
+                                           sqrt(diag(solve(fit$hessian)))), 
+            code = fit$convergence, 
+            converged = fit$converged,
+            method = methodText
+          )
+        }
       
-    } else {
-      if (is.null(results)){
-        fit$converged = FALSE  
-        results <- list(
-          x = x,
-          n = length(x),
-          call = call,
-          loglik = - (fit$value + sum(lfactorial(x))),
-          aic = 2 * (fit$value + sum(lfactorial(x))) + 4,
-          bic = 2 * (fit$value + sum(lfactorial(x))) + 2 * log(length(x)),
-          hessian = fit$hessian,
-          code = fit$convergence, 
-          converged = fit$converged,
-          method = methodText
-        )
-        
+      } else {
+        if (is.null(results)){
+          results<-list()
+          results$aic <- -Inf
+          results$method<-methodText
+          results$code <- fit$convergence
+          results$converged <- FALSE
+          results$n<-nrow(x)
+        }
       }
     }
   }
