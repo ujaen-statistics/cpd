@@ -444,7 +444,7 @@ fitcbp <- function(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments
 #' methods are \code{print}, \code{summary}, \code{coef}, \code{logLik}, \code{AIC}, \code{BIC} and \code{plot}. 
 #'
 #' @usage
-#' fitebw(x, alphastart = NULL, gammastart = NULL, rhostart = NULL, method = "L-BFGS-B",
+#' fitebw(x, alphastart = NULL, gammastart = NULL, rhostart = NULL,
 #'           moments = TRUE, hessian = TRUE, control = list(),...)
 
 #'        
@@ -452,7 +452,6 @@ fitcbp <- function(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments
 #' @param alphastart An starting value for the parameter \eqn{\alpha}; by default NULL.
 #' @param gammastart An starting value for the parameter \eqn{\gamma}; by default NULL.
 #' @param rhostart An starting value for the parameter \eqn{\rho}; by default NULL.
-#' @param method The method to be used in fitting the model. The default method is "L-BFGS-B" (optim).
 #' @param moments The starting values for the parameters are those obtained from the method of moments; by default TRUE.
 #' If the starting value for \eqn{\alpha > 0}, the parametrization \eqn{(\alpha,\rho)} is used; otherwise,
 #' the parametrization \eqn{(\alpha,\gamma)} is used.
@@ -509,7 +508,7 @@ fitcbp <- function(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments
 #' fitebw(x)
 #' fitebw(x, alphastart = 1, rhostart = 5, moments = FALSE)
 
-fitebw <- function(x, alphastart = NULL, gammastart = NULL, rhostart = NULL, method = "L-BFGS-B", 
+fitebw <- function(x, alphastart = NULL, gammastart = NULL, rhostart = NULL, 
                    moments = TRUE, hessian = TRUE, control = list(), ...)  
 {
   
@@ -597,12 +596,10 @@ fitebw <- function(x, alphastart = NULL, gammastart = NULL, rhostart = NULL, met
   #Optimizamos la log-verosimilitud
   results <- NULL
   for (ind in 1:length(alphastart)){
-    #Modificar esto con un try para optimizar
-    #tambien nos podemos plantear usar paralelo
     fit <- try(optim(c(alphastart[[ind]], param2[[ind]]), logLVect[[ind]], method = "L-BFGS-B", lower = c(-Inf, 1e-10), upper = c(Inf, Inf), hessian = hessian, control = list(maxit = control$maxit, trace = control$trace)))
     if ('try-error' %in% class(fit)){
       if (control$trace > 0) {
-        cat(paste("Crashed '",method,"' initial fit",sep=","),"\n")
+        cat(paste("Crashed '","L-BFGS-B","' initial fit",sep=","),"\n")
       }
     }
     else {

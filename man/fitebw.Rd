@@ -4,7 +4,7 @@
 \alias{fitebw}
 \title{Maximum-likelihood fitting of the EBW distribution}
 \usage{
-fitebw(x, alphastart = NULL, gammastart = NULL, rhostart = NULL, method = "L-BFGS-B",
+fitebw(x, alphastart = NULL, gammastart = NULL, rhostart = NULL,
           moments = TRUE, hessian = TRUE, control = list(),...)
 }
 \arguments{
@@ -15,8 +15,6 @@ fitebw(x, alphastart = NULL, gammastart = NULL, rhostart = NULL, method = "L-BFG
 \item{gammastart}{An starting value for the parameter \eqn{\gamma}; by default NULL.}
 
 \item{rhostart}{An starting value for the parameter \eqn{\rho}; by default NULL.}
-
-\item{method}{The method to be used in fitting the model. The default method is "L-BFGS-B" (optim).}
 
 \item{moments}{The starting values for the parameters are those obtained from the method of moments; by default TRUE.
 If the starting value for \eqn{\alpha > 0}, the parametrization \eqn{(\alpha,\rho)} is used; otherwise,
