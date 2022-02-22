@@ -10,11 +10,11 @@ fitcbp(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B",
 \arguments{
 \item{x}{A numeric vector of length at least one containing only finite values.}
 
-\item{bstart}{An starting value for the parameter \eqn{b}; by default 1.}
+\item{bstart}{A starting value for the parameter \eqn{b}; by default 1.}
 
-\item{gammastart}{An starting value for the parameter \eqn{\gamma}; by default 1.1.}
+\item{gammastart}{A starting value for the parameter \eqn{\gamma}; by default 1.1.}
 
-\item{method}{The method to be used in fitting the model. The default method is "L-BFGS-B" (optim).}
+\item{method}{The method to be used in fitting the model. The default method is "L-BFGS-B" (see details in \code{\link{optim}} function).}
 
 \item{moments}{If \code{TRUE} the estimates of \eqn{b} and \eqn{\gamma} by the method of moments are used as starting values (if it is posible). By default this argument is \code{FALSE}.}
 
@@ -25,7 +25,7 @@ fitcbp(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B",
 \item{...}{Additional parameters.}
 }
 \value{
-An object of class "fitcbp" is a list containing the following components:
+An object of class \code{'fitCBP'} is a list containing the following components:
 
 \itemize{
 \item \code{n}, the number of observations,
@@ -46,14 +46,14 @@ An object of class "fitcbp" is a list containing the following components:
 Generic functions:
 
 \itemize{
-\item \code{print}: The print of a \code{'fitcbp'} object shows the ML parameter estimates and their standard errors in parenthesis.
+\item \code{print}: The print of a \code{'fitCBP'} object shows the ML parameter estimates and their standard errors in parenthesis.
 \item \code{summary}: The summary provides the ML parameter estimates, their standard errors and the statistic and p-value of the Wald test to check if the parameters are significant.
 This summary also shows the loglikelihood, AIC and BIC values, as well as the results for the chi-squared goodness-of-fit test and the Kolmogorov-Smirnov test for discrete variables. Finally, the correlation matrix between parameter estimates appears.
-\item \code{coef}: It extracts the fitted coefficients from a \code{'fitcbp'} object.
-\item \code{logLik}: It extracts the estimated log-likelihood from a \code{'fitcbp'} object.
-\item \code{AIC}: It extracts the value of the Akaike Information Criterion from a \code{'fitcbp'} object.
-\item \code{BIC}: It extracts the value of the Bayesian Information Criterion from a \code{'fitcbp'} object.
-\item \code{plot}: It shows the plot of a \code{'fitcbp'} object. Observed and theoretical probabitilies, empirical and theoretical cumulative distribution functions or empirical cumulative probabilities against theoretical cumulative probabilities are the three plot types.
+\item \code{coef}: It extracts the fitted coefficients from a \code{'fitCBP'} object.
+\item \code{logLik}: It extracts the estimated log-likelihood from a \code{'fitCBP'} object.
+\item \code{AIC}: It extracts the value of the Akaike Information Criterion from a \code{'fitCBP'} object.
+\item \code{BIC}: It extracts the value of the Bayesian Information Criterion from a \code{'fitCBP'} object.
+\item \code{plot}: It shows the plot of a \code{'fitCBP'} object. Observed and theoretical probabilities, empirical and theoretical cumulative distribution functions or empirical cumulative probabilities against theoretical cumulative probabilities are the three plot types.
 }
 }
 \description{
@@ -71,6 +71,9 @@ fitcbp(x, moments = TRUE)
 \insertRef{RCS2003}{cpd}
 }
 \seealso{
+Plot of observed and theoretical frequencies for a CBP fit: \code{\link{plot.fitCBP}}
+
 Maximum-likelihood fitting for the CTP distribution: \code{\link{fitctp}}.
+
 Maximum-likelihood fitting for the EBW distribution: \code{\link{fitebw}}.
 }

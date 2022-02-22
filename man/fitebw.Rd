@@ -10,13 +10,13 @@ fitebw(x, alphastart = NULL, gammastart = NULL, rhostart = NULL,
 \arguments{
 \item{x}{A numeric vector of length at least one containing only finite values.}
 
-\item{alphastart}{An starting value for the parameter \eqn{\alpha}; by default NULL.}
+\item{alphastart}{A starting value for the parameter \eqn{\alpha}; by default \code{NULL}.}
 
-\item{gammastart}{An starting value for the parameter \eqn{\gamma}; by default NULL.}
+\item{gammastart}{A starting value for the parameter \eqn{\gamma}; by default \code{NULL}.}
 
-\item{rhostart}{An starting value for the parameter \eqn{\rho}; by default NULL.}
+\item{rhostart}{A starting value for the parameter \eqn{\rho}; by default \code{NULL}.}
 
-\item{moments}{The starting values for the parameters are those obtained from the method of moments; by default TRUE.
+\item{moments}{The starting values for the parameters are those obtained from the method of moments; by default \code{TRUE}.
 If the starting value for \eqn{\alpha > 0}, the parametrization \eqn{(\alpha,\rho)} is used; otherwise,
 the parametrization \eqn{(\alpha,\gamma)} is used.}
 
@@ -27,7 +27,7 @@ the parametrization \eqn{(\alpha,\gamma)} is used.}
 \item{...}{Additional parameters.}
 }
 \value{
-An object of class "fitebw" is a list containing the following components:
+An object of class \code{'fitEBW'} is a list containing the following components:
 
 \itemize{
 \item \code{n}, the number of observations,
@@ -41,26 +41,26 @@ An object of class "fitebw" is a list containing the following components:
 \item \code{aic}, Akaike Information Criterion, minus twice the maximized log-likelihood plus twice the number of parameters,
 \item \code{bic}, Bayesian Information Criterion, minus twice the maximized log-likelihood plus twice the number of parameters,
 \item \code{code}, a code that indicates successful convergence of the fitter function used (see nlm and optim helps),
-\item \code{converged},  logical value that indicates if the optimization algorithms succesfull,
-\item \code{method}, the name of the fitter function used.
+\item \code{converged},  logical value that indicates if the optimization algorithms succesfull.
 }
 
 Generic functions:
 
 \itemize{
-\item \code{print}: The print of a \code{'fitebw'} object shows the ML parameter estimates and their standard errors in parenthesis.
+\item \code{print}: The print of a \code{'fitEBW'} object shows the ML parameter estimates and their standard errors in parenthesis.
 \item \code{summary}: The summary provides the ML parameter estimates, their standard errors and the statistic and p-value of the Wald test to check if the parameters are significant.
 This summary also shows the loglikelihood, AIC and BIC values, as well as the results for the chi-squared goodness-of-fit test and the Kolmogorov-Smirnov test for discrete variables. Finally, the correlation matrix between parameter estimates appears.
-\item \code{coef}: It extracts the fitted coefficients from a \code{'fitebw'} object.
-\item \code{logLik}: It extracts the estimated log-likelihood from a \code{'fitebw'} object.
-\item \code{AIC}: It extracts the value of the Akaike Information Criterion from a \code{'fitebw'} object.
-\item \code{BIC}: It extracts the value of the Bayesian Information Criterion from a \code{'fitebw'} object.
-\item \code{plot}: It shows the plot of a \code{'fitebw'} object. Observed and theoretical probabitilies, empirical and theoretical cumulative distribution functions or empirical cumulative probabilities against theoretical cumulative probabilities are the three plot types.
+\item \code{coef}: It extracts the fitted coefficients from a \code{'fitEBW'} object.
+\item \code{logLik}: It extracts the estimated log-likelihood from a \code{'fitEBW'} object.
+\item \code{AIC}: It extracts the value of the Akaike Information Criterion from a \code{'fitEBW'} object.
+\item \code{BIC}: It extracts the value of the Bayesian Information Criterion from a \code{'fitEBW'} object.
+\item \code{plot}: It shows the plot of a \code{'fitEBW'} object. Observed and theoretical probabilities, empirical and theoretical cumulative distribution functions or empirical cumulative probabilities against theoretical cumulative probabilities are the three plot types.
 }
 }
 \description{
 Maximum-likelihood fitting of the Extended Biparametric Waring (EBW) distribution with parameters \eqn{\alpha}, \eqn{\rho} and \eqn{\gamma}. Generic
-methods are \code{print}, \code{summary}, \code{coef}, \code{logLik}, \code{AIC}, \code{BIC} and \code{plot}.
+methods are \code{print}, \code{summary}, \code{coef}, \code{logLik}, \code{AIC}, \code{BIC} and \code{plot}. The method to be used in fitting the 
+model is "L-BFGS-B" which allows constraints for each variable (see details in \code{\link{optim}} funtion).
 }
 \examples{
 set.seed(123)
@@ -72,6 +72,9 @@ fitebw(x, alphastart = 1, rhostart = 5, moments = FALSE)
 \insertRef{COR2021}{cpd}
 }
 \seealso{
+Plot of observed and theoretical frequencies for a EBW fit: \code{\link{plot.fitEBW}}
+
 Maximum-likelihood fitting for the CTP distribution: \code{\link{fitctp}}.
+
 Maximum-likelihood fitting for the CBP distribution: \code{\link{fitcbp}}.
 }

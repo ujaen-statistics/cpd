@@ -9,16 +9,16 @@
 #'        moments = FALSE, hessian = TRUE, control = list(), ...)
 #'        
 #' @param x A numeric vector of length at least one containing only finite values.
-#' @param astart An starting value for the parameter \eqn{a}; by default 0.
-#' @param bstart An starting value for the parameter \eqn{b}; by default 1.
-#' @param gammastart An starting value for the parameter \eqn{\gamma}; by default 1.1.
-#' @param method The method to be used in fitting the model. The default method is "L-BFGS-B" (optim).
+#' @param astart A starting value for the parameter \eqn{a}; by default 0.
+#' @param bstart A starting value for the parameter \eqn{b}; by default 1.
+#' @param gammastart A starting value for the parameter \eqn{\gamma}; by default 1.1.
+#' @param method The method to be used in fitting the model. The default method is "L-BFGS-B" (see details in \code{\link{optim}} function).
 #' @param moments If \code{TRUE} the estimates of \eqn{a}, \eqn{b} and \eqn{\gamma} by the method of moments are used as starting values (if it is posible). By default this argument is \code{FALSE}.
 #' @param hessian If \code{TRUE} the hessian of the objective function at the minimum is returned.
 #' @param control A list of parameters for controlling the fitting process.
 #' @param ...  Additional parameters.
 #'
-#' @return An object of class "fitctp" is a list containing the following components:
+#' @return An object of class \code{'fitCTP'} is a list containing the following components:
 #'
 #' \itemize{
 #' \item \code{n}, the number of observations,
@@ -39,14 +39,14 @@
 #' Generic functions:
 #'
 #' \itemize{
-#' \item \code{print}: The print of a \code{'fitctp'} object shows the ML parameter estimates and their standard errors in parenthesis.
+#' \item \code{print}: The print of a \code{'fitCTP'} object shows the ML parameter estimates and their standard errors in parenthesis.
 #' \item \code{summary}: The summary provides the ML parameter estimates, their standard errors and the statistic and p-value of the Wald test to check if the parameters are significant.
 #' This summary also shows the loglikelihood, AIC and BIC values, as well as the results for the chi-squared goodness-of-fit test and the Kolmogorov-Smirnov test for discrete variables. Finally, the correlation matrix between parameter estimates appears.
-#' \item \code{coef}: It extracts the fitted coefficients from a \code{'fitctp'} object.
-#' \item \code{logLik}: It extracts the estimated log-likelihood from a \code{'fitctp'} object.
-#' \item \code{AIC}: It extracts the value of the Akaike Information Criterion from a \code{'fitctp'} object.
-#' \item \code{BIC}: It extracts the value of the Bayesian Information Criterion from a \code{'fitctp'} object.
-#' \item \code{plot}: It shows the plot of a \code{'fitctp'} object. Observed and theoretical probabitilies, empirical and theoretical cumulative distribution functions or empirical cumulative probabilities against theoretical cumulative probabilities are the three plot types.
+#' \item \code{coef}: It extracts the fitted coefficients from a \code{'fitCTP'} object.
+#' \item \code{logLik}: It extracts the estimated log-likelihood from a \code{'fitCTP'} object.
+#' \item \code{AIC}: It extracts the value of the Akaike Information Criterion from a \code{'fitCTP'} object.
+#' \item \code{BIC}: It extracts the value of the Bayesian Information Criterion from a \code{'fitCTP'} object.
+#' \item \code{plot}: It shows the plot of a \code{'fitCTP'} object. Observed and theoretical probabilities, empirical and theoretical cumulative distribution functions or empirical cumulative probabilities against theoretical cumulative probabilities are the three plot types.
 #' }
 #' 
 #' @importFrom stats nlm optim coef runif
@@ -58,7 +58,11 @@
 #' \insertRef{ROC2018}{cpd}
 #' 
 #' @seealso
+#' Plot of observed and theoretical frequencies for a CTP fit: \code{\link{plot.fitCTP}}
+#' 
 #' Maximum-likelihood fitting for the CBP distribution: \code{\link{fitcbp}}.
+#' 
+#' Maximum-likelihood fitting for the EBW distribution: \code{\link{fitebw}}.
 #'
 #' @examples
 #' set.seed(123)
@@ -236,15 +240,15 @@ fitctp <- function(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS
 #' 
 #' 
 #' @param x A numeric vector of length at least one containing only finite values.
-#' @param bstart An starting value for the parameter \eqn{b}; by default 1.
-#' @param gammastart An starting value for the parameter \eqn{\gamma}; by default 1.1.
-#' @param method The method to be used in fitting the model. The default method is "L-BFGS-B" (optim).
+#' @param bstart A starting value for the parameter \eqn{b}; by default 1.
+#' @param gammastart A starting value for the parameter \eqn{\gamma}; by default 1.1.
+#' @param method The method to be used in fitting the model. The default method is "L-BFGS-B" (see details in \code{\link{optim}} function).
 #' @param moments If \code{TRUE} the estimates of \eqn{b} and \eqn{\gamma} by the method of moments are used as starting values (if it is posible). By default this argument is \code{FALSE}.
 #' @param hessian If \code{TRUE} the hessian of the objective function at the minimum is returned.
 #' @param control A list of parameters for controlling the fitting process.
 #' @param ...  Additional parameters.
 #'
-#' @return An object of class "fitcbp" is a list containing the following components:
+#' @return An object of class \code{'fitCBP'} is a list containing the following components:
 #'
 #' \itemize{
 #' \item \code{n}, the number of observations,
@@ -265,14 +269,14 @@ fitctp <- function(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS
 #' Generic functions:
 #'
 #' \itemize{
-#' \item \code{print}: The print of a \code{'fitcbp'} object shows the ML parameter estimates and their standard errors in parenthesis.
+#' \item \code{print}: The print of a \code{'fitCBP'} object shows the ML parameter estimates and their standard errors in parenthesis.
 #' \item \code{summary}: The summary provides the ML parameter estimates, their standard errors and the statistic and p-value of the Wald test to check if the parameters are significant.
 #' This summary also shows the loglikelihood, AIC and BIC values, as well as the results for the chi-squared goodness-of-fit test and the Kolmogorov-Smirnov test for discrete variables. Finally, the correlation matrix between parameter estimates appears.
-#' \item \code{coef}: It extracts the fitted coefficients from a \code{'fitcbp'} object.
-#' \item \code{logLik}: It extracts the estimated log-likelihood from a \code{'fitcbp'} object.
-#' \item \code{AIC}: It extracts the value of the Akaike Information Criterion from a \code{'fitcbp'} object.
-#' \item \code{BIC}: It extracts the value of the Bayesian Information Criterion from a \code{'fitcbp'} object.
-#' \item \code{plot}: It shows the plot of a \code{'fitcbp'} object. Observed and theoretical probabitilies, empirical and theoretical cumulative distribution functions or empirical cumulative probabilities against theoretical cumulative probabilities are the three plot types.
+#' \item \code{coef}: It extracts the fitted coefficients from a \code{'fitCBP'} object.
+#' \item \code{logLik}: It extracts the estimated log-likelihood from a \code{'fitCBP'} object.
+#' \item \code{AIC}: It extracts the value of the Akaike Information Criterion from a \code{'fitCBP'} object.
+#' \item \code{BIC}: It extracts the value of the Bayesian Information Criterion from a \code{'fitCBP'} object.
+#' \item \code{plot}: It shows the plot of a \code{'fitCBP'} object. Observed and theoretical probabilities, empirical and theoretical cumulative distribution functions or empirical cumulative probabilities against theoretical cumulative probabilities are the three plot types.
 #' }
 #' 
 #' @importFrom stats nlm optim coef runif
@@ -283,7 +287,10 @@ fitctp <- function(x, astart = 0, bstart = 1, gammastart = 1.1, method = "L-BFGS
 #' \insertRef{RCS2003}{cpd}
 #' 
 #' @seealso
+#' Plot of observed and theoretical frequencies for a CBP fit: \code{\link{plot.fitCBP}}
+#' 
 #' Maximum-likelihood fitting for the CTP distribution: \code{\link{fitctp}}.
+#' 
 #' Maximum-likelihood fitting for the EBW distribution: \code{\link{fitebw}}.
 #'
 #' @examples
@@ -441,7 +448,8 @@ fitcbp <- function(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments
 #'
 #' @description
 #' Maximum-likelihood fitting of the Extended Biparametric Waring (EBW) distribution with parameters \eqn{\alpha}, \eqn{\rho} and \eqn{\gamma}. Generic
-#' methods are \code{print}, \code{summary}, \code{coef}, \code{logLik}, \code{AIC}, \code{BIC} and \code{plot}. 
+#' methods are \code{print}, \code{summary}, \code{coef}, \code{logLik}, \code{AIC}, \code{BIC} and \code{plot}. The method to be used in fitting the 
+#' model is "L-BFGS-B" which allows constraints for each variable (see details in \code{\link{optim}} funtion). 
 #'
 #' @usage
 #' fitebw(x, alphastart = NULL, gammastart = NULL, rhostart = NULL,
@@ -449,17 +457,17 @@ fitcbp <- function(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments
 
 #'        
 #' @param x A numeric vector of length at least one containing only finite values.
-#' @param alphastart An starting value for the parameter \eqn{\alpha}; by default NULL.
-#' @param gammastart An starting value for the parameter \eqn{\gamma}; by default NULL.
-#' @param rhostart An starting value for the parameter \eqn{\rho}; by default NULL.
-#' @param moments The starting values for the parameters are those obtained from the method of moments; by default TRUE.
+#' @param alphastart A starting value for the parameter \eqn{\alpha}; by default \code{NULL}.
+#' @param gammastart A starting value for the parameter \eqn{\gamma}; by default \code{NULL}.
+#' @param rhostart A starting value for the parameter \eqn{\rho}; by default \code{NULL}.
+#' @param moments The starting values for the parameters are those obtained from the method of moments; by default \code{TRUE}.
 #' If the starting value for \eqn{\alpha > 0}, the parametrization \eqn{(\alpha,\rho)} is used; otherwise,
 #' the parametrization \eqn{(\alpha,\gamma)} is used.
 #' @param hessian If \code{TRUE} the hessian of the objective function at the minimum is returned.
 #' @param control A list of parameters for controlling the fitting process.
 #' @param ...  Additional parameters.
 #'
-#' @return An object of class "fitebw" is a list containing the following components:
+#' @return An object of class \code{'fitEBW'} is a list containing the following components:
 #'
 #' \itemize{
 #' \item \code{n}, the number of observations,
@@ -473,21 +481,20 @@ fitcbp <- function(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments
 #' \item \code{aic}, Akaike Information Criterion, minus twice the maximized log-likelihood plus twice the number of parameters,
 #' \item \code{bic}, Bayesian Information Criterion, minus twice the maximized log-likelihood plus twice the number of parameters,
 #' \item \code{code}, a code that indicates successful convergence of the fitter function used (see nlm and optim helps),
-#' \item \code{converged},  logical value that indicates if the optimization algorithms succesfull,
-#' \item \code{method}, the name of the fitter function used.
+#' \item \code{converged},  logical value that indicates if the optimization algorithms succesfull.
 #' }
 #' 
 #' Generic functions:
 #'
 #' \itemize{
-#' \item \code{print}: The print of a \code{'fitebw'} object shows the ML parameter estimates and their standard errors in parenthesis.
+#' \item \code{print}: The print of a \code{'fitEBW'} object shows the ML parameter estimates and their standard errors in parenthesis.
 #' \item \code{summary}: The summary provides the ML parameter estimates, their standard errors and the statistic and p-value of the Wald test to check if the parameters are significant.
 #' This summary also shows the loglikelihood, AIC and BIC values, as well as the results for the chi-squared goodness-of-fit test and the Kolmogorov-Smirnov test for discrete variables. Finally, the correlation matrix between parameter estimates appears.
-#' \item \code{coef}: It extracts the fitted coefficients from a \code{'fitebw'} object.
-#' \item \code{logLik}: It extracts the estimated log-likelihood from a \code{'fitebw'} object.
-#' \item \code{AIC}: It extracts the value of the Akaike Information Criterion from a \code{'fitebw'} object.
-#' \item \code{BIC}: It extracts the value of the Bayesian Information Criterion from a \code{'fitebw'} object.
-#' \item \code{plot}: It shows the plot of a \code{'fitebw'} object. Observed and theoretical probabitilies, empirical and theoretical cumulative distribution functions or empirical cumulative probabilities against theoretical cumulative probabilities are the three plot types.
+#' \item \code{coef}: It extracts the fitted coefficients from a \code{'fitEBW'} object.
+#' \item \code{logLik}: It extracts the estimated log-likelihood from a \code{'fitEBW'} object.
+#' \item \code{AIC}: It extracts the value of the Akaike Information Criterion from a \code{'fitEBW'} object.
+#' \item \code{BIC}: It extracts the value of the Bayesian Information Criterion from a \code{'fitEBW'} object.
+#' \item \code{plot}: It shows the plot of a \code{'fitEBW'} object. Observed and theoretical probabilities, empirical and theoretical cumulative distribution functions or empirical cumulative probabilities against theoretical cumulative probabilities are the three plot types.
 #' }
 #' 
 #' @importFrom stats nlm optim coef runif var
@@ -499,7 +506,10 @@ fitcbp <- function(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", moments
 #'  
 #' 
 #' @seealso
+#' Plot of observed and theoretical frequencies for a EBW fit: \code{\link{plot.fitEBW}}
+#' 
 #' Maximum-likelihood fitting for the CTP distribution: \code{\link{fitctp}}.
+#' 
 #' Maximum-likelihood fitting for the CBP distribution: \code{\link{fitcbp}}.
 #'
 #' @examples
@@ -886,12 +896,21 @@ print.summary.fitEBW <- function(x, digits = getOption("digits"), ...){
 
 #' Plot of observed and theoretical frequencies for a CBP fit
 #' 
-#' @param x An object of class \code{'fitcbp'}
+#' @param x An object of class \code{'fitCBP'}
 #' @param plty Plot type to be shown. Default is \code{"FREQ"} which shows the observed and theoretical frequencies for each value of the variable; \code{"CDF"} and \code{"PP"} are also available for plotting the empirical and theoretical cumulative distribution functions or the theoretical cumulative probabilities against the empirical cumulative probabilities, respectively.
 #' @param maxValue maxValue you want to appear in the plot
 #' @param ...  Additional parameters.
 #' @importFrom graphics abline legend plot points segments
 #' @method plot fitCBP
+#' 
+#' @examples 
+#' set.seed(123)
+#' x <- rcbp(500, 1.75, 3.5)
+#' fit <- fitcbp(x)
+#' plot(fit)
+#' plot(fit, plty = "CDF")
+#' plot(fit, plty = "PP")
+#'  
 #' @export
 plot.fitCBP <- function(x, plty = "FREQ", maxValue = NULL, ...){
   if (!("fitCBP" %in% class(x))){ 
@@ -948,12 +967,21 @@ plot.fitCBP <- function(x, plty = "FREQ", maxValue = NULL, ...){
 
 #' Plot of observed and theoretical frequencies for a CTP fit
 #' 
-#' @param x An object of class \code{'fitctp'}
+#' @param x An object of class \code{'fitCTP'}
 #' @param plty Plot type to be shown. Default is \code{"FREQ"} which shows the observed and theoretical frequencies for each value of the variable; \code{"CDF"} and \code{"PP"} are also available for plotting the empirical and theoretical cumulative distribution functions or the theoretical cumulative probabilities against the empirical cumulative probabilities, respectively.
 #' @param maxValue maxValue you want to appear in the plot
 #' @param ...  Additional parameters.
 #' @importFrom graphics abline legend plot points segments
 #' @method plot fitCTP
+#' 
+#' @examples 
+#' set.seed(123)
+#' x <- rctp(500, -0.5, 1, 2)
+#' fit <- fitctp(x)
+#' plot(fit)
+#' plot(fit, plty = "CDF")
+#' plot(fit, plty = "PP")
+#' 
 #' @export
 plot.fitCTP <- function(x, plty = "FREQ", maxValue = NULL, ...){
   if (!("fitCTP" %in% class(x))){ 
@@ -1009,12 +1037,21 @@ plot.fitCTP <- function(x, plty = "FREQ", maxValue = NULL, ...){
 
 #' Plot of observed and theoretical frequencies for a EBW fit
 #' 
-#' @param x An object of class \code{'fitebw'}
+#' @param x An object of class \code{'fitEBW'}
 #' @param plty Plot type to be shown. Default is \code{"FREQ"} which shows the observed and theoretical frequencies for each value of the variable; \code{"CDF"} and \code{"PP"} are also available for plotting the empirical and theoretical cumulative distribution functions or the theoretical cumulative probabilities against the empirical cumulative probabilities, respectively.
 #' @param maxValue maxValue you want to appear in the plot
 #' @param ...  Additional parameters.
 #' @importFrom graphics abline legend plot points segments
 #' @method plot fitEBW
+#' 
+#' @examples 
+#' set.seed(123)
+#' x <- rebw(500, -0.25, 1)
+#' fit <- fitebw(x)
+#' plot(fit)
+#' plot(fit, plty = "CDF")
+#' plot(fit, plty = "PP")
+#' 
 #' @export
 plot.fitEBW <- function(x, plty = "FREQ", maxValue = NULL, ...){
   if (!("fitEBW" %in% class(x))){ 

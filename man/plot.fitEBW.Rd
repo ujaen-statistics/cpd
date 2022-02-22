@@ -7,7 +7,7 @@
 \method{plot}{fitEBW}(x, plty = "FREQ", maxValue = NULL, ...)
 }
 \arguments{
-\item{x}{An object of class \code{'fitebw'}}
+\item{x}{An object of class \code{'fitEBW'}}
 
 \item{plty}{Plot type to be shown. Default is \code{"FREQ"} which shows the observed and theoretical frequencies for each value of the variable; \code{"CDF"} and \code{"PP"} are also available for plotting the empirical and theoretical cumulative distribution functions or the theoretical cumulative probabilities against the empirical cumulative probabilities, respectively.}
 
@@ -17,4 +17,13 @@
 }
 \description{
 Plot of observed and theoretical frequencies for a EBW fit
+}
+\examples{
+set.seed(123)
+x <- rebw(500, -0.25, 1)
+fit <- fitebw(x)
+plot(fit)
+plot(fit, plty = "CDF")
+plot(fit, plty = "PP")
+
 }

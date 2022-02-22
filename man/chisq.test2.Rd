@@ -14,7 +14,7 @@ chisq.test2(obs, p.esp, npar = NULL, grouping = FALSE)
 \item{npar}{an integer specifying the number of parameters of the model. By default \code{npar} is \code{NULL}, so the degrees of freedom of
 the chi-squared statistics are the number of classes minus 1.}
 
-\item{grouping}{a logical indicating whether to group in classes with expected frequency greather or equal to 5. By default \code{grouping} is \code{FALSE}.}
+\item{grouping}{a logical indicating whether to group in classes with expected frequency greather than or equal to 5. By default \code{grouping} is \code{FALSE}.}
 }
 \value{
 A list with class \code{"htest"} containing the following components:
@@ -42,5 +42,6 @@ p.esp <- c(dctp(0:(length(obs)-1),fit$coefficients[1],fit$coefficients[2],
            fit$coefficients[3])[1:(length(obs)-1)],1-sum(dctp(0:(length(obs)-1),
            fit$coefficients[1],fit$coefficients[2],fit$coefficients[3])[1:(length(obs)-1)]))
 chisq.test2(obs, p.esp)
-
+chisq.test2(obs, p.esp, grouping = TRUE)
+chisq.test2(obs, npar= 3, p.esp)
 }
