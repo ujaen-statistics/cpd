@@ -1,5 +1,5 @@
 #' @rdname ctp
-#' @importFrom fAsianOptions cgamma
+#' @importFrom hypergeo complex_gamma
 #' @export
 #'
 #' @examples
@@ -29,7 +29,7 @@ qctp <- function(p, a, b, gamma, lower.tail = TRUE ){
   n=length(p)
   result<-vector(mode="numeric",length=n)
 
-  lf0 <- 2 * Re(cgamma(gamma - a + b * icomplex, log = TRUE)) - lgamma(gamma) - lgamma(gamma - 2 * a)
+  lf0 <- 2 * Re(complex_gamma(gamma - a + b * icomplex, log = TRUE)) - lgamma(gamma) - lgamma(gamma - 2 * a)
   pmfAux<-exp(lf0)
   i=1
   Fd <-c(pmfAux)
@@ -73,7 +73,7 @@ qctp <- function(p, a, b, gamma, lower.tail = TRUE ){
 
 
 #' @rdname cbp
-#' @importFrom fAsianOptions cgamma
+#' @importFrom hypergeo complex_gamma
 #' @export
 #'
 #' @examples
@@ -103,7 +103,7 @@ qcbp <- function(p, b, gamma, lower.tail = TRUE)  {
   n=length(p)
   result<-vector(mode="numeric",length=n)
 
-  lf0 <- 2 * Re(cgamma(gamma  + b * icomplex, log = TRUE)) - lgamma(gamma) - lgamma(gamma )
+  lf0 <- 2 * Re(complex_gamma(gamma  + b * icomplex, log = TRUE)) - lgamma(gamma) - lgamma(gamma )
   pmfAux<-exp(lf0)
   i=1
   Fd <-c(pmfAux)
@@ -145,14 +145,12 @@ qcbp <- function(p, b, gamma, lower.tail = TRUE)  {
 }
 
 #' @rdname ebw
-#' @importFrom fAsianOptions cgamma
+#' @importFrom hypergeo complex_gamma
 #' @export
 #'
 #'
 #' @examples
-#' # Examples for the function qebw
-#' qebw(0.5,-2.1,gamma=0.1)
-#' qebw(c(.8,.9),-2.1,gamma=0.1)
+#' # Examples for the function pcbp
 #' qebw(0.5,2,rho=5)
 #' qebw(c(.8,.9),2,rho=5)
 #' 

@@ -1,5 +1,5 @@
 #' @rdname ctp
-#' @importFrom fAsianOptions cgamma
+#' @importFrom hypergeo complex_gamma
 #' @export
 #'
 #' @examples
@@ -24,7 +24,7 @@ pctp <- function(q, a, b, gamma, lower.tail = TRUE) {
       maxX=q[i]
   }
   icomplex <- sqrt(as.complex(-1))
-  lf0 <- 2 * Re(cgamma(gamma - a + b * icomplex, log = TRUE)) - lgamma(gamma) - lgamma(gamma - 2 * a)
+  lf0 <- 2 * Re(complex_gamma(gamma - a + b * icomplex, log = TRUE)) - lgamma(gamma) - lgamma(gamma - 2 * a)
   pmfAux<-exp(lf0)
   i=1
   Fd <-c(pmfAux)
@@ -52,7 +52,7 @@ pctp <- function(q, a, b, gamma, lower.tail = TRUE) {
 }
 
 #' @rdname cbp
-#' @importFrom fAsianOptions cgamma
+#' @importFrom hypergeo complex_gamma
 #' @export
 #'
 #'
@@ -78,7 +78,7 @@ pcbp <- function(q, b, gamma, lower.tail = TRUE ) {
       maxX=q[i]
   }
   icomplex <- sqrt(as.complex(-1))
-  lf0 <- 2 * ( Re(cgamma(gamma  + b * icomplex, log = TRUE)) - lgamma(gamma))
+  lf0 <- 2 * ( Re(complex_gamma(gamma  + b * icomplex, log = TRUE)) - lgamma(gamma))
   pmfAux<-exp(lf0)
   i=1
   Fd <-c(pmfAux)
@@ -105,12 +105,12 @@ pcbp <- function(q, b, gamma, lower.tail = TRUE ) {
 }
 
 #' @rdname ebw
-#' @importFrom fAsianOptions cgamma
+#' @importFrom hypergeo complex_gamma
 #' @export
 #'
 #'
 #' @examples
-#' # Examples for the function pebw
+#' # Examples for the function pcbp
 #' pebw(3,2,rho=5)
 #' pebw(c(3,4),2,rho=5)
 #' 

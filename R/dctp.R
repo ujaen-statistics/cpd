@@ -23,7 +23,6 @@
 #' the normalizing constant.
 #' 
 #' If \eqn{a=0} the CTP is a Complex Biparametric Pearson (CBP) distribution, so the pmf of the CBP distribution is obtained.
-#' If \eqn{b=0} the CTP is an Extended Biparametric Waring (EBW) distribution, so the pmf of the EBW distribution is obtained.
 #'
 #' The mean and the variance of the CTP distribution are
 #' \eqn{E(X)=\mu=(a^2+b^2)/(\gamma-2a-1)} and \eqn{Var(X)=\mu(\mu+\gamma-1)/(\gamma-2a-2)}
@@ -36,7 +35,6 @@
 #' \code{dctp} gives the pmf, \code{pctp} gives the distribution function, \code{qctp} gives the quantile function and \code{rctp} generates random values.
 #'
 #' If \eqn{a = 0} the probability mass function, distribution function, quantile function and random generation function for the CBP distribution arise.
-#' If \eqn{b = 0} the probability mass function, distribution function, quantile function and random generation function for the EBW distribution arise.
 #'
 #' @references 
 #' \insertRef{RCS2003}{cpd}
@@ -44,11 +42,9 @@
 #' \insertRef{RCSO2004}{cpd}
 #' 
 #' \insertRef{ROC2018}{cpd}
-#' 
-#' \insertRef{COR2021}{cpd}
 #'
 #' @seealso
-#' Functions for maximum-likelihood fitting of the CTP, CBP and EBW distributions: \code{\link{fitctp}}, \code{\link{fitcbp}} and \code{\link{fitebw}}.
+#' Functions for maximum-likelihood fitting of the CTP and CBP distributions: \code{\link{fitctp}} and \code{\link{fitcbp}}.
 #'
 #' @examples
 #' # Examples for the function dctp
@@ -58,7 +54,7 @@
 #' @name ctp
 #'
 #' @rdname ctp
-#' @importFrom fAsianOptions cgamma
+#' @importFrom hypergeo complex_gamma
 #' @export
 #'
 dctp <- function(x, a, b, gamma) {
@@ -85,7 +81,7 @@ dctp <- function(x, a, b, gamma) {
      lpmf<-2*(lgamma(gamma-a)+lgamma(x+a)-lgamma(a))-lgamma(gamma-2*a)-lgamma(gamma+x)-lgamma(x+1)
   } else {
      i <- sqrt(as.complex(-1))
-     lpmf<-Re(cgamma(gamma-a-b*i,log=TRUE)+cgamma(gamma-a+b*i,log=TRUE)+cgamma(x+a+b*i,log=TRUE)+cgamma(x+a-b*i,log=TRUE)) -lgamma(gamma-2*a)-Re(cgamma(a+b*i,log=TRUE)+cgamma(a-b*i,log=TRUE))-lgamma(gamma+x)-lgamma(x+1)
+     lpmf<-Re(complex_gamma(gamma-a-b*i,log=TRUE)+complex_gamma(gamma-a+b*i,log=TRUE)+complex_gamma(x+a+b*i,log=TRUE)+complex_gamma(x+a-b*i,log=TRUE)) -lgamma(gamma-2*a)-Re(complex_gamma(a+b*i,log=TRUE)+complex_gamma(a-b*i,log=TRUE))-lgamma(gamma+x)-lgamma(x+1)
   }
   result <- exp(lpmf)
   for (i in 1:length(errors)){
@@ -145,7 +141,7 @@ dctp <- function(x, a, b, gamma) {
 #' @name cbp
 #'
 #' @rdname cbp
-#' @importFrom fAsianOptions cgamma
+#' @importFrom hypergeo complex_gamma
 #' @export
 #'
 #'
@@ -174,7 +170,7 @@ dcbp <- function(x, b, gamma) {
     lpmf<-2*(lgamma(gamma)+lgamma(x))-lgamma(gamma)-lgamma(gamma+x)-lgamma(x+1)
   } else {
     i <- sqrt(as.complex(-1))
-    lpmf<-Re(cgamma(gamma-b*i,log=TRUE)+cgamma(gamma+b*i,log=TRUE)+cgamma(x+b*i,log=TRUE)+cgamma(x-b*i,log=TRUE)) -lgamma(gamma)-Re(cgamma(b*i,log=TRUE)+cgamma(b*i,log=TRUE))-lgamma(gamma+x)-lgamma(x+1)
+    lpmf<-Re(complex_gamma(gamma-b*i,log=TRUE)+complex_gamma(gamma+b*i,log=TRUE)+complex_gamma(x+b*i,log=TRUE)+complex_gamma(x-b*i,log=TRUE)) -lgamma(gamma)-Re(complex_gamma(b*i,log=TRUE)+complex_gamma(b*i,log=TRUE))-lgamma(gamma+x)-lgamma(x+1)
   }
   result <- exp(lpmf)
   for (i in 1:length(errors)){
@@ -184,10 +180,10 @@ dcbp <- function(x, b, gamma) {
 }
 
 
-#' The Extended Biparametric Waring (EBW) Distribution
+#' The Extended Biparametric Waring (EBW) Distribution COMPLETAR
 #'
 #' @description
-#' Probability mass function, distribution function, quantile function and random generation for the Extended Biparametric Waring (EBW) distribution with parameters \eqn{\alpha} and \eqn{\gamma} (or \eqn{\rho}). 
+#' Probability mass function, distribution function, quantile function and random generation for the Complex Triparametric Pearson (CTP) distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}. 
 #'
 #' @usage
 #' debw(x, alpha, gamma, rho)
@@ -197,36 +193,31 @@ dcbp <- function(x, b, gamma) {
 #' @param p vector of probabilities.
 #' @param n number of observations. If \code{length(n) > 1}, the length is taken to be the number required.
 #' @param alpha parameter alpha (real)
-#' @param rho parameter rho (positive)
+#' @param rho parameter rho (real)
 #' @param gamma parameter \eqn{\gamma} (positive)
 #' @param lower.tail if TRUE (default), probabilities are \eqn{P(X<=x)}, otherwise, \eqn{P(X>x)}.
 #'
 #' @details
-#' The EBW distribution with parameters \eqn{\alpha} and \eqn{\gamma} has pmf
-#' \deqn{f(x|a,\alpha,\gamma) = C \Gamma(\alpha+x)^2 / (\Gamma(\gamma+x) x!), x=0,1,2,...} 
-#' where \eqn{\Gamma(·)} is the gamma function and 
-#' \deqn{C = \Gamma(\gamma-\alpha^2 / (\Gamma(\alpha)^2 \Gamma(\gamma-2a))}
+#' The CTP distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma} has pmf
+#' \deqn{f(x|a,b,\gamma) = C \Gamma(a+ib+x) \Gamma(a-ib+x) / (\Gamma(\gamma+x) x!), x=0,1,2,...} 
+#' where \eqn{i} is the imaginary unit, \eqn{\Gamma(·)} the gamma function and 
+#' \deqn{C = \Gamma(\gamma-a-ib) \Gamma(\gamma-a+ib) / (\Gamma(\gamma-2a) \Gamma(a+ib) \Gamma(a-ib))}
 #' the normalizing constant.
 #' 
-#' There is an alternative parametrization in terms of \eqn{\alpha} and \eqn{\rho=\gamma-2\alpha>0} 
-#' when \eqn{\alpha>0}. So, introduce only \eqn{\alpha} and \eqn{\gamma} or \eqn{\alpha} and \eqn{\rho},
-#' depending on the parametrization you wish to use.
-#' 
-#' 
-#' The mean and the variance of the EBW distribution are
-#' \eqn{E(X)=\mu=\alpha^2/(\gamma-2\alpha-1)} and \eqn{Var(X)=\mu(\mu+\gamma-1)/(\gamma-2a-2)}
+#' If \eqn{a=0} the CTP is a Complex Biparametric Pearson (CBP) distribution, so the pmf of the CBP distribution is obtained.
+#'
+#' The mean and the variance of the CTP distribution are
+#' \eqn{E(X)=\mu=(a^2+b^2)/(\gamma-2a-1)} and \eqn{Var(X)=\mu(\mu+\gamma-1)/(\gamma-2a-2)}
 #' so \eqn{\gamma > 2a + 2}.
 #'
 #' It is underdispersed if \eqn{a < - (\mu + 1) / 2}, equidispersed if \eqn{a = - (\mu + 1) / 2} or overdispersed
-#' if \eqn{a > - (\mu + 1) / 2}. In particular, if \eqn{a >= 0} the EBW is always overdispersed.
+#' if \eqn{a > - (\mu + 1) / 2}. In particular, if \eqn{a >= 0} the CTP is always overdispersed.
 #'
 #' @return 
-#' \code{debw} gives the pmf, \code{pebw} gives the distribution function, \code{qebw} gives the quantile function and \code{rebw} generates random values.
+#' \code{dctp} gives the pmf, \code{pctp} gives the distribution function, \code{qctp} gives the quantile function and \code{rctp} generates random values.
 #'
-#' If \eqn{\alpha > 0} the probability mass function, distribution function, quantile function and random generation function for the UGW\eqn{(\alpha,\alpha,\rho)} distribution arise.
-#' 
-#' If \eqn{\alpha < 0} the probability mass function, distribution function, quantile function and random generation function for the CTP\eqn{(\alpha,0,\gamma)} distribution arise.
-#' 
+#' If \eqn{a = 0} the probability mass function, distribution function, quantile function and random generation function for the CBP distribution arise.
+#'
 #' @references 
 #' \insertRef{RCS2003}{cpd}
 #' 
@@ -245,7 +236,7 @@ dcbp <- function(x, b, gamma) {
 #' @name ebw
 #'
 #' @rdname ebw
-#' @importFrom fAsianOptions cgamma
+#' @importFrom hypergeo complex_gamma
 #' @export
 #'
 

@@ -1,5 +1,5 @@
 #' @rdname ctp
-#' @importFrom fAsianOptions cgamma
+#' @importFrom hypergeo complex_gamma
 #' @export
 #'
 #' @examples
@@ -20,7 +20,7 @@ rctp<-function(n, a, b, gamma){
   maxRandoms <- max(randoms)
   result<-vector(mode="numeric",length=n)
 
-  lf0 <- 2 * Re(cgamma(gamma - a + b * icomplex, log = TRUE)) - lgamma(gamma) - lgamma(gamma - 2 * a)
+  lf0 <- 2 * Re(complex_gamma(gamma - a + b * icomplex, log = TRUE)) - lgamma(gamma) - lgamma(gamma - 2 * a)
   pmfAux<-exp(lf0)
   i=1
   Fd <-c(pmfAux)
@@ -51,7 +51,7 @@ rctp<-function(n, a, b, gamma){
 
 
 #' @rdname cbp
-#' @importFrom fAsianOptions cgamma
+#' @importFrom hypergeo complex_gamma
 #' @export
 #'
 #' @examples
@@ -72,7 +72,7 @@ rcbp<-function(n, b, gamma){
   maxRandoms <- max(randoms)
   result<-vector(mode="numeric",length=n)
 
-  lf0 <- 2 * Re(cgamma(gamma + b * icomplex, log = TRUE)) - lgamma(gamma) - lgamma(gamma)
+  lf0 <- 2 * Re(complex_gamma(gamma + b * icomplex, log = TRUE)) - lgamma(gamma) - lgamma(gamma)
   pmfAux<-exp(lf0)
   i=1
   Fd <-c(pmfAux)
@@ -105,14 +105,14 @@ rcbp<-function(n, b, gamma){
 
 
 #' @rdname ebw
-#' @importFrom fAsianOptions cgamma
+#' @importFrom hypergeo complex_gamma
 #' @export
 #'
 #'
 #' @examples
 #' # Examples for the function rebw
 #' rebw(4,2,rho=5)
-#' rebw(4,-2.1,gamma=5)
+
 #' 
 
 rebw <- function(n,alpha,gamma,rho, lower.tail = TRUE ) {

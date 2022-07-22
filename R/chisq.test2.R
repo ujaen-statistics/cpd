@@ -5,7 +5,7 @@
 #' @param p.esp a numeric vector with the expected probabilities of the same length of \code{obs}. They must sum 1.
 #' @param npar an integer specifying the number of parameters of the model. By default \code{npar} is \code{NULL}, so the degrees of freedom of
 #' the chi-squared statistics are the number of classes minus 1.
-#' @param grouping a logical indicating whether to group in classes with expected frequency greather than or equal to 5. By default \code{grouping} is \code{FALSE}.
+#' @param grouping a logical indicating whether to group in classes with expected frequency greather or equal to 5. By default \code{grouping} is \code{FALSE}.
 #' @return A list with class \code{"htest"} containing the following components:
 #' \itemize{
 #' \item \code{statistic}: the value of the chi-squared test statistic.
@@ -30,8 +30,8 @@
 #'            fit$coefficients[3])[1:(length(obs)-1)],1-sum(dctp(0:(length(obs)-1),
 #'            fit$coefficients[1],fit$coefficients[2],fit$coefficients[3])[1:(length(obs)-1)]))
 #' chisq.test2(obs, p.esp)
-#' chisq.test2(obs, p.esp, grouping = TRUE)
-#' chisq.test2(obs, npar= 3, p.esp)
+#' 
+
 
 chisq.test2 <- function (obs, p.esp, npar = NULL, grouping = FALSE) {
   
@@ -97,7 +97,7 @@ chisq.test2 <- function (obs, p.esp, npar = NULL, grouping = FALSE) {
   
   names(DF) <- "df"
   
-  if (any(esp < 5) && is.finite(DF) && isFALSE(grouping)) 
+  if (any(esp < 5) && is.finite(DF)) 
     warning("Chi-squared approximation may be incorrect (expected frequencies less than 5)")
   
   ans <- list(statistic = STATISTIC, df = DF, p.value = PVALUE, observed = obs, observed.grouped = nobs,
