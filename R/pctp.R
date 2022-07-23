@@ -110,7 +110,7 @@ pcbp <- function(q, b, gamma, lower.tail = TRUE ) {
 #'
 #'
 #' @examples
-#' # Examples for the function pcbp
+#' # Examples for the function pebw
 #' pebw(3,2,rho=5)
 #' pebw(c(3,4),2,rho=5)
 #' 
