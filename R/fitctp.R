@@ -81,7 +81,12 @@ fitctp <- function(x, astart = NULL, bstart = NULL, gammastart = NULL,
 
   if( is.null(control$trace) )
     control$trace <- 0
-
+  if( is.null(control$warn) )
+    control$warn <- -2
+  #set warning level
+  defWarn <- getOption("warn")
+  options(warn=control$warn)
+  
   if ( !is.numeric(control$maxit) || control$maxit <= 0 )
     stop( "maximum number of iterations must be > 0" )
   
@@ -228,6 +233,8 @@ fitctp <- function(x, astart = NULL, bstart = NULL, gammastart = NULL,
     results$converged<-FALSE
     results$n<-nrow(x)
   }
+  #restore warning level
+  options(warn=defWarn)
   class(results) <- "fitCTP"
   results
 }
@@ -314,7 +321,12 @@ fitcbp <- function(x, bstart = NULL, gammastart = NULL,
 
   if( is.null(control$trace) )
     control$trace <- 0
-
+  if( is.null(control$warn) )
+    control$warn <- -2
+  #set warning level
+  defWarn <- getOption("warn")
+  options(warn=control$warn)
+  
   if ( !is.numeric(control$maxit) || control$maxit <= 0 )
     stop( "maximum number of iterations must be > 0" )
   
@@ -448,6 +460,8 @@ fitcbp <- function(x, bstart = NULL, gammastart = NULL,
     results$converged<-FALSE
     results$n<-nrow(x)
   }
+  #restore warning level
+  options(warn=defWarn)
   class(results) <- "fitCBP"
   results
 }
@@ -539,6 +553,11 @@ fitebw <- function(x, alphastart = NULL, rhostart = NULL, gammastart = NULL,
   if( is.null(control$trace) )
     control$trace = 0
   if( is.null(control$warn) )
+    control$warn <- -2
+  #set warning level
+  defWarn <- getOption("warn")
+  options(warn=control$warn)
+  
   if ( !is.numeric(control$maxit) || control$maxit <= 0 )
     stop( "maximum number of iterations must be > 0" )
   
@@ -775,7 +794,9 @@ else{
     		)
   	  }
     }
-  }					
+  }
+  #restore warning level
+  options(warn=defWarn)
   class(results)<-"fitEBW"
   return(results)
 }
