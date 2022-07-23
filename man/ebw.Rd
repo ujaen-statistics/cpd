@@ -34,7 +34,7 @@ rebw(n, alpha, gamma, rho, lower.tail = TRUE)
 \item{n}{number of observations. If \code{length(n) > 1}, the length is taken to be the number required.}
 }
 \value{
-\code{debw} gives the pmf, \code{pebw} gives the distribution function, \code{qebw} gives the quantile function and \code{rebw} generates random values.
+\code{debw} gives the pmf, \code{pebw} gives the distribution function, \code{qebw} gives the quantile function and \code{rebw} generates random values.																																	
 
 If \eqn{\alpha > 0} the probability mass function, distribution function, quantile function and random generation function for the UGW\eqn{(\alpha,\alpha,\rho)} distribution arise.
 

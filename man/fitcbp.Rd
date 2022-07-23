@@ -4,21 +4,16 @@
 \alias{fitcbp}
 \title{Maximum-likelihood fitting of the CBP distribution}
 \usage{
-fitcbp(x, bstart = 1, gammastart = 1.1, method = "L-BFGS-B", 
-       moments = FALSE, hessian = TRUE, control = list(), ...)
+fitcbp(x, bstart = NULL, gammastart = NULL, method = "L-BFGS-B", control = list(), ...)
 }
 \arguments{
 \item{x}{A numeric vector of length at least one containing only finite values.}
 
-\item{bstart}{A starting value for the parameter \eqn{b}; by default 1.}
+\item{bstart}{A starting value for the parameter \eqn{b}; by default NULL.}
 
-\item{gammastart}{A starting value for the parameter \eqn{\gamma}; by default 1.1.}
+\item{gammastart}{A starting value for the parameter \eqn{\gamma}; by default NULL.}
 
 \item{method}{The method to be used in fitting the model. The default method is "L-BFGS-B" (see details in \code{\link{optim}} function).}
-
-\item{moments}{If \code{TRUE} the estimates of \eqn{b} and \eqn{\gamma} by the method of moments are used as starting values (if it is posible). By default this argument is \code{FALSE}.}
-
-\item{hessian}{If \code{TRUE} the hessian of the objective function at the minimum is returned.}
 
 \item{control}{A list of parameters for controlling the fitting process.}
 
@@ -65,7 +60,6 @@ set.seed(123)
 x <- rcbp(500, 1.75, 3.5)
 fitcbp(x)
 fitcbp(x, bstart = 1.1, gammastart = 3)
-fitcbp(x, moments = TRUE)
 }
 \references{
 \insertRef{RCS2003}{cpd}

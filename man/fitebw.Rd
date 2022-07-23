@@ -4,23 +4,21 @@
 \alias{fitebw}
 \title{Maximum-likelihood fitting of the EBW distribution}
 \usage{
-fitebw(x, alphastart = NULL, gammastart = NULL, rhostart = NULL,
-          moments = TRUE, hessian = TRUE, control = list(),...)
+fitebw(x, alphastart = NULL, rhostart = NULL, gammastart = NULL, 
+          method = "L-BFGS-B", control = list(),...)
 }
 \arguments{
 \item{x}{A numeric vector of length at least one containing only finite values.}
 
 \item{alphastart}{A starting value for the parameter \eqn{\alpha}; by default \code{NULL}.}
 
-\item{gammastart}{A starting value for the parameter \eqn{\gamma}; by default \code{NULL}.}
-
-\item{rhostart}{A starting value for the parameter \eqn{\rho}; by default \code{NULL}.}
-
-\item{moments}{The starting values for the parameters are those obtained from the method of moments; by default \code{TRUE}.
+\item{rhostart}{A starting value for the parameter \eqn{\rho}; by default \code{NULL}.
 If the starting value for \eqn{\alpha > 0}, the parametrization \eqn{(\alpha,\rho)} is used; otherwise,
 the parametrization \eqn{(\alpha,\gamma)} is used.}
 
-\item{hessian}{If \code{TRUE} the hessian of the objective function at the minimum is returned.}
+\item{gammastart}{A starting value for the parameter \eqn{\gamma}; by default \code{NULL}.}
+
+\item{method}{The method to be used in fitting the model. The default method is "L-BFGS-B" (optim).}
 
 \item{control}{A list of parameters for controlling the fitting process.}
 
@@ -42,6 +40,7 @@ An object of class \code{'fitEBW'} is a list containing the following components
 \item \code{bic}, Bayesian Information Criterion, minus twice the maximized log-likelihood plus twice the number of parameters,
 \item \code{code}, a code that indicates successful convergence of the fitter function used (see nlm and optim helps),
 \item \code{converged},  logical value that indicates if the optimization algorithms succesfull.
+\item \code{method}, the name of the fitter function used.
 }
 
 Generic functions:
@@ -66,7 +65,7 @@ model is "L-BFGS-B" which allows constraints for each variable (see details in \
 set.seed(123)
 x <- rebw(500, 2, rho = 5)
 fitebw(x)
-fitebw(x, alphastart = 1, rhostart = 5, moments = FALSE)
+fitebw(x, alphastart = 1, rhostart = 5)
 }
 \references{
 \insertRef{COR2021}{cpd}
