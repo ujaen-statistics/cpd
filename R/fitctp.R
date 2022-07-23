@@ -1,23 +1,22 @@
-#' Maximum-likelihood fitting of the Complex Triparametric Pearson (CTP) distribution
+#' Maximum-likelihood fitting of the CTP distribution
 #'
 #' @description
 #' Maximum-likelihood fitting of the Complex Triparametric Pearson (CTP) distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}. Generic
 #' methods are \code{print}, \code{summary}, \code{coef}, \code{logLik}, \code{AIC}, \code{BIC} and \code{plot}. 
 #'
 #' @usage
-#' fitctp(x, astart = NULL, bstart = NULL, gammastart = NULL, method = "L-BFGS-B", 
-#'        hessian = TRUE, control = list(), ...)
+#' fitctp(x, astart = NULL, bstart = NULL, gammastart = NULL, 
+#'           method = "L-BFGS-B", control = list(), ...)
 #'        
 #' @param x A numeric vector of length at least one containing only finite values.
-#' @param astart An starting value for the parameter \eqn{a}; by default NULL.
-#' @param bstart An starting value for the parameter \eqn{b}; by default NULL.
-#' @param gammastart An starting value for the parameter \eqn{\gamma}; by default NULL.
-#' @param method The method to be used in fitting the model. The default method is "L-BFGS-B" (optim).
-#' @param hessian If \code{TRUE} the hessian of the objective function at the minimum is returned.
+#' @param astart A starting value for the parameter \eqn{a}; by default NULL.
+#' @param bstart A starting value for the parameter \eqn{b}; by default NULL.
+#' @param gammastart A starting value for the parameter \eqn{\gamma}; by default NULL.
+#' @param method The method to be used in fitting the model. The default method is "L-BFGS-B" (see details in \code{\link{optim}} function).
 #' @param control A list of parameters for controlling the fitting process.
 #' @param ...  Additional parameters.
 #'
-#' @return An object of class "fitctp" is a list containing the following components:
+#' @return An object of class \code{'fitCTP'} is a list containing the following components:
 #'
 #' \itemize{
 #' \item \code{n}, the number of observations,
@@ -38,14 +37,14 @@
 #' Generic functions:
 #'
 #' \itemize{
-#' \item \code{print}: The print of a \code{'fitctp'} object shows the ML parameter estimates and their standard errors in parenthesis.
+#' \item \code{print}: The print of a \code{'fitCTP'} object shows the ML parameter estimates and their standard errors in parenthesis.
 #' \item \code{summary}: The summary provides the ML parameter estimates, their standard errors and the statistic and p-value of the Wald test to check if the parameters are significant.
 #' This summary also shows the loglikelihood, AIC and BIC values, as well as the results for the chi-squared goodness-of-fit test and the Kolmogorov-Smirnov test for discrete variables. Finally, the correlation matrix between parameter estimates appears.
-#' \item \code{coef}: It extracts the fitted coefficients from a \code{'fitctp'} object.
-#' \item \code{logLik}: It extracts the estimated log-likelihood from a \code{'fitctp'} object.
-#' \item \code{AIC}: It extracts the value of the Akaike Information Criterion from a \code{'fitctp'} object.
-#' \item \code{BIC}: It extracts the value of the Bayesian Information Criterion from a \code{'fitctp'} object.
-#' \item \code{plot}: It shows the plot of a \code{'fitctp'} object. Observed and theoretical probabitilies, empirical and theoretical cumulative distribution functions or empirical cumulative probabilities against theoretical cumulative probabilities are the three plot types.
+#' \item \code{coef}: It extracts the fitted coefficients from a \code{'fitCTP'} object.
+#' \item \code{logLik}: It extracts the estimated log-likelihood from a \code{'fitCTP'} object.
+#' \item \code{AIC}: It extracts the value of the Akaike Information Criterion from a \code{'fitCTP'} object.
+#' \item \code{BIC}: It extracts the value of the Bayesian Information Criterion from a \code{'fitCTP'} object.
+#' \item \code{plot}: It shows the plot of a \code{'fitCTP'} object. Observed and theoretical probabilities, empirical and theoretical cumulative distribution functions or empirical cumulative probabilities against theoretical cumulative probabilities are the three plot types.
 #' }
 #' 
 #' @importFrom stats nlm optim coef runif
@@ -57,7 +56,11 @@
 #' \insertRef{ROC2018}{cpd}
 #' 
 #' @seealso
+#' Plot of observed and theoretical frequencies for a CTP fit: \code{\link{plot.fitCTP}}
+#' 
 #' Maximum-likelihood fitting for the CBP distribution: \code{\link{fitcbp}}.
+#' 
+#' Maximum-likelihood fitting for the EBW distribution: \code{\link{fitebw}}.
 #'
 #' @examples
 #' set.seed(123)
@@ -65,8 +68,8 @@
 #' fitctp(x)
 #' fitctp(x, astart = 1, bstart = 1.1, gammastart = 3)
 
-fitctp <- function(x, astart = NULL, bstart = NULL, gammastart = NULL, method = "L-BFGS-B", 
-                   hessian = TRUE, control = list(), ...)
+fitctp <- function(x, astart = NULL, bstart = NULL, gammastart = NULL, 
+                   method = "L-BFGS-B", control = list(), ...)
 {
 
   #Checking
@@ -99,7 +102,7 @@ fitctp <- function(x, astart = NULL, bstart = NULL, gammastart = NULL, method = 
     b <- matrix(c(0, -m2, -2 * m3 - m2), ncol = 1, nrow = 3)
 
     #Solve the system
-    sol <- try(solve(A)%*%b,silent=TRUE)
+    sol <- try(solve(A)%*%b,silent = TRUE)
     if ('try-error' %in% class(sol)){
       stop("The method of moments does not provide any estimates. Introduce initial values for the parameters.")
     }
@@ -120,111 +123,135 @@ fitctp <- function(x, astart = NULL, bstart = NULL, gammastart = NULL, method = 
   #Log-likelihood
   if (method != "L-BFGS-B") {
     logL <- function(p){
-            a <- p[1]
-            b <- p[2]
-            gama <- exp(p[3])
-            respuesta <- -sum(2*Re(complex_gamma(gama-a+b*i,log=TRUE)+log(complex_gamma(a+b*i+x))-log(complex_gamma(a+b*i)))-lgamma(gama-2*a)-lgamma(gama+x))
-            return(respuesta)
-      }
+      a <- p[1]
+      b <- p[2]
+      gama <- exp(p[3])
+      respuesta <- -sum(2*Re(complex_gamma(gama-a+b*i,log=TRUE)+log(complex_gamma(a+b*i+x))-log(complex_gamma(a+b*i)))-lgamma(gama-2*a)-lgamma(gama+x))
+      return(respuesta)
+    }
 
-      pstart <- c(astart,bstart,log(gammastart))
+    pstart <- c(astart,bstart,log(gammastart))
 
-    }else {
-      logL <- function(p){
-        a <- p[1]
-        b <- p[2]
-        gama <- p[3]
-        respuesta <- -sum(2*Re(complex_gamma(gama-a+b*i,log=TRUE)+log(complex_gamma(a+b*i+x))-log(complex_gamma(a+b*i)))-lgamma(gama-2*a)-lgamma(gama+x))
-        return(respuesta)
+  }else {
+    logL <- function(p){
+      a <- p[1]
+      b <- p[2]
+      gama <- p[3]
+      respuesta <- -sum(2*Re(complex_gamma(gama-a+b*i,log=TRUE)+log(complex_gamma(a+b*i+x))-log(complex_gamma(a+b*i)))-lgamma(gama-2*a)-lgamma(gama+x))
+      return(respuesta)
       }
 
       pstart <- c(astart,bstart,gammastart)
     }
 
   #Optimization process
-
+  converged<-FALSE
+  
   if (method == "nlm") {
-    fit <- nlm(logL, p = pstart, hessian = hessian, iterlim = control$maxit, print.level = control$trace)
-    fit$value <- fit$minimum
-    fit$par <- fit$estimate
-    fit$convergence <- fit$code
-    if (fit$convergence < 3)
-      fit$converged = TRUE
-    else fit$converged = FALSE
-    methodText = "nlm"
+    fit <- try(nlm(logL, p = pstart, hessian = TRUE, iterlim = control$maxit, print.level = control$trace))
+    if ('try-error' %in% class(fit)){
+      if (control$trace > 0) {
+        cat("Crashed 'nlm' initial fit", "\n")
+      }
+    }
+    else {
+      fit$value <- fit$minimum
+      fit$par <- fit$estimate
+      fit$convergence <- fit$code
+      if (fit$convergence < 3)
+        converged = TRUE
+      methodText = "nlm"
+    }
   }
   else if (any(method == c("Nelder-Mead", "BFGS", "CG", "SANN"))) {
-    fit <- optim(pstart, logL, method = method, hessian = hessian,
-                 control = list(maxit = control$maxit, trace = control$trace))
-    methodText <- method
-    if (fit$convergence == 0)
-      fit$converged = TRUE
-    else fit$converged = FALSE
+    fit <- try(optim(pstart, logL, method = method, hessian = TRUE,
+                 control = list(maxit = control$maxit, trace = control$trace)))
+    if ('try-error' %in% class(fit)){
+      if (control$trace > 0) {
+        cat(paste("Crashed '",method,"' initial fit",sep=","),"\n")
+      }
+    }
+    else {
+      methodText <- method
+      if (fit$convergence == 0)
+        converged = TRUE
+    }
   }
   else if (any(method == c("L-BFGS-B"))) {
-    fit<-optim(pstart, logL, method = method, lower = c(-Inf,0,0.0000001), upper = c(Inf,Inf,Inf), hessian = hessian, control = list(maxit = control$maxit, trace = control$trace))
-    methodText <- method
-    if (fit$convergence == 0)
-      fit$converged = TRUE
-    else fit$converged = FALSE
+    fit <- try(optim(pstart, logL, method = method, lower = c(-Inf,0,0.0000001), upper = c(Inf,Inf,Inf), hessian = TRUE, control = list(maxit = control$maxit, trace = control$trace)))
+    if ('try-error' %in% class(fit)){
+      if (control$trace > 0) {
+        cat(paste("Crashed '",method,"' initial fit",sep=","),"\n")
+      }
+    }
+    else {
+      methodText <- method
+      if (fit$convergence == 0)
+        converged<-TRUE
+    }
   }else{
     stop("Incorrect method")
   }
-
-  if (method != "L-BFGS-B") {
-    coef.table<-rbind(fit$par,deparse.level=0)
-    dimnames(coef.table)<-list("",c("a","b","log(gamma)"))
+  
+  if (converged){
+    if (method != "L-BFGS-B") {
+      coef.table <- rbind(fit$par, deparse.level = 0)
+      dimnames(coef.table) <- list("", c("a", "b", "log(gamma)"))
+    }
+    else {
+      coef.table <- rbind(fit$par, deparse.level = 0)
+      dimnames(coef.table) <- list("", c("a", "b", "gamma"))
+	}
+    
+    #Results
+    results <- list(
+      x = x,
+      n = length(x),
+      loglik = - (fit$value + sum(lfactorial(x))),
+      aic = 2 * (fit$value + sum(lfactorial(x))) + 6,
+      bic = 2 * (fit$value + sum(lfactorial(x))) + 2 * log(length(x)),
+      coefficients =  coef.table,
+      code = fit$convergence,
+      hessian = fit$hessian,
+      cov = solve(fit$hessian),
+      se = sqrt(diag(solve(fit$hessian))),
+      corr = solve(fit$hessian) / (sqrt(diag(solve(fit$hessian))) %o%
+                                     sqrt(diag(solve(fit$hessian)))),
+      code = fit$convergence,
+      converged = converged,
+      initialValues = c(astart, bstart, gammastart),
+      method = methodText
+    )
+  } else{
+    results<-list()
+    results$method<-methodText
+    results$converged<-FALSE
+    results$n<-nrow(x)
   }
-  else {
-    coef.table<-rbind(fit$par,deparse.level=0)
-    dimnames(coef.table)<-list("",c("a","b","gamma"))
-  }
-
-  #Results
-  results<-list(
-    x = x,
-    n=length(x),
-    loglik = -(fit$value+sum(lfactorial(x))),
-    aic = 2*(fit$value+sum(lfactorial(x)))+6,
-    bic = 2*(fit$value+sum(lfactorial(x)))+2*log(length(x)),
-    coefficients =  coef.table,
-    code = fit$convergence,
-    hessian = fit$hessian,
-    cov = solve(fit$hessian),
-    se = sqrt(diag(solve(fit$hessian))),
-    corr = solve(fit$hessian)/(sqrt(diag(solve(fit$hessian))) %o%
-                                 sqrt(diag(solve(fit$hessian)))),
-    code = fit$convergence,
-    converged = fit$converged,
-    initialValues=c(astart,bstart,gammastart),
-    method = methodText
-  )
   class(results) <- "fitCTP"
   results
 }
 
 
-#' Maximum-likelihood fitting of the Complex Biparametric Pearson (CBP) distribution
+#' Maximum-likelihood fitting of the CBP distribution
 #'
 #' @description
 #' Maximum-likelihood fitting of the Complex Biparametric Pearson (CBP) distribution with parameters \eqn{b} and \eqn{\gamma}. Generic
 #' methods are \code{print}, \code{summary}, \code{coef}, \code{logLik}, \code{AIC}, \code{BIC} and \code{plot}. 
 #'
 #' @usage
-#' fitcbp(x, bstart = NULL, gammastart = NULL, method = "L-BFGS-B", 
-#'         hessian = TRUE, control = list(), ...)
+#' fitcbp(x, bstart = NULL, gammastart = NULL, method = "L-BFGS-B", control = list(), ...)
 #'        
 #' 
 #' 
 #' @param x A numeric vector of length at least one containing only finite values.
-#' @param bstart An starting value for the parameter \eqn{b}; by default NULL.
-#' @param gammastart An starting value for the parameter \eqn{\gamma}; by default NULL.
-#' @param method The method to be used in fitting the model. The default method is "L-BFGS-B" (optim).
-#' @param hessian If \code{TRUE} the hessian of the objective function at the minimum is returned.
+#' @param bstart A starting value for the parameter \eqn{b}; by default NULL.
+#' @param gammastart A starting value for the parameter \eqn{\gamma}; by default NULL.
+#' @param method The method to be used in fitting the model. The default method is "L-BFGS-B" (see details in \code{\link{optim}} function).
 #' @param control A list of parameters for controlling the fitting process.
 #' @param ...  Additional parameters.
 #'
-#' @return An object of class "fitcbp" is a list containing the following components:
+#' @return An object of class \code{'fitCBP'} is a list containing the following components:
 #'
 #' \itemize{
 #' \item \code{n}, the number of observations,
@@ -245,14 +272,14 @@ fitctp <- function(x, astart = NULL, bstart = NULL, gammastart = NULL, method = 
 #' Generic functions:
 #'
 #' \itemize{
-#' \item \code{print}: The print of a \code{'fitcbp'} object shows the ML parameter estimates and their standard errors in parenthesis.
+#' \item \code{print}: The print of a \code{'fitCBP'} object shows the ML parameter estimates and their standard errors in parenthesis.
 #' \item \code{summary}: The summary provides the ML parameter estimates, their standard errors and the statistic and p-value of the Wald test to check if the parameters are significant.
 #' This summary also shows the loglikelihood, AIC and BIC values, as well as the results for the chi-squared goodness-of-fit test and the Kolmogorov-Smirnov test for discrete variables. Finally, the correlation matrix between parameter estimates appears.
-#' \item \code{coef}: It extracts the fitted coefficients from a \code{'fitcbp'} object.
-#' \item \code{logLik}: It extracts the estimated log-likelihood from a \code{'fitcbp'} object.
-#' \item \code{AIC}: It extracts the value of the Akaike Information Criterion from a \code{'fitcbp'} object.
-#' \item \code{BIC}: It extracts the value of the Bayesian Information Criterion from a \code{'fitcbp'} object.
-#' \item \code{plot}: It shows the plot of a \code{'fitcbp'} object. Observed and theoretical probabitilies, empirical and theoretical cumulative distribution functions or empirical cumulative probabilities against theoretical cumulative probabilities are the three plot types.
+#' \item \code{coef}: It extracts the fitted coefficients from a \code{'fitCBP'} object.
+#' \item \code{logLik}: It extracts the estimated log-likelihood from a \code{'fitCBP'} object.
+#' \item \code{AIC}: It extracts the value of the Akaike Information Criterion from a \code{'fitCBP'} object.
+#' \item \code{BIC}: It extracts the value of the Bayesian Information Criterion from a \code{'fitCBP'} object.
+#' \item \code{plot}: It shows the plot of a \code{'fitCBP'} object. Observed and theoretical probabilities, empirical and theoretical cumulative distribution functions or empirical cumulative probabilities against theoretical cumulative probabilities are the three plot types.
 #' }
 #' 
 #' @importFrom stats nlm optim coef runif
@@ -263,7 +290,11 @@ fitctp <- function(x, astart = NULL, bstart = NULL, gammastart = NULL, method = 
 #' \insertRef{RCS2003}{cpd}
 #' 
 #' @seealso
+#' Plot of observed and theoretical frequencies for a CBP fit: \code{\link{plot.fitCBP}}
+#' 
 #' Maximum-likelihood fitting for the CTP distribution: \code{\link{fitctp}}.
+#' 
+#' Maximum-likelihood fitting for the EBW distribution: \code{\link{fitebw}}.
 #'
 #' @examples
 #' set.seed(123)
@@ -271,18 +302,18 @@ fitctp <- function(x, astart = NULL, bstart = NULL, gammastart = NULL, method = 
 #' fitcbp(x)
 #' fitcbp(x, bstart = 1.1, gammastart = 3)
 
-fitcbp <- function(x, bstart = NULL, gammastart = NULL, method = "L-BFGS-B", hessian = TRUE, control = list(), ...)
+fitcbp <- function(x, bstart = NULL, gammastart = NULL, 
+                      method = "L-BFGS-B", control = list(), ...)
 {
-
   #Checking
   if ( mode(x) != "numeric")
     stop( paste ("non-numeric argument to mathematical function", sep = ""))
 
   if( is.null(control$maxit) )
-    control$maxit = 10000
+    control$maxit <- 10000
 
   if( is.null(control$trace) )
-    control$trace = 0
+    control$trace <- 0
 
   if ( !is.numeric(control$maxit) || control$maxit <= 0 )
     stop( "maximum number of iterations must be > 0" )
@@ -335,62 +366,88 @@ fitcbp <- function(x, bstart = NULL, gammastart = NULL, method = "L-BFGS-B", hes
   }
 
   #Optimization process
+  converged<-FALSE
   if (method == "nlm") {
-    fit <- nlm(logL, p = pstart, hessian = hessian, iterlim = control$maxit, print.level = control$trace)
-    fit$value <- fit$minimum
-    fit$par <- fit$estimate
-    fit$convergence <- fit$code
-    if (fit$convergence < 3)
-      fit$converged = TRUE
-    else fit$converged = FALSE
-    methodText = "nlm"
+    fit <- try(nlm(logL, p = pstart, hessian = TRUE, iterlim = control$maxit, print.level = control$trace))
+    if ('try-error' %in% class(fit)){
+      if (control$trace > 0) {
+        cat("Crashed 'nlm' initial fit", "\n")
+      }
+    }
+    else {
+      fit$value <- fit$minimum
+      fit$par <- fit$estimate
+      fit$convergence <- fit$code
+      if (fit$convergence < 3)
+        converged<-TRUE
+							  
+      methodText = "nlm"
+    }
   }
   else if (any(method == c("Nelder-Mead", "BFGS", "CG", "SANN"))) {
-    fit <- optim(pstart, logL, method = method, hessian = hessian,
-                 control = list(maxit = control$maxit, trace = control$trace))
-    methodText <- method
-    if (fit$convergence == 0)
-      fit$converged = TRUE
-    else fit$converged = FALSE
+    fit <- try(optim(pstart, logL, method = method, hessian = TRUE,
+                 control = list(maxit = control$maxit, trace = control$trace)))
+    if ('try-error' %in% class(fit)){
+      if (control$trace > 0) {
+        cat(paste("Crashed '",method,"' initial fit",sep=","),"\n")
+      }
+    }
+    else {
+      methodText <- method
+      if (fit$convergence == 0)
+        converged = TRUE
+    }
   }
   else if (any(method == c("L-BFGS-B"))) {
-    fit<-optim(pstart, logL, method = method, lower = c(0,0.0000001), upper = c(Inf,Inf), hessian = hessian, control = list(maxit = control$maxit, trace = control$trace))
-    methodText <- method
-    if (fit$convergence == 0)
-      fit$converged = TRUE
-    else fit$converged = FALSE
+    fit<-try(optim(pstart, logL, method = method, lower = c(0,0.0000001), upper = c(Inf,Inf), hessian = TRUE, control = list(maxit = control$maxit, trace = control$trace)))
+    if ('try-error' %in% class(fit)){
+      if (control$trace > 0) {
+        cat(paste("Crashed '",method,"' initial fit",sep=","),"\n")
+      }
+    }
+    else {
+      methodText <- method
+      if (fit$convergence == 0)
+        converged<-TRUE
+    }
   }else{
     stop("Incorrect method")
   }
-
-  if (method != "L-BFGS-B") {
-    coef.table<-rbind(fit$par,deparse.level=0)
-    dimnames(coef.table)<-list("  ",c("b","log(gamma)"))
-  }
-  else {
-    coef.table<-rbind(fit$par,deparse.level=0)
-    dimnames(coef.table)<-list("  ",c("b","gamma"))
+  if (converged){
+    if (method != "L-BFGS-B") {
+      coef.table <- rbind(fit$par, deparse.level = 0)
+      dimnames(coef.table) <- list("  ", c("b", "log(gamma)"))
     }
-
-  #Results
-  results<-list(
-    x = x,
-    n=length(x),
-    loglik = -(fit$value+sum(lfactorial(x))),
-    aic = 2*(fit$value+sum(lfactorial(x)))+4,
-    bic = 2*(fit$value+sum(lfactorial(x)))+2*log(length(x)),
-    coefficients =  coef.table,
-    code = fit$convergence,
-    hessian = fit$hessian,
-    cov = solve(fit$hessian),
-    se = sqrt(diag(solve(fit$hessian))),
-    corr = solve(fit$hessian)/(sqrt(diag(solve(fit$hessian))) %o%
-                                 sqrt(diag(solve(fit$hessian)))),
-    code = fit$convergence,
-    converged = fit$converged,
-    initialValues=c(bstart,gammastart),
-    method = methodText
-  )
+    else {
+      coef.table <- rbind(fit$par, deparse.level = 0)
+      dimnames(coef.table) <- list("  ", c("b", "gamma"))
+    }
+    
+    #Results
+    results <- list(
+      x = x,
+      n = length(x),
+      loglik = - (fit$value + sum(lfactorial(x))),
+      aic = 2 * (fit$value + sum(lfactorial(x))) + 4,
+      bic = 2 * (fit$value + sum(lfactorial(x))) + 2 * log(length(x)),
+      coefficients =  coef.table,
+      code = fit$convergence,
+      hessian = fit$hessian,
+      cov = solve(fit$hessian),
+      se = sqrt(diag(solve(fit$hessian))),
+      corr = solve(fit$hessian) / (sqrt(diag(solve(fit$hessian))) %o%
+                                     sqrt(diag(solve(fit$hessian)))),
+      code = fit$convergence,
+      converged = converged,
+      initialValues = c(bstart, gammastart),
+      method = methodText
+    )
+  }else{
+    results<-list()
+    results$method<-methodText
+    results$converged<-FALSE
+    results$n<-nrow(x)
+  }
   class(results) <- "fitCBP"
   results
 }
@@ -398,24 +455,25 @@ fitcbp <- function(x, bstart = NULL, gammastart = NULL, method = "L-BFGS-B", hes
 #' Maximum-likelihood fitting of the EBW distribution
 #'
 #' @description
-#' Maximum-likelihood fitting of the EBW (EBW) distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}. Generic
-#' methods are \code{print}, \code{summary}, \code{coef}, \code{logLik}, \code{AIC}, \code{BIC} and \code{plot}. 
+#' Maximum-likelihood fitting of the Extended Biparametric Waring (EBW) distribution with parameters \eqn{\alpha}, \eqn{\rho} and \eqn{\gamma}. Generic
+#' methods are \code{print}, \code{summary}, \code{coef}, \code{logLik}, \code{AIC}, \code{BIC} and \code{plot}. The method to be used in fitting the 
+#' model is "L-BFGS-B" which allows constraints for each variable (see details in \code{\link{optim}} funtion). 
 #'
 #' @usage
-#' fitebw(x, alphastart = NULL, rhostart = NULL, gammastart = NULL, method = "L-BFGS-B", 
-#'           hessian = TRUE, control = list(),...)
-
+#' fitebw(x, alphastart = NULL, rhostart = NULL, gammastart = NULL, 
+#'           method = "L-BFGS-B", control = list(),...)
 #'        
 #' @param x A numeric vector of length at least one containing only finite values.
-#' @param alphastart An starting value for the parameter \eqn{a}; by default NULL.
-#' @param rhostart An starting value for the parameter \eqn{ro}; by default NULL.
-#' @param gammastart An starting value for the parameter \eqn{gamma}; by default NULL.
+#' @param alphastart A starting value for the parameter \eqn{\alpha}; by default \code{NULL}.
+#' @param gammastart A starting value for the parameter \eqn{\gamma}; by default \code{NULL}.
+#' @param rhostart A starting value for the parameter \eqn{\rho}; by default \code{NULL}.
+#' If the starting value for \eqn{\alpha > 0}, the parametrization \eqn{(\alpha,\rho)} is used; otherwise,
+#' the parametrization \eqn{(\alpha,\gamma)} is used.
 #' @param method The method to be used in fitting the model. The default method is "L-BFGS-B" (optim).
-#' @param hessian If \code{TRUE} the hessian of the objective function at the minimum is returned.
 #' @param control A list of parameters for controlling the fitting process.
 #' @param ...  Additional parameters.
 #'
-#' @return An object of class "fitebw" is a list containing the following components:
+#' @return An object of class \code{'fitEBW'} is a list containing the following components:
 #'
 #' \itemize{
 #' \item \code{n}, the number of observations,
@@ -429,21 +487,21 @@ fitcbp <- function(x, bstart = NULL, gammastart = NULL, method = "L-BFGS-B", hes
 #' \item \code{aic}, Akaike Information Criterion, minus twice the maximized log-likelihood plus twice the number of parameters,
 #' \item \code{bic}, Bayesian Information Criterion, minus twice the maximized log-likelihood plus twice the number of parameters,
 #' \item \code{code}, a code that indicates successful convergence of the fitter function used (see nlm and optim helps),
-#' \item \code{converged},  logical value that indicates if the optimization algorithms succesfull,
+#' \item \code{converged},  logical value that indicates if the optimization algorithms succesfull.
 #' \item \code{method}, the name of the fitter function used.
 #' }
 #' 
 #' Generic functions:
 #'
 #' \itemize{
-#' \item \code{print}: The print of a \code{'fitctp'} object shows the ML parameter estimates and their standard errors in parenthesis.
+#' \item \code{print}: The print of a \code{'fitEBW'} object shows the ML parameter estimates and their standard errors in parenthesis.
 #' \item \code{summary}: The summary provides the ML parameter estimates, their standard errors and the statistic and p-value of the Wald test to check if the parameters are significant.
 #' This summary also shows the loglikelihood, AIC and BIC values, as well as the results for the chi-squared goodness-of-fit test and the Kolmogorov-Smirnov test for discrete variables. Finally, the correlation matrix between parameter estimates appears.
-#' \item \code{coef}: It extracts the fitted coefficients from a \code{'fitctp'} object.
-#' \item \code{logLik}: It extracts the estimated log-likelihood from a \code{'fitctp'} object.
-#' \item \code{AIC}: It extracts the value of the Akaike Information Criterion from a \code{'fitctp'} object.
-#' \item \code{BIC}: It extracts the value of the Bayesian Information Criterion from a \code{'fitctp'} object.
-#' \item \code{plot}: It shows the plot of a \code{'fitctp'} object. Observed and theoretical probabitilies, empirical and theoretical cumulative distribution functions or empirical cumulative probabilities against theoretical cumulative probabilities are the three plot types.
+#' \item \code{coef}: It extracts the fitted coefficients from a \code{'fitEBW'} object.
+#' \item \code{logLik}: It extracts the estimated log-likelihood from a \code{'fitEBW'} object.
+#' \item \code{AIC}: It extracts the value of the Akaike Information Criterion from a \code{'fitEBW'} object.
+#' \item \code{BIC}: It extracts the value of the Bayesian Information Criterion from a \code{'fitEBW'} object.
+#' \item \code{plot}: It shows the plot of a \code{'fitEBW'} object. Observed and theoretical probabilities, empirical and theoretical cumulative distribution functions or empirical cumulative probabilities against theoretical cumulative probabilities are the three plot types.
 #' }
 #' 
 #' @importFrom stats nlm optim coef runif var
@@ -451,21 +509,25 @@ fitcbp <- function(x, bstart = NULL, gammastart = NULL, method = "L-BFGS-B", hes
 #' @export
 #' @references 
 #' 
-#' \insertRef{RCSO2004}{cpd}
-#' 
-#' \insertRef{ROC2018}{cpd}
+#' \insertRef{COR2021}{cpd}
+#'  
 #' 
 #' @seealso
+#' Plot of observed and theoretical frequencies for a EBW fit: \code{\link{plot.fitEBW}}
+#' 
+#' Maximum-likelihood fitting for the CTP distribution: \code{\link{fitctp}}.
+#' 
 #' Maximum-likelihood fitting for the CBP distribution: \code{\link{fitcbp}}.
 #'
 #' @examples
 #' set.seed(123)
-#' x <- rebw(500, 2,rho=5)
+#' x <- rebw(500, 2, rho = 5)
 #' fitebw(x)
 #' fitebw(x, alphastart = 1, rhostart = 5)
 
-fitebw <- function(x, alphastart = NULL, rhostart = NULL, gammastart = NULL, method = "L-BFGS-B", 
-                   hessian = TRUE, control = list(), ...){
+fitebw <- function(x, alphastart = NULL, rhostart = NULL, gammastart = NULL, 
+                      method = "L-BFGS-B", control = list(), ...)
+{
   
   #Checking
   if ( mode(x) != "numeric")
@@ -476,15 +538,12 @@ fitebw <- function(x, alphastart = NULL, rhostart = NULL, gammastart = NULL, met
   
   if( is.null(control$trace) )
     control$trace = 0
-  
+  if( is.null(control$warn) )
   if ( !is.numeric(control$maxit) || control$maxit <= 0 )
     stop( "maximum number of iterations must be > 0" )
   
   if (!any(method == c("nlm", "Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN"))){
     stop("method must be in c('nlm', 'Nelder-Mead', 'BFGS', 'CG', 'L-BFGS-B', 'SANN')")
-  }
-  if (!is.logical(hessian)){
-    stop("hessian must be logical")
   }
   moments<-TRUE
   if ( is.numeric(alphastart) && !is.nan(alphastart) && (
@@ -494,187 +553,229 @@ fitebw <- function(x, alphastart = NULL, rhostart = NULL, gammastart = NULL, met
     moments <-FALSE
   }
 
-
+if (method != "L-BFGS-B") {
+  #log-likelihood as a function of alpha and rho
+  logL1<- function(p){
+    alpha <-   exp( p[1] )
+    rho   <-    exp( p[2] ) 
+    respuesta <- - sum(2 * lgamma(rho + alpha) + 2 * lgamma(alpha + x) - 2 * lgamma(alpha) - lgamma(rho) - lgamma(rho + 2 * alpha + x))
+    return(respuesta)
+  }
+  #log-likelihood as a function of alpha and gamma
+  logL2 <- function(p){
+    alpha <-  - exp( p[1] )
+    gamma <-    exp( p[2] ) 
+    respuesta <- - sum(2 * lgamma(gamma - alpha) + 2 * lgamma(alpha + x) - 2 * lgamma(alpha) - lgamma(gamma - 2 * alpha) - lgamma(gamma + x))
+    return(respuesta)
+  }
+} 
+else{
+  #log-likelihood as a function of alpha and rho
+  logL1<- function(p){
+    alpha <- p[1]
+    rho <- p[2] 
+    respuesta <- - sum(2 * lgamma(rho + alpha) + 2 * lgamma(alpha + x) - 2 * lgamma(alpha) - lgamma(rho) - lgamma(rho + 2 * alpha + x))
+    return(respuesta)
+  }
+  #log-likelihood as a function of alpha and gamma
+  logL2 <- function(p){
+    alpha <- p[1]
+    gamma <- p[2]
+    respuesta <- - sum(2 * lgamma(gamma - alpha) + 2 * lgamma(alpha + x) - 2 * lgamma(alpha) - lgamma(gamma - 2 * alpha) - lgamma(gamma + x))
+    return(respuesta)
+  }
+} 
+  
   if (moments){
-    m1 <- mean(x)
-    m2 <- var(x)
-    alphastart1 <- (m1 + sqrt(m1 * m2 *((m1 - 1) * m1 + m2)))/(m2 - m1)
-    alphastart2 <- 2*m1/(m2 - m1) -alphastart1
+  	#Estimates by the method of moments
+  	m1 <- mean(x)
+  	m2 <- var(x)  
+    alphastart1 <- (m1 ^ 2 + sqrt(m1 * m2 * ((m1 - 1) * m1 + m2))) / (m2 - m1)
+    alphastart2 <- 2 * m1 ^ 2 / (m2 - m1) - alphastart1
+    alphastart  <- c(alphastart1, alphastart2)
     
-    #Caso infradisperso
-    if(m1 > m2){
-      if(alphastart1 < 0){
-        alphastart <- alphastart1
-      }
-      else{
-        alphastart <- alphastart2
-      }
+    if (m1 > 1){
+      indexes <- which((alphastart <= - m1 + sqrt(m1 * (m1 - 1))) & (alphastart >= - m1 - sqrt(m1 * (m1 - 1))))
+      alphastart <- alphastart[-indexes]    																																																				   
     }
-    else{
-      if(alphastart1 > 0){
-        alphastart <- alphastart1
-      }
-      else{
-        alphastart <- alphastart2
-      }
-    }
-    rhostart <- alphastart^2/m1 + 1
-    if (alphastart < 0) gammastart <- 2 * alphastart + rhostart
     
-  } else{
-    if ((alphastart < 0) && (alphastart%%1==0)) stop("'alpha' cannot be a negative integer")
-    if (rhostart <= 0) stop("'rhostart'  must be positive")
-    if ((alphastart < 0) && (is.null(gammastart) || gammastart <0 ) ) stop("Introduce a positive value of 'gammastart'")
-    if ((mean(x) > var(x)) && alphastart > 0) warning("With underdisperse data alpha must be negative")
-  }
-
-  Y <- x
-  
-  control<-list(maxit=10000,trace=0)
-  #Log-likelihood
-  if (method != "L-BFGS-B") {
-      if (alphastart >0){
-        #Definimos la log-verosimilitud en función de rho
-        logL <- function(p){
-          alpha <- exp(p[1])
-          rho <- exp(p[2]) 
-          respuesta <- - sum(2 * lgamma(rho + alpha) + 2 * lgamma(alpha + x) - 2 * lgamma(alpha) - lgamma(rho) - lgamma(rho + 2 * alpha + x))
-          return(respuesta)
-        }
-        
-        pstart <- c(log(alphastart), log(rhostart))
-        
+    if (length(alphastart) < 1)
+      stop("The method of moments does not provide any estimate. Please introduce starting values for the parameters")
+    
+    param2 <- c()
+    logLVect <- c()
+    for (i in 1:length(alphastart)){
+      if (alphastart[i] >0){
+        param2 <- c(param2, alphastart[i] ^ 2 / m1 + 1)
+        logLVect<-c(logLVect, logL1)
       } else {
-        #Definimos la log-verosimilitud de gamma
-        logL <- function(p){
-          alpha <- -exp(p[1])
-          gama <- exp(p[2]) 
-          respuesta <- - sum(2 * lgamma(gama - alpha) + 2 * lgamma(alpha + x) - 2 * lgamma(alpha) - lgamma(gama - 2 * alpha) - lgamma(gama + x))
-          return(respuesta)
-        }
-        
-        pstart <- c(log(-alphastart), log(gammastart))
-      }
-  } 
-  else {
-    if (alphastart >0){
-      #Definimos la log-verosimilitud en función de rho
-      logL <- function(p){
-        alpha <- p[1]
-        rho <- p[2] 
-        respuesta <- - sum(2 * lgamma(rho + alpha) + 2 * lgamma(alpha + x) - 2 * lgamma(alpha) - lgamma(rho) - lgamma(rho + 2 * alpha + x))
-        return(respuesta)
-      }
-      
-      pstart <- c(alphastart, rhostart)
-      
-    } else {
-      #Definimos la log-verosimilitud de gamma
-      logL <- function(p){
-        alpha <- p[1]
-        gama <- p[2] + 2 * alpha 
-        respuesta <- - sum(2 * lgamma(gama - alpha) + 2 * lgamma(alpha + x) - 2 * lgamma(alpha) - lgamma(gama - 2 * alpha) - lgamma(gama + x))
-        return(respuesta)
-      }
-      
-      #pstart <- c(alphastart, rhostart + 2 * alphastart)
-      #Cambio este valor de inicio para que esté habilitado para trabajat con alpha<0
-      pstart <- c(alphastart, gammastart - 2 * alphastart)
-    }
-  }
-
-  if (method == "nlm"){
-    fit <- nlm(logL, p = pstart, hessian = hessian, iterlim = control$maxit, print.level = control$trace)
-    fit$value <- fit$minimum
-    fit$par <- fit$estimate
-    fit$convergence <- fit$code
-    if(fit$convergence<3)
-      fit$converged=TRUE
-    else
-      fit$converged=FALSE
-    methodText = "nlm"
-  }
-  else if (any(method == c("Nelder-Mead", "BFGS", "CG","SANN"))){
-    fit <- optim(pstart, logL, method = method, hessian = hessian, control = list(maxit = control$maxit, trace = control$trace))
-    methodText <- method
-    if(fit$convergence==0)
-      fit$converged=TRUE
-    else
-      fit$converged=FALSE
-  }
-  else if (any(method == c("L-BFGS-B"))){
-    fit <- optim(pstart, logL, method = "L-BFGS-B", lower = c(-Inf,1e-10), upper = c(Inf,Inf), 
-                 hessian = hessian, control = list(maxit = control$maxit, trace = control$trace))
-    methodText <- method
-    if(fit$convergence==0)
-      fit$converged=TRUE
-    else
-      fit$converged=FALSE
-  }
-  
-  if (fit$converged){
-    if (any(method == c("nlm", "Nelder-Mead", "BFGS", "CG","SANN"))){
-      if (alphastart>0){
-        coef.table<-rbind(exp(fit$par),deparse.level=0)
-        dimnames(coef.table)<-list("",c("alpha","rho"))
-        se<-rbind(sqrt(diag(solve(fit$hessian))),deparse.level=0)
-        dimnames(se)<-list("",c("std error log(alpha)","std error log(rho)"))
-      }
-      else{
-        coef.table<-rbind(c(-exp(fit$par[1]),exp(fit$par[2])),deparse.level=0)
-        dimnames(coef.table)<-list("",c("alpha","gamma"))
-        se = rbind(sqrt(diag(solve(fit$hessian))),deparse.level=0)
-        dimnames(se)<-list("",c("std error log(-alpha)","std error log(gamma)"))
+        param2 <- c(param2, alphastart[i] ^ 2 / m1 + 2 * alphastart[i] + 1)
+        logLVect<-c(logLVect, logL2)
       }
     }
-    else{
-      if (alphastart>0){
-        coef.table<-rbind(c(fit$par,fit$par[2]+2*fit$par[1]),deparse.level=0)
-        dimnames(coef.table)<-list("",c("alpha","rho","gamma"))
-        se<-solve(fit$hessian)
-        se<-rbind(sqrt(c(diag(se),se[2,2]+4*se[1,1]+4*se[1,2])),deparse.level=0)
-        dimnames(se)<-list("",c("std error alpha","std error rho","std error gamma"))
-      } else {
-        coef.table<-rbind(c(fit$par[1],fit$par[2]+2*fit$par[1]),deparse.level=0)
-        dimnames(coef.table)<-list("",c("alpha","gamma"))
-        se = rbind(sqrt(diag(solve(fit$hessian))))
-        dimnames(se)<-list("",c("std error alpha","std error gamma"))
-      }
-    }
-    results<-list(
-      x = x,
-      n=length(x),
-      call = call,
-      loglik = - (fit$value + sum(lfactorial(x))),
-      aic = 2 * (fit$value + sum(lfactorial(x))) + 4,
-      bic = 2 * (fit$value + sum(lfactorial(x))) + 2 * log(length(x)),
-      coefficients = coef.table,
-      #expected.frequencies=length(data)*dctp(0:max(data),fit$par[1],fit$par[2],fit$par[3]),
-      hessian = fit$hessian,
-      cov = solve(fit$hessian),
-      se = se, 
-      corr = solve(fit$hessian)/(sqrt(diag(solve(fit$hessian))) %o% 
-                                   sqrt(diag(solve(fit$hessian)))), 
-      code = fit$convergence, 
-      converged = fit$converged,
-      method = methodText
-    )
   }
   else{
-    warning("fitebw have not converged")
-    results<-list(
-      x = x,
-      n=length(x),
-      call = call,
-      loglik = - (fit$value + sum(lfactorial(x))),
-      aic = 2 * (fit$value + sum(lfactorial(x))) + 4,
-      bic = 2 * (fit$value + sum(lfactorial(x))) + 2 * log(length(x)),
-      hessian = fit$hessian,
-      code = fit$convergence, 
-      converged = fit$converged,
-      method = methodText
-    )
+    if (alphastart < 0) {
+      if (alphastart %% 1 == 0)
+        stop("'alpha' cannot be a negative integer")
+      if (missing(gammastart))
+        stop("Introduce 'gammastart'")
+      if (gammastart < 0)
+        stop("'gammastart' must be positive")
+      param2 <- c(gammastart)
+      logLVect <- c(logL2)
+    }else{ 
+      if (missing(rhostart))
+        stop("Introduce 'rhostart'")
+      if (rhostart <= 0)
+        stop("'rhostart'  must be positive")
+      param2 <- c(rhostart)
+      logLVect <- c(logL1)
+    }
+    alphastart <- c(alphastart)
+  	if ((mean(x) > var(x)) && alphastart > 0) warning("With underdispersed data alpha must be negative")
   }
+
+
+  #Log-likelihood
+  results <- NULL
+  for (ind in 1:length(alphastart)){
+    if (method != "L-BFGS-B") {
+      if ( alphastart[[ind]] < 0 )
+        pstart <- c(log(-alphastart[[ind]]),log(param2[[ind]]))
+      else
+        pstart<-c(log(alphastart[[ind]]),log(param2[[ind]]))
+    }else{
+      pstart<-c(alphastart[[ind]],param2[[ind]])
+    }
+	  converged <- FALSE
+	  if (method == "nlm"){
+  		fit <- try (nlm(logLVect[[ind]],p=pstart, hessian = TRUE, 
+  						iterlim = control$maxit, print.level = control$trace),silent = TRUE)
+  		if ('try-error' %in% class(fit)){
+  		  if (control$trace > 0) {
+  			  cat(paste("Crashed '","nlm","' initial fit",sep=","),"\n")
+  		  }	
+  		  converged <- FALSE
+  		}
+  		else {
+  		  fit$value <- fit$minimum
+  		  fit$par <- fit$estimate
+  		  fit$convergence <- fit$code
+  		  if (fit$convergence < 3)
+  			  converged <- TRUE
+  		  else
+  		    converged <- FALSE
+  		  
+  		  methodText <- "nlm"
+  		}
+	  }else if (any(method == c("Nelder-Mead", "BFGS", "CG", "SANN"))) {
+  		fit <- try(optim(pstart, logLVect[[ind]], method = method, 
+  					hessian = TRUE, control = list(maxit = control$maxit, trace = control$trace)), silent=TRUE)
+  		if ('try-error' %in% class(fit)){
+  		  if (control$trace > 0) {
+  			  cat(paste("Crashed '",method,"' initial fit",sep=","),"\n")
+  		  }
+  		  converged <- FALSE
+  		}
+  		else {
+  		  if (fit$convergence == 0)
+  			  converged <- TRUE
+  		  else
+  		    converged <- FALSE
+  		}
+  		methodText <- method
+	  }
+	  else if (any(method == c("L-BFGS-B"))) {
+  		fit <- try(optim(pstart, logLVect[[ind]], 
+  						lower = c(-Inf, 1e-10), upper = c(Inf, Inf), method = method, hessian = TRUE,
+  					    control = list(maxit = control$maxit, trace = control$trace)), silent=TRUE)
+    		if ('try-error' %in% class(fit)){
+    		  if (control$trace > 0) {
+    			  cat(paste("Crashed '",method,"' initial fit",sep=","),"\n")
+    		  }
+    		  converged <- FALSE
+    		}
+    		else {
+    		  if (fit$convergence == 0)
+    			  converged <- TRUE
+    		  else
+    		    converged <- FALSE
+    		}
+  		 methodText <- method
+	  }else{
+		  stop("Incorrect method")
+	  }
+    #Exist Hessian
+	  existHessian<-try(solve(fit$hessian))
+	  if ('try-error' %in% class(existHessian)){
+	     existHessian <- FALSE
+	  }else{
+	     existHessian <- TRUE
+	  }
+	  
+    if (is.null(results) || results$converged == FALSE || (converged && (results$aic > (2 * (fit$value + sum(lfactorial(x))) + 4) )) ){
+      if (converged && existHessian){
+    		if (any(method == c("nlm", "Nelder-Mead", "BFGS", "CG","SANN"))){
+    		  if (alphastart[ind]>0){
+      			coef.table<-rbind(exp(fit$par),deparse.level=0)
+      			dimnames(coef.table)<-list("",c("alpha","rho"))
+        		se<-rbind(sqrt(diag(solve(fit$hessian))),deparse.level=0)
+        		dimnames(se)<-list("",c("std error log(alpha)","std error log(rho)"))
+    		  }
+    		  else{
+      			coef.table<-rbind(c(-exp(fit$par[1]),exp(fit$par[2])),deparse.level=0)
+      			dimnames(coef.table)<-list("",c("alpha","gamma"))
+        		se <-rbind(sqrt(diag(solve(fit$hessian))),deparse.level=0)
+      			dimnames(se)<-list("",c("std error log(-alpha)","std error log(gamma)"))
+      		}
+    		}
+    		else{
+    		  if (alphastart[ind]>0){
+      			coef.table<-rbind(c(fit$par,fit$par[2]+2*fit$par[1]),deparse.level=0)
+      			dimnames(coef.table)<-list("",c("alpha","rho","gamma"))
+        		se<-solve(fit$hessian)
+        		se<-rbind(sqrt(c(diag(se),se[2,2]+4*se[1,1]+4*se[1,2])),deparse.level=0)
+        		dimnames(se)<-list("",c("std error alpha","std error rho","std error gamma"))
+    		  } else {
+      			coef.table<-rbind(c(fit$par[1],fit$par[2]),deparse.level=0)
+      			dimnames(coef.table)<-list("",c("alpha","gamma"))
+        		se = rbind(sqrt(diag(solve(fit$hessian))))
+        		dimnames(se)<-list("",c("std error alpha","std error gamma"))
+    		  }
+    		}
+    		results<-list(
+    		  x = x,
+    		  n=length(x),
+    		  call = call,
+    		  loglik = - (fit$value + sum(lfactorial(x))),
+    		  aic = 2 * (fit$value + sum(lfactorial(x))) + 4,
+    		  bic = 2 * (fit$value + sum(lfactorial(x))) + 2 * log(length(x)),
+    		  coefficients = coef.table,
+    		  #expected.frequencies=length(data)*dctp(0:max(data),fit$par[1],fit$par[2],fit$par[3]),
+    		  hessian = fit$hessian,
+    		  cov = solve(fit$hessian),
+    		  se = se, 
+    		  corr = solve(fit$hessian)/(sqrt(diag(solve(fit$hessian))) %o% 
+    		                                      sqrt(diag(solve(fit$hessian)))),
+    		  code = fit$convergence, 
+    		  converged = converged,
+    		  method = methodText
+    		)
+  	  }
+  	  else{
+    		warning("fitebw have not converged")
+    		results<-list(
+    		  x = x,
+    		  n=length(x),
+    		  call = call,
+    		  code = fit$convergence, 
+    		  converged = fit$converged,
+    		  method = methodText
+    		)
+  	  }
+    }
+  }					
   class(results)<-"fitEBW"
   return(results)
 }
@@ -867,7 +968,11 @@ summary.fitEBW<-function (object, ...) {
   if (!("fitEBW" %in% class(object))){ 
     stop("This method only works with fitEBW objects")
   }
-  myfun <- stepfun(0:max(object$x), c(0, pcbp(0:max(object$x), b = object$coefficients[1], gamma = object$coefficients[2])))
+  if (object$coefficients[1]<0)
+     myfun <- stepfun(0:max(object$x), c(0, pebw(0:max(object$x), alpha = object$coefficients[1], gamma = object$coefficients[2])))
+  else
+     myfun <- stepfun(0:max(object$x), c(0, pebw(0:max(object$x), alpha = object$coefficients[1], rho = object$coefficients[2])))
+	  
   object$kstest <- ks.test(object$x,myfun , simulate.p.value=TRUE, B=1000)
   object$zvalue<-object$coefficients/object$se
   object$pvalue<- 2 * pnorm(abs(object$zvalue),lower.tail = FALSE)
@@ -906,14 +1011,23 @@ print.summary.fitEBW <- function(x, digits = getOption("digits"), ...){
 }
 
 
-#' Plots fitCBP object.
+#' Plot of observed and theoretical frequencies for a CBP fit
 #' 
-#' @param x An object of class \code{'fitcbp'}
+#' @param x An object of class \code{'fitCBP'}
 #' @param plty Plot type to be shown. Default is \code{"FREQ"} which shows the observed and theoretical frequencies for each value of the variable; \code{"CDF"} and \code{"PP"} are also available for plotting the empirical and theoretical cumulative distribution functions or the theoretical cumulative probabilities against the empirical cumulative probabilities, respectively.
 #' @param maxValue maxValue you want to appear in the plot
 #' @param ...  Additional parameters.
 #' @importFrom graphics abline legend plot points segments
 #' @method plot fitCBP
+#' 
+#' @examples 
+#' set.seed(123)
+#' x <- rcbp(500, 1.75, 3.5)
+#' fit <- fitcbp(x)
+#' plot(fit)
+#' plot(fit, plty = "CDF")
+#' plot(fit, plty = "PP")
+#'  
 #' @export
 plot.fitCBP <- function(x,plty="FREQ",maxValue=NULL,...){
   if (!("fitCBP" %in% class(x))){ 
@@ -968,14 +1082,23 @@ plot.fitCBP <- function(x,plty="FREQ",maxValue=NULL,...){
 }
 
 
-#' Plots fitCTP object.
+#' Plot of observed and theoretical frequencies for a CTP fit
 #' 
-#' @param x An object of class \code{'fitctp'}
+#' @param x An object of class \code{'fitCTP'}
 #' @param plty Plot type to be shown. Default is \code{"FREQ"} which shows the observed and theoretical frequencies for each value of the variable; \code{"CDF"} and \code{"PP"} are also available for plotting the empirical and theoretical cumulative distribution functions or the theoretical cumulative probabilities against the empirical cumulative probabilities, respectively.
 #' @param maxValue maxValue you want to appear in the plot
 #' @param ...  Additional parameters.
 #' @importFrom graphics abline legend plot points segments
 #' @method plot fitCTP
+#' 
+#' @examples 
+#' set.seed(123)
+#' x <- rctp(500, -0.5, 1, 2)
+#' fit <- fitctp(x)
+#' plot(fit)
+#' plot(fit, plty = "CDF")
+#' plot(fit, plty = "PP")
+#' 
 #' @export
 plot.fitCTP <- function(x,plty="FREQ",maxValue=NULL,...){
   if (!("fitCTP" %in% class(x))){ 
@@ -1029,14 +1152,23 @@ plot.fitCTP <- function(x,plty="FREQ",maxValue=NULL,...){
   }
 }
 
-#' Plots fitEBW object.
+#' Plot of observed and theoretical frequencies for a EBW fit
 #' 
-#' @param x An object of class \code{'fitebw'}
+#' @param x An object of class \code{'fitEBW'}
 #' @param plty Plot type to be shown. Default is \code{"FREQ"} which shows the observed and theoretical frequencies for each value of the variable; \code{"CDF"} and \code{"PP"} are also available for plotting the empirical and theoretical cumulative distribution functions or the theoretical cumulative probabilities against the empirical cumulative probabilities, respectively.
 #' @param maxValue maxValue you want to appear in the plot
 #' @param ...  Additional parameters.
 #' @importFrom graphics abline legend plot points segments
 #' @method plot fitEBW
+#' 
+#' @examples 
+#' set.seed(123)
+#' x <- rebw(500, -0.25, 1)
+#' fit <- fitebw(x)
+#' plot(fit)
+#' plot(fit, plty = "CDF")
+#' plot(fit, plty = "PP")
+#' 
 #' @export
 plot.fitEBW <- function(x,plty="FREQ",maxValue=NULL,...){
   if (!("fitEBW" %in% class(x))){ 
@@ -1055,7 +1187,7 @@ plot.fitEBW <- function(x,plty="FREQ",maxValue=NULL,...){
   if (x$coefficients[1]>0) #rho parametrization
     p<-pebw(values,alpha=x$coefficients[1],rho=x$coefficients[2])
   else
-    p<-pebw(values,alpha=x$coefficients[1],gamma=x$coefficients[3])
+    p<-pebw(values,alpha=x$coefficients[1],gamma=x$coefficients[2])
   freq<-rep(0,hLimit+1)
   for (i in 1:x$n)
     freq[x$x[i]+1]<-freq[x$x[i]+1]+1
@@ -1081,7 +1213,7 @@ plot.fitEBW <- function(x,plty="FREQ",maxValue=NULL,...){
     if (x$coefficients[1]>0) #rho parametrization
       n.esp<-debw(values,alpha=x$coefficients[1],rho=x$coefficients[2])*x$n
     else
-      n.esp<-debw(values,alpha=x$coefficients[1],gamma=x$coefficients[3])*x$n
+      n.esp<-debw(values,alpha=x$coefficients[1],gamma=x$coefficients[2])*x$n
     fLimit <- max(n.esp,freq)
     plot(range(0, maxValue), range(0, fLimit), type = "n", xlab = "Values", 
          ylab = "Frequencies",main="Observed & Theoretical Frequencies")
