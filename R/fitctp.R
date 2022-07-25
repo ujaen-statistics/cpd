@@ -901,7 +901,10 @@ summary.fitCTP<-function (object, ...) {
   object$zvalue<-object$coefficients/object$se
   object$pvalue<- 2 * pnorm(abs(object$zvalue),lower.tail = FALSE)
   xmax<-max(object$x)
-  p.esp<-dctp(0:(xmax-1),object$coefficients[1],object$coefficients[2],object$coefficients[3])
+  if (object$coefficients[1]<0)
+    p.esp<-debw(0:(xmax-1),object$coefficients[1],gamma=object$coefficients[2])
+  else
+    p.esp<-debw(0:(xmax-1),object$coefficients[1],rho=object$coefficients[2])
   p.esp[xmax+1]<-1-sum(p.esp[1:(xmax)])
   obs<-rep(0,xmax+1)
   for (i in 1:length(object$x))
