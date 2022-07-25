@@ -896,6 +896,7 @@ summary.fitCTP<-function (object, ...) {
   if (!("fitCTP" %in% class(object))){ 
     stop("This method only works with fitCTP objects")
   }
+
   myfun <- stepfun(0:max(object$x), c(0, pctp(0:max(object$x), a = object$coefficients[1], b = object$coefficients[2], gamma = object$coefficients[3])))
   object$kstest <- ks.test(object$x,myfun , simulate.p.value=TRUE, B=1000)
   object$zvalue<-object$coefficients/object$se
@@ -909,7 +910,7 @@ summary.fitCTP<-function (object, ...) {
   obs<-rep(0,xmax+1)
   for (i in 1:length(object$x))
     obs[object$x[i]+1]<-obs[object$x[i]+1]+1
-  object$chi2test=chisq.test2(obs, p.esp, npar = 3)
+  object$chi2test=chisq.test2(obs, p.esp, npar = 3, ...)
   class(object) <- "summary.fitCTP"
   object
 }
@@ -955,7 +956,7 @@ summary.fitCBP<-function (object, ...) {
   obs<-rep(0,xmax+1)
   for (i in 1:length(object$x))
     obs[object$x[i]+1]<-obs[object$x[i]+1]+1
-  object$chi2test=chisq.test2(obs, p.esp, npar = 2)
+  object$chi2test=chisq.test2(obs, p.esp, npar = 2, ...)
   class(object) <- "summary.fitCBP"
   object
 }
@@ -1006,7 +1007,7 @@ summary.fitEBW<-function (object, ...) {
   obs<-rep(0,xmax+1)
   for (i in 1:length(object$x))
     obs[object$x[i]+1]<-obs[object$x[i]+1]+1
-  object$chi2test=chisq.test2(obs, p.esp, npar = 2)
+  object$chi2test=chisq.test2(obs, p.esp, npar = 2, ...)
   class(object) <- "summary.fitEBW"
   object
 }
@@ -1081,7 +1082,7 @@ plot.fitCBP <- function(x,plty="FREQ",maxValue=NULL,...){
     abline(0,1, col = "blue", lty = 2)
   } else if(plty=="CDF") {
     plot(range(0, maxValue), range(0, 1), type = "n", xlab = "Values", 
-         ylab = "Cumulative probability",main="Empirical and Theoretical CDFs")
+         ylab = "Cumulative probability",main="Empirical and Theoretical CDFs", ...)
     cFreq<-cumFreq[values+1]
     points(values,p,col="blue",pch=19)
     points(values,cFreq,col="red",pch=19)
@@ -1094,7 +1095,7 @@ plot.fitCBP <- function(x,plty="FREQ",maxValue=NULL,...){
     n.esp<-dcbp(values,x$coefficients[1],x$coefficients[2] )*x$n
     fLimit <- max(n.esp,freq)
     plot(range(0, maxValue), range(0, fLimit), type = "n", xlab = "Values", 
-         ylab = "Frequencies",main="Observed & Theoretical Frequencies")
+         ylab = "Frequencies",main="Observed & Theoretical Frequencies", ...)
     points(values,n.esp,col="blue",pch=19)
     points(values,freq,col="red",pch=19)
     segments(values[-length(values)], freq[-length(freq)], values[-1], freq[-1], col= 'red',lty=2)
@@ -1152,7 +1153,7 @@ plot.fitCTP <- function(x,plty="FREQ",maxValue=NULL,...){
     abline(0,1, col = "blue", lty = 2)
   } else if(plty=="CDF") {
     plot(range(0, maxValue), range(0, 1), type = "n", xlab = "Values", 
-         ylab = "Cumulative probability",main="Empirical and Theoretical CDF")
+         ylab = "Cumulative probability",main="Empirical and Theoretical CDF", ...)
     cFreq<-cumFreq[values+1]
     points(values,p,col="blue",pch=19)
     points(values,cFreq,col="red",pch=19)
@@ -1165,7 +1166,7 @@ plot.fitCTP <- function(x,plty="FREQ",maxValue=NULL,...){
     n.esp<-dctp(values,x$coefficients[1],x$coefficients[2],x$coefficients[3] )*x$n
     fLimit <- max(n.esp,freq)
     plot(range(0, maxValue), range(0, fLimit), type = "n", xlab = "Values", 
-         ylab = "Frequencies",main="Observed & Theoretical Frequencies")
+         ylab = "Frequencies",main="Observed & Theoretical Frequencies", ...)
     points(values,n.esp,col="blue",pch=19)
     points(values,freq,col="red",pch=19)
     segments(values[-length(values)], freq[-length(freq)], values[-1], freq[-1], col= 'red',lty=2)
@@ -1224,7 +1225,7 @@ plot.fitEBW <- function(x,plty="FREQ",maxValue=NULL,...){
     abline(0,1, col = "blue", lty = 2)
   } else if(plty=="CDF") {
     plot(range(0, maxValue), range(0, 1), type = "n", xlab = "Values", 
-         ylab = "Cumulative probability",main="Empirical and Theoretical CDF")
+         ylab = "Cumulative probability",main="Empirical and Theoretical CDF", ...)
     cFreq<-cumFreq[values+1]
     points(values,p,col="blue",pch=19)
     points(values,cFreq,col="red",pch=19)
@@ -1240,7 +1241,7 @@ plot.fitEBW <- function(x,plty="FREQ",maxValue=NULL,...){
       n.esp<-debw(values,alpha=x$coefficients[1],gamma=x$coefficients[2])*x$n
     fLimit <- max(n.esp,freq)
     plot(range(0, maxValue), range(0, fLimit), type = "n", xlab = "Values", 
-         ylab = "Frequencies",main="Observed & Theoretical Frequencies")
+         ylab = "Frequencies",main="Observed & Theoretical Frequencies", ...)
     points(values,n.esp,col="blue",pch=19)
     points(values,freq,col="red",pch=19)
     segments(values[-length(values)], freq[-length(freq)], values[-1], freq[-1], col= 'red',lty=2)
