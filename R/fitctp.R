@@ -118,7 +118,7 @@ fitctp <- function(x, astart = NULL, bstart = NULL, gammastart = NULL,
     gammastart <- sol[3] + 1
     
     if (is.nan(bstart) || gammastart <= max(0,astart)){
-      stop("The method of moments does not provide any estimates. Introduce initial values for the parameters.")
+      stop("The method of moments does not provide any estimates. Enter initial values for the parameters.")
     }
 
   }
@@ -902,10 +902,7 @@ summary.fitCTP<-function (object, ...) {
   object$zvalue<-object$coefficients/object$se
   object$pvalue<- 2 * pnorm(abs(object$zvalue),lower.tail = FALSE)
   xmax<-max(object$x)
-  if (object$coefficients[1]<0)
-    p.esp<-debw(0:(xmax-1),object$coefficients[1],gamma=object$coefficients[2])
-  else
-    p.esp<-debw(0:(xmax-1),object$coefficients[1],rho=object$coefficients[2])
+  p.esp<-dctp(0:(xmax-1),object$coefficients[1],object$coefficients[2],object$coefficients[3])
   p.esp[xmax+1]<-1-sum(p.esp[1:(xmax)])
   obs<-rep(0,xmax+1)
   for (i in 1:length(object$x))
@@ -1001,8 +998,11 @@ summary.fitEBW<-function (object, ...) {
   object$kstest <- ks.test(object$x,myfun , simulate.p.value=TRUE, B=1000)
   object$zvalue<-object$coefficients/object$se
   object$pvalue<- 2 * pnorm(abs(object$zvalue),lower.tail = FALSE)
-  xmax<-max(object$x)
-  p.esp<-dcbp(0:(xmax-1),object$coefficients[1],object$coefficients[2])
+  xmax<-max(object$x)						   
+  if (object$coefficients[1]<0)
+    p.esp<-debw(0:(xmax-1), alpha = object$coefficients[1], gamma = object$coefficients[2])
+  else
+    p.esp<-debw(0:(xmax-1), alpha = object$coefficients[1], rho = object$coefficients[2])
   p.esp[xmax+1]<-1-sum(p.esp[1:(xmax)])
   obs<-rep(0,xmax+1)
   for (i in 1:length(object$x))
@@ -1082,26 +1082,26 @@ plot.fitCBP <- function(x,plty="FREQ",maxValue=NULL,...){
     abline(0,1, col = "blue", lty = 2)
   } else if(plty=="CDF") {
     plot(range(0, maxValue), range(0, 1), type = "n", xlab = "Values", 
-         ylab = "Cumulative probability",main="Empirical and Theoretical CDFs", ...)
+         ylab = "Cumulative probability",main="Empirical and Theoretical CDFs")
     cFreq<-cumFreq[values+1]
     points(values,p,col="blue",pch=19)
     points(values,cFreq,col="red",pch=19)
     segments(values[-length(values)], cumFreq[-length(cumFreq)], values[-1], cumFreq[-length(cumFreq)], col= 'red')
     segments(values[-length(values)], p[-length(p)], values[-1], p[-length(p)], col= 'blue')
     abline(h = c(0, 1), col = "gray", lty = 2)
-    legend(hLimit/2,0.3, legend=c("Empirical", "Theoretical"),
+    legend(hLimit*4/5,0.25, legend=c("Empirical", "Theoretical"),
            col=c("red", "blue"), lty=1, cex=0.8)
   } else{
     n.esp<-dcbp(values,x$coefficients[1],x$coefficients[2] )*x$n
     fLimit <- max(n.esp,freq)
     plot(range(0, maxValue), range(0, fLimit), type = "n", xlab = "Values", 
-         ylab = "Frequencies",main="Observed & Theoretical Frequencies", ...)
+         ylab = "Frequencies",main="Observed & Theoretical Frequencies")
     points(values,n.esp,col="blue",pch=19)
     points(values,freq,col="red",pch=19)
     segments(values[-length(values)], freq[-length(freq)], values[-1], freq[-1], col= 'red',lty=2)
     segments(values[-length(values)], n.esp[-length(n.esp)], values[-1], n.esp[-1], col= 'blue',lty=2)
     abline(h = 0, col = "gray", lty = 2)
-    legend(hLimit/2,fLimit/2, legend=c("Observed", "Theoretical"),
+    legend(hLimit*4/5,fLimit*4/5, legend=c("Observed", "Theoretical"),
            col=c("red", "blue"), lty=2, cex=0.8)
   }
 }
@@ -1153,26 +1153,26 @@ plot.fitCTP <- function(x,plty="FREQ",maxValue=NULL,...){
     abline(0,1, col = "blue", lty = 2)
   } else if(plty=="CDF") {
     plot(range(0, maxValue), range(0, 1), type = "n", xlab = "Values", 
-         ylab = "Cumulative probability",main="Empirical and Theoretical CDF", ...)
+         ylab = "Cumulative probability",main="Empirical and Theoretical CDF")
     cFreq<-cumFreq[values+1]
     points(values,p,col="blue",pch=19)
     points(values,cFreq,col="red",pch=19)
     segments(values[-length(values)], cumFreq[-length(cumFreq)], values[-1], cumFreq[-length(cumFreq)], col= 'red')
     segments(values[-length(values)], p[-length(p)], values[-1], p[-length(p)], col= 'blue')
     abline(h = c(0, 1), col = "gray", lty = 2)
-    legend(maxValue/2,0.3, legend=c("Empirical", "Theoretical"),
+    legend(maxValue*4/5,0.25, legend=c("Empirical", "Theoretical"),
            col=c("red", "blue"), lty=1, cex=0.8)
   } else{
     n.esp<-dctp(values,x$coefficients[1],x$coefficients[2],x$coefficients[3] )*x$n
     fLimit <- max(n.esp,freq)
     plot(range(0, maxValue), range(0, fLimit), type = "n", xlab = "Values", 
-         ylab = "Frequencies",main="Observed & Theoretical Frequencies", ...)
+         ylab = "Frequencies",main="Observed & Theoretical Frequencies")
     points(values,n.esp,col="blue",pch=19)
     points(values,freq,col="red",pch=19)
     segments(values[-length(values)], freq[-length(freq)], values[-1], freq[-1], col= 'red',lty=2)
     segments(values[-length(values)], n.esp[-length(n.esp)], values[-1], n.esp[-1], col= 'blue',lty=2)
     abline(h = 0, col = "gray", lty = 2)
-    legend(maxValue*2/3,fLimit*2/3, legend=c("Observed", "Theoretical"),
+    legend(maxValue*4/5,fLimit*4/5, legend=c("Observed", "Theoretical"),
            col=c("red", "blue"), lty=2, cex=0.8)
   }
 }
@@ -1225,14 +1225,14 @@ plot.fitEBW <- function(x,plty="FREQ",maxValue=NULL,...){
     abline(0,1, col = "blue", lty = 2)
   } else if(plty=="CDF") {
     plot(range(0, maxValue), range(0, 1), type = "n", xlab = "Values", 
-         ylab = "Cumulative probability",main="Empirical and Theoretical CDF", ...)
+         ylab = "Cumulative probability",main="Empirical and Theoretical CDF")
     cFreq<-cumFreq[values+1]
     points(values,p,col="blue",pch=19)
     points(values,cFreq,col="red",pch=19)
     segments(values[-length(values)], cumFreq[-length(cumFreq)], values[-1], cumFreq[-length(cumFreq)], col= 'red')
     segments(values[-length(values)], p[-length(p)], values[-1], p[-length(p)], col= 'blue')
     abline(h = c(0, 1), col = "gray", lty = 2)
-    legend(maxValue/2,0.3, legend=c("Empirical", "Theoretical"),
+    legend(maxValue*4/5,0.25, legend=c("Empirical", "Theoretical"),
            col=c("red", "blue"), lty=1, cex=0.8)
   } else{
     if (x$coefficients[1]>0) #rho parametrization
@@ -1241,13 +1241,13 @@ plot.fitEBW <- function(x,plty="FREQ",maxValue=NULL,...){
       n.esp<-debw(values,alpha=x$coefficients[1],gamma=x$coefficients[2])*x$n
     fLimit <- max(n.esp,freq)
     plot(range(0, maxValue), range(0, fLimit), type = "n", xlab = "Values", 
-         ylab = "Frequencies",main="Observed & Theoretical Frequencies", ...)
+         ylab = "Frequencies",main="Observed & Theoretical Frequencies")
     points(values,n.esp,col="blue",pch=19)
     points(values,freq,col="red",pch=19)
     segments(values[-length(values)], freq[-length(freq)], values[-1], freq[-1], col= 'red',lty=2)
     segments(values[-length(values)], n.esp[-length(n.esp)], values[-1], n.esp[-1], col= 'blue',lty=2)
     abline(h = 0, col = "gray", lty = 2)
-    legend(maxValue*2/3,fLimit*2/3, legend=c("Observed", "Theoretical"),
+    legend(maxValue*4/5,fLimit*4/5, legend=c("Observed", "Theoretical"),
            col=c("red", "blue"), lty=2, cex=0.8)
   }
 }
