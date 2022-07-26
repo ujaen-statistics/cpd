@@ -28,6 +28,7 @@ pctp <- function(q, a, b, gamma, lower.tail = TRUE) {
   pmfAux<-exp(lf0)
   i=1
   Fd <-c(pmfAux)
+  
   #Generating distribution function
   digits=options()$digit
   while( i <= maxX+1 && Fd[i]<(1-10^-digits)){
@@ -82,6 +83,7 @@ pcbp <- function(q, b, gamma, lower.tail = TRUE ) {
   pmfAux<-exp(lf0)
   i=1
   Fd <-c(pmfAux)
+  
   #Generating distribution function
   while( i <= maxX+1 ){
     pmfAux <- exp(log(pmfAux)+log(((i-1)^2+b^2))-log((gamma+i-1))-log(i))
@@ -165,7 +167,6 @@ pebw <- function(q,alpha,gamma,rho, lower.tail = TRUE ) {
   i=1
   Fd <-c(pmfAux)
   
-
   #Generating distribution function
   while( i <= maxX+1 ){
     pmfAux <- exp(log(pmfAux)+log((alpha+i-1)^2)-log(auxgamma+i-1)-log(i))

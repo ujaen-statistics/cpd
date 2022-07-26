@@ -9,12 +9,22 @@
 #'           method = "L-BFGS-B", control = list(), ...)
 #'        
 #' @param x A numeric vector of length at least one containing only finite values.
-#' @param astart A starting value for the parameter \eqn{a}; by default NULL.
+#' @param astart A starting value for the parameter \eqn{a>0}; by default NULL.
 #' @param bstart A starting value for the parameter \eqn{b}; by default NULL.
-#' @param gammastart A starting value for the parameter \eqn{\gamma}; by default NULL.
-#' @param method The method to be used in fitting the model. The default method is "L-BFGS-B" (see details in \code{\link{optim}} function).
+#' @param gammastart A starting value for the parameter \eqn{\gamma>max(0,2a)}; by default NULL.
+#' @param method The method to be used in fitting the model. See 'Details'. 
 #' @param control A list of parameters for controlling the fitting process.
 #' @param ...  Additional parameters.
+#'
+#' @details If the starting values of the parameters \eqn{a}, \eqn{b} and \eqn{\gamma} are omitted (default option), 
+#' they are computing by the method of moments (if possible; otherwise they must be entered).
+#' 
+#' The default method is \code{"L-BFGS-B"} (see details in \code{\link{optim}} function),
+#' but non-linear minimization (\code{\link{nlm}}) or those included in the \code{optim} function (\code{"Nelder-Mead"}, 
+#' \code{"BFGS"}, \code{"CG"} and \code{"SANN"}) may be used.
+#' 
+#' Standard error (SE) estimates for \eqn{a}, \eqn{b}
+#' and \eqn{\gamma} are provided by the default method; otherwise, SE for \eqn{\gamma_0} where \eqn{\gamma=exp(\gamma_0)} is computed.
 #'
 #' @return An object of class \code{'fitCTP'} is a list containing the following components:
 #'
@@ -66,7 +76,7 @@
 #' set.seed(123)
 #' x <- rctp(500, -0.5, 1, 2)
 #' fitctp(x)
-#' fitctp(x, astart = 1, bstart = 1.1, gammastart = 3)
+#' summary(fitctp(x, astart = 1, bstart = 1.1, gammastart = 3))
 
 fitctp <- function(x, astart = NULL, bstart = NULL, gammastart = NULL, 
                    method = "L-BFGS-B", control = list(), ...)
@@ -96,7 +106,7 @@ fitctp <- function(x, astart = NULL, bstart = NULL, gammastart = NULL,
     moments<-TRUE
   }
   if (moments){
-    #Try to generate initial values using moments method
+    #Try to generate initial values using the method of moments
     n <- length(x)
     m1 <- mean(x)
     m2 <- sum(x ^ 2) / n
@@ -109,7 +119,7 @@ fitctp <- function(x, astart = NULL, bstart = NULL, gammastart = NULL,
     #Solve the system
     sol <- try(solve(A)%*%b,silent = TRUE)
     if ('try-error' %in% class(sol)){
-      stop("The method of moments does not provide any estimates. Introduce initial values for the parameters.")
+      stop("The method of moments does not provide any estimates. Enter initial values for the parameters.")
     }
      
     #New initial values
@@ -233,6 +243,7 @@ fitctp <- function(x, astart = NULL, bstart = NULL, gammastart = NULL,
     results$converged<-FALSE
     results$n<-nrow(x)
   }
+  
   #restore warning level
   options(warn=defWarn)
   class(results) <- "fitCTP"
@@ -249,15 +260,24 @@ fitctp <- function(x, astart = NULL, bstart = NULL, gammastart = NULL,
 #' @usage
 #' fitcbp(x, bstart = NULL, gammastart = NULL, method = "L-BFGS-B", control = list(), ...)
 #'        
-#' 
-#' 
+#'  
 #' @param x A numeric vector of length at least one containing only finite values.
 #' @param bstart A starting value for the parameter \eqn{b}; by default NULL.
-#' @param gammastart A starting value for the parameter \eqn{\gamma}; by default NULL.
-#' @param method The method to be used in fitting the model. The default method is "L-BFGS-B" (see details in \code{\link{optim}} function).
+#' @param gammastart A starting value for the parameter \eqn{\gamma>0}; by default NULL.
+#' @param method The method to be used in fitting the model. See 'Details'. 
 #' @param control A list of parameters for controlling the fitting process.
 #' @param ...  Additional parameters.
-#'
+#
+#' @details If the starting values of the parameters \eqn{b} and \eqn{\gamma} are omitted (default option), 
+#' they are computing by the method of moments (if possible; otherwise they must be entered).
+#' 
+#' The default method is \code{"L-BFGS-B"} (see details in \code{\link{optim}} function),
+#' but non-linear minimization (\code{\link{nlm}}) or those included in the \code{optim} function (\code{"Nelder-Mead"}, 
+#' \code{"BFGS"}, \code{"CG"} and \code{"SANN"}) may be used.
+#' 
+#' Standard error (SE) estimates for \eqn{b} and \eqn{\gamma} are provided by the default method; 
+#' otherwise, SE for \eqn{\gamma_0} where \eqn{\gamma=exp{(\gamma_0})} is computed.
+#' 
 #' @return An object of class \code{'fitCBP'} is a list containing the following components:
 #'
 #' \itemize{
@@ -307,7 +327,7 @@ fitctp <- function(x, astart = NULL, bstart = NULL, gammastart = NULL,
 #' set.seed(123)
 #' x <- rcbp(500, 1.75, 3.5)
 #' fitcbp(x)
-#' fitcbp(x, bstart = 1.1, gammastart = 3)
+#' summary(fitcbp(x, bstart = 1.1, gammastart = 3))
 
 fitcbp <- function(x, bstart = NULL, gammastart = NULL, 
                       method = "L-BFGS-B", control = list(), ...)
@@ -336,12 +356,12 @@ fitcbp <- function(x, bstart = NULL, gammastart = NULL,
     moments<-TRUE
   
   if (moments){
-    #Try to generate initial values using moments method
+    #Try to generate initial values using the method of moments
     n <- length(x)
     m1 <- mean(x)
     m2 <- sum(x ^ 2) / n
     if (m2 - m1 ^ 2 -m1 <= 0){
-      stop("The method of moments does not provide any estimates. Introduce initial values for the parameters.")
+      stop("The method of moments does not provide any estimates. Enter initial values for the parameters.")
     }else{
       #New initial values
       bstart <- sqrt(m1 * m2 / (m2 - m1  ^ 2 - m1))
@@ -479,13 +499,25 @@ fitcbp <- function(x, bstart = NULL, gammastart = NULL,
 #'        
 #' @param x A numeric vector of length at least one containing only finite values.
 #' @param alphastart A starting value for the parameter \eqn{\alpha}; by default \code{NULL}.
-#' @param gammastart A starting value for the parameter \eqn{\gamma}; by default \code{NULL}.
-#' @param rhostart A starting value for the parameter \eqn{\rho}; by default \code{NULL}.
-#' If the starting value for \eqn{\alpha > 0}, the parametrization \eqn{(\alpha,\rho)} is used; otherwise,
-#' the parametrization \eqn{(\alpha,\gamma)} is used.
+#' @param gammastart A starting value for the parameter \eqn{\gamma>max(0,2\alpha)}; by default \code{NULL}.
+#' @param rhostart A starting value for the parameter \eqn{\rho>0}; by default \code{NULL}.
 #' @param method The method to be used in fitting the model. The default method is "L-BFGS-B" (optim).
 #' @param control A list of parameters for controlling the fitting process.
 #' @param ...  Additional parameters.
+#'
+#' @details If the starting value for \eqn{\alpha} is positive, the parameterization \eqn{(\alpha,\rho)} is used; 
+#' otherwise, the parameterization \eqn{(\alpha,\gamma)} is used.
+#' 
+#' If the starting values of the parameters \eqn{\alpha}, \eqn{\gamma} or \eqn{\rho} are omitted (default option), 
+#' they are computing by the method of moments (if possible; otherwise they must be entered).
+#' 
+#' The default method is \code{"L-BFGS-B"} (see details in \code{\link{optim}} function),
+#' but non-linear minimization (\code{\link{nlm}}) or those included in the \code{optim} function 
+#' (\code{"Nelder-Mead"}, \code{"BFGS"}, \code{"CG"} and \code{"SANN"}) may be used.
+#' 
+#' Standard error (SE) estimates for \eqn{\alpha}, \eqn{\gamma} or \eqn{\rho} are provided by the default method; 
+#' otherwise, SE for \eqn{\alpha_0} and \eqn{\gamma_0} where \eqn{\alpha=-exp(\alpha_0)} and \eqn{\gamma=exp(\gamma_0)}
+#' (or for \eqn{\alpha_0} and \eqn{\rho_0} where \eqn{\alpha=exp(\alpha_0)} and \eqn{\rho=exp(\rho_0)}) are computed.
 #'
 #' @return An object of class \code{'fitEBW'} is a list containing the following components:
 #'
@@ -537,7 +569,7 @@ fitcbp <- function(x, bstart = NULL, gammastart = NULL,
 #' set.seed(123)
 #' x <- rebw(500, 2, rho = 5)
 #' fitebw(x)
-#' fitebw(x, alphastart = 1, rhostart = 5)
+#' summary(fitebw(x, alphastart = 1, rhostart = 5))
 
 fitebw <- function(x, alphastart = NULL, rhostart = NULL, gammastart = NULL, 
                       method = "L-BFGS-B", control = list(), ...)
@@ -619,7 +651,7 @@ else{
     }
     
     if (length(alphastart) < 1)
-      stop("The method of moments does not provide any estimate. Please introduce starting values for the parameters")
+      stop("The method of moments does not provide any estimate. Enter initial values for the parameters.")
     
     param2 <- c()
     logLVect <- c()
@@ -647,7 +679,7 @@ else{
       if (missing(rhostart))
         stop("Introduce 'rhostart'")
       if (rhostart <= 0)
-        stop("'rhostart'  must be positive")
+        stop("'rhostart' must be positive")
       param2 <- c(rhostart)
       logLVect <- c(logL1)
     }
@@ -725,7 +757,7 @@ else{
 	  }else{
 		  stop("Incorrect method")
 	  }
-    #Exist Hessian
+    #Hessian exists
 	  existHessian<-try(solve(fit$hessian))
 	  if ('try-error' %in% class(existHessian)){
 	     existHessian <- FALSE
@@ -795,7 +827,8 @@ else{
   	  }
     }
   }
-  #restore warning level
+  
+  #Restore warning level
   options(warn=defWarn)
   class(results)<-"fitEBW"
   return(results)
@@ -1209,7 +1242,7 @@ plot.fitEBW <- function(x,plty="FREQ",maxValue=NULL,...){
     maxValue=hLimit
   }
   values<-0:hLimit;
-  if (x$coefficients[1]>0) #rho parametrization
+  if (x$coefficients[1]>0) #rho parameterization
     p<-pebw(values,alpha=x$coefficients[1],rho=x$coefficients[2])
   else
     p<-pebw(values,alpha=x$coefficients[1],gamma=x$coefficients[2])
@@ -1235,7 +1268,7 @@ plot.fitEBW <- function(x,plty="FREQ",maxValue=NULL,...){
     legend(maxValue*4/5,0.25, legend=c("Empirical", "Theoretical"),
            col=c("red", "blue"), lty=1, cex=0.8)
   } else{
-    if (x$coefficients[1]>0) #rho parametrization
+    if (x$coefficients[1]>0) #rho parameterization
       n.esp<-debw(values,alpha=x$coefficients[1],rho=x$coefficients[2])*x$n
     else
       n.esp<-debw(values,alpha=x$coefficients[1],gamma=x$coefficients[2])*x$n
@@ -1252,21 +1285,25 @@ plot.fitEBW <- function(x,plty="FREQ",maxValue=NULL,...){
   }
 }
 
-#' varcomp for fitEBW object.
+#' Variance decomposition for a EBW fit
 #' 
-#' Description .
+#' One of the main drawbacks of the Univariate Generalized Waring (UGW) distribution with parameters \eqn{a}, 
+#' \eqn{k} and \eqn{\rho} is that the first two parameters are interchangeable, so it is not possible to distinguish 
+#' the variance components 'liability' and 'proneness' without additional information. To solve this problem, 
+#' an EBW distribution (where these components are uniquely identifiable) can be used since, 
+#' given a UGW distribution, there always exists an EBW close to it.
 #' 
-#' @param object An object of class \code{'fitebw'}
+#' @param object An object of class \code{'fitEBW'}
 #' @param ...  Additional parameters.
-#' @return Two data frames, with ratio of sources of variation and sources of variation in which variance is splitted.
+#' @return A data frame with the variance components (randomness, liability and proneness) in absolute and relative terms.
 #'
 #' @examples
 #'
 #' set.seed(123)
-#' x <- rebw(500, 2,rho=5)
-#' fit<-fitebw(x, alphastart = 1, rhostart = 5)
-#'
+#' x <- rebw(500, 2, rho = 5)
+#' fit <- fitebw(x, alphastart = 1, rhostart = 5)
 #' varcomp(fit)
+#' 
 #' @export
 varcomp <- function(object,  ...){
   UseMethod("varcomp")
@@ -1280,18 +1317,18 @@ varcomp.fitEBW <- function(object ,...){
   alpha<-object$coefficients[1]
   rho <- object$coefficients[2]
   if (alpha >0 && rho >2){
-    #predisposición
-    prone <- (alpha^3 * (alpha + rho - 1))/((rho-1)^2*(rho-2))
-    #aleatoriedad
-    rand <- (alpha)^2 / (rho - 1)
-    #riesgo
-    liabi<- (alpha^2 * (alpha + 1))/((rho-1)*(rho-2))
-    var=rand+liabi+prone
-    Component<-c(rand,liabi,prone)
-    Proportion<-c(rand/var,liabi/var,prone/var)
-    ans<-data.frame(cbind(Component,Proportion),row.names = c("Randomness","Liability","Proneness"))
+    #proneness
+    prone <- (alpha ^ 3 * (alpha + rho - 1)) / ((rho - 1) ^ 2 * (rho - 2))
+    #randomness
+    rand <- alpha ^ 2 / (rho - 1)
+    #liability
+    liabi <- (alpha ^ 2 * (alpha + 1)) / ((rho - 1) * (rho - 2))
+    var <- rand + liabi + prone
+    Value <- c(rand, liabi, prone)
+    Ratio <- c(rand / var, liabi / var, prone / var)
+    ans <- data.frame(cbind(Value, Ratio), row.names = c("Randomness","Liability","Proneness"))
   }else{
-    warning("alpha must be greater than 0 and rho geater than 2")
+    warning("alpha must be greater than 0 and rho greater than 2")
     ans<-NULL
   }
   ans

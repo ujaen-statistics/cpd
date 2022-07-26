@@ -37,7 +37,7 @@ rctp(n, a, b, gamma)
 \code{dctp} gives the pmf, \code{pctp} gives the distribution function, \code{qctp} gives the quantile function and \code{rctp} generates random values.
 
 If \eqn{a = 0} the probability mass function, distribution function, quantile function and random generation function for the CBP distribution arise.
-If \eqn{b = 0} the probability mass function, distribution function, quantile function and random generation function for the EBW distribution arise.#'
+If \eqn{b = 0} the probability mass function, distribution function, quantile function and random generation function for the EBW distribution arise.
 }
 \description{
 Probability mass function, distribution function, quantile function and random generation for the Complex Triparametric Pearson (CTP) distribution with parameters \eqn{a}, \eqn{b} and \eqn{\gamma}.
@@ -73,7 +73,7 @@ qctp(0.5,1,2,3)
 qctp(c(.8,.9),1,2,3)
 
 # Examples for the function rctp
-rctp(4,1,1,3)
+rctp(10,1,1,3)
 
 }
 \references{

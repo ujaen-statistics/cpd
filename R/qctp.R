@@ -33,7 +33,8 @@ qctp <- function(p, a, b, gamma, lower.tail = TRUE ){
   pmfAux<-exp(lf0)
   i=1
   Fd <-c(pmfAux)
-  #Generating Density Distribution
+  
+  #Generating distribution function
   while( Fd[[i]] < maxP ){
     pmfAux <- exp(log(pmfAux)+log(((a+i-1)^2+b^2))-log((gamma+i-1))-log(i))
     Fd <- c( Fd, Fd[[i]] + pmfAux )
@@ -107,7 +108,8 @@ qcbp <- function(p, b, gamma, lower.tail = TRUE)  {
   pmfAux<-exp(lf0)
   i=1
   Fd <-c(pmfAux)
-  #Generating Density Distribution
+  
+  #Generating distribution function
   while( Fd[[i]] < maxP ){
     pmfAux <- exp(log(pmfAux)+log(((i-1)^2+b^2))-log((gamma+i-1))-log(i))
     Fd <- c( Fd, Fd[[i]] + pmfAux )
@@ -209,7 +211,8 @@ qebw <- function(p,alpha,gamma,rho, lower.tail = TRUE ) {
   pmfAux<-exp(lf0)
   i=1
   Fd <-c(pmfAux)
-  #Generating Density Distribution
+  
+  #Generating distribution function
   while( Fd[[i]] < maxP ){
     pmfAux <- exp(log(pmfAux)+log((alpha+i-1)^2)-log(auxgamma+i-1)-log(i))
     #pmfAux <- pmfAux * (alpha+i-1)^2 / ((auxgamma+i-1) *i)

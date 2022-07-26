@@ -4,7 +4,7 @@
 #'
 #' @examples
 #' # Examples for the function rctp
-#' rctp(4,1,1,3)
+#' rctp(10,1,1,3)
 #' 
 
 rctp<-function(n, a, b, gamma){
@@ -24,7 +24,8 @@ rctp<-function(n, a, b, gamma){
   pmfAux<-exp(lf0)
   i=1
   Fd <-c(pmfAux)
-  #Generating Density Distribution
+  
+  #Generating distribution function
   while( Fd[[i]] < maxRandoms ){
     pmfAux <- exp(log(pmfAux)+log(((a+i-1)^2+b^2))-log((gamma+i-1))-log(i))
     Fd <- c( Fd, Fd[[i]] + pmfAux )
@@ -56,7 +57,7 @@ rctp<-function(n, a, b, gamma){
 #'
 #' @examples
 #' # Examples for the function rcbp
-#' rcbp(4,1,3)
+#' rcbp(10,1,3)
 #' 
 
 rcbp<-function(n, b, gamma){
@@ -76,7 +77,8 @@ rcbp<-function(n, b, gamma){
   pmfAux<-exp(lf0)
   i=1
   Fd <-c(pmfAux)
-  #Generating Density Distribution
+  
+  #Generating distribution function
   while( Fd[[i]] < maxRandoms ){
     pmfAux <- exp(log(pmfAux)+log(((i-1)^2+b^2))-log((gamma+i-1))-log(i))
     Fd <- c( Fd, Fd[[i]] + pmfAux )
@@ -111,8 +113,8 @@ rcbp<-function(n, b, gamma){
 #'
 #' @examples
 #' # Examples for the function rebw
-#' rebw(4,2,rho=5)
-#' rebw(4,-2.1,gamma=5)
+#' rebw(10,2,rho=5)
+#' rebw(10,-2.1,gamma=5)
 #' 
 
 rebw <- function(n,alpha,gamma,rho, lower.tail = TRUE ) {
@@ -163,10 +165,10 @@ rebw <- function(n,alpha,gamma,rho, lower.tail = TRUE ) {
   pmfAux<-exp(lf0)
   i=1
   Fd <-c(pmfAux)
-  #Generating Density Distribution
+  
+  #Generating distribution function
   while( Fd[[i]] < maxRandoms ){
     pmfAux <- exp(log(pmfAux)+log((alpha+i-1)^2)-log(auxgamma+i-1)-log(i))
-    #pmfAux <- pmfAux * (alpha+i-1)^2 / ((auxgamma+i-1) *i)
     Fd <- c( Fd, Fd[[i]] + pmfAux )
     i <- i + 1
   }

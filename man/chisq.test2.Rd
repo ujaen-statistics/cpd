@@ -14,7 +14,7 @@ chisq.test2(obs, p.esp, npar = NULL, grouping = FALSE)
 \item{npar}{an integer specifying the number of parameters of the model. By default \code{npar} is \code{NULL}, so the degrees of freedom of
 the chi-squared statistics are the number of classes minus 1.}
 
-\item{grouping}{a logical indicating whether to group in classes with expected frequency greather than or equal to 5. By default \code{grouping} is \code{FALSE}.}
+\item{grouping}{a logical indicating whether to group in classes with expected frequency greater than or equal to 5. By default \code{grouping} is \code{FALSE}.}
 }
 \value{
 A list with class \code{"htest"} containing the following components:

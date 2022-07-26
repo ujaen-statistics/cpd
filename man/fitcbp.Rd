@@ -11,9 +11,9 @@ fitcbp(x, bstart = NULL, gammastart = NULL, method = "L-BFGS-B", control = list(
 
 \item{bstart}{A starting value for the parameter \eqn{b}; by default NULL.}
 
-\item{gammastart}{A starting value for the parameter \eqn{\gamma}; by default NULL.}
+\item{gammastart}{A starting value for the parameter \eqn{\gamma>0}; by default NULL.}
 
-\item{method}{The method to be used in fitting the model. The default method is "L-BFGS-B" (see details in \code{\link{optim}} function).}
+\item{method}{The method to be used in fitting the model. See 'Details'.}
 
 \item{control}{A list of parameters for controlling the fitting process.}
 
@@ -55,11 +55,22 @@ This summary also shows the loglikelihood, AIC and BIC values, as well as the re
 Maximum-likelihood fitting of the Complex Biparametric Pearson (CBP) distribution with parameters \eqn{b} and \eqn{\gamma}. Generic
 methods are \code{print}, \code{summary}, \code{coef}, \code{logLik}, \code{AIC}, \code{BIC} and \code{plot}.
 }
+\details{
+If the starting values of the parameters \eqn{b} and \eqn{\gamma} are omitted (default option), 
+they are computing by the method of moments (if possible; otherwise they must be entered).
+
+The default method is \code{"L-BFGS-B"} (see details in \code{\link{optim}} function),
+but non-linear minimization (\code{\link{nlm}}) or those included in the \code{optim} function (\code{"Nelder-Mead"}, 
+\code{"BFGS"}, \code{"CG"} and \code{"SANN"}) may be used.
+
+Standard error (SE) estimates for \eqn{b} and \eqn{\gamma} are provided by the default method; 
+otherwise, SE for \eqn{\gamma_0} where \eqn{\gamma=exp{(\gamma_0})} is computed.
+}
 \examples{
 set.seed(123)
 x <- rcbp(500, 1.75, 3.5)
 fitcbp(x)
-fitcbp(x, bstart = 1.1, gammastart = 3)
+summary(fitcbp(x, bstart = 1.1, gammastart = 3))
 }
 \references{
 \insertRef{RCS2003}{cpd}

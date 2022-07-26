@@ -36,7 +36,8 @@
 #' \code{dctp} gives the pmf, \code{pctp} gives the distribution function, \code{qctp} gives the quantile function and \code{rctp} generates random values.
 #'
 #' If \eqn{a = 0} the probability mass function, distribution function, quantile function and random generation function for the CBP distribution arise.
-#' If \eqn{b = 0} the probability mass function, distribution function, quantile function and random generation function for the EBW distribution arise.#'
+#' If \eqn{b = 0} the probability mass function, distribution function, quantile function and random generation function for the EBW distribution arise.
+#' 
 #' @references 
 #' \insertRef{RCS2003}{cpd}
 #' 
@@ -213,11 +214,14 @@ dcbp <- function(x, b, gamma) {
 #' 
 #' 
 #' The mean and the variance of the EBW distribution are
-#' \eqn{E(X)=\mu=\alpha^2/(\gamma-2\alpha-1)} and \eqn{Var(X)=\mu(\mu+\gamma-1)/(\gamma-2a-2)}
+#' \eqn{E(X)=\mu=\alpha^2/(\gamma-2\alpha-1)} and \eqn{Var(X)=\mu(\mu+\gamma-1)/(\gamma-2\alpha-2)}
 #' so \eqn{\gamma > 2a + 2}.
 #'
-#' It is underdispersed if \eqn{a < - (\mu + 1) / 2}, equidispersed if \eqn{a = - (\mu + 1) / 2} or overdispersed
-#' if \eqn{a > - (\mu + 1) / 2}. In particular, if \eqn{a >= 0} the EBW is always overdispersed.
+#' It is underdispersed if \eqn{\alpha < - (\mu + 1) / 2}, equidispersed if \eqn{\alpha = - (\mu + 1) / 2} or overdispersed
+#' if \eqn{\alpha > - (\mu + 1) / 2}. In particular, if \eqn{\alpha >= -0.5} the EBW is overdispersed, whereas if 
+#' \eqn{\alpha < -1} the EBW is underdispersed. In the case \eqn{-1 < \alpha <= -0.5}, the EBW may be under-, equi- or 
+#' overdispersed depending on the value of \eqn{\gamma}.
+#' 
 #'
 #' @return 
 #' \code{debw} gives the pmf, \code{pebw} gives the distribution function, \code{qebw} gives the quantile function and \code{rebw} generates random values.																																	

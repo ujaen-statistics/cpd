@@ -66,7 +66,7 @@ qcbp(0.5,2,3)
 qcbp(c(.8,.9),2,3)
 
 # Examples for the function rcbp
-rcbp(4,1,3)
+rcbp(10,1,3)
 
 }
 \references{

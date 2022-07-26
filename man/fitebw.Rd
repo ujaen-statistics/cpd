@@ -12,11 +12,9 @@ fitebw(x, alphastart = NULL, rhostart = NULL, gammastart = NULL,
 
 \item{alphastart}{A starting value for the parameter \eqn{\alpha}; by default \code{NULL}.}
 
-\item{rhostart}{A starting value for the parameter \eqn{\rho}; by default \code{NULL}.
-If the starting value for \eqn{\alpha > 0}, the parametrization \eqn{(\alpha,\rho)} is used; otherwise,
-the parametrization \eqn{(\alpha,\gamma)} is used.}
+\item{rhostart}{A starting value for the parameter \eqn{\rho>0}; by default \code{NULL}.}
 
-\item{gammastart}{A starting value for the parameter \eqn{\gamma}; by default \code{NULL}.}
+\item{gammastart}{A starting value for the parameter \eqn{\gamma>max(0,2\alpha)}; by default \code{NULL}.}
 
 \item{method}{The method to be used in fitting the model. The default method is "L-BFGS-B" (optim).}
 
@@ -61,11 +59,26 @@ Maximum-likelihood fitting of the Extended Biparametric Waring (EBW) distributio
 methods are \code{print}, \code{summary}, \code{coef}, \code{logLik}, \code{AIC}, \code{BIC} and \code{plot}. The method to be used in fitting the 
 model is "L-BFGS-B" which allows constraints for each variable (see details in \code{\link{optim}} funtion).
 }
+\details{
+If the starting value for \eqn{\alpha} is positive, the parameterization \eqn{(\alpha,\rho)} is used; 
+otherwise, the parameterization \eqn{(\alpha,\gamma)} is used.
+
+If the starting values of the parameters \eqn{\alpha}, \eqn{\gamma} or \eqn{\rho} are omitted (default option), 
+they are computing by the method of moments (if possible; otherwise they must be entered).
+
+The default method is \code{"L-BFGS-B"} (see details in \code{\link{optim}} function),
+but non-linear minimization (\code{\link{nlm}}) or those included in the \code{optim} function 
+(\code{"Nelder-Mead"}, \code{"BFGS"}, \code{"CG"} and \code{"SANN"}) may be used.
+
+Standard error (SE) estimates for \eqn{\alpha}, \eqn{\gamma} or \eqn{\rho} are provided by the default method; 
+otherwise, SE for \eqn{\alpha_0} and \eqn{\gamma_0} where \eqn{\alpha=-exp(\alpha_0)} and \eqn{\gamma=exp(\gamma_0)}
+(or for \eqn{\alpha_0} and \eqn{\rho_0} where \eqn{\alpha=exp(\alpha_0)} and \eqn{\rho=exp(\rho_0)}) are computed.
+}
 \examples{
 set.seed(123)
 x <- rebw(500, 2, rho = 5)
 fitebw(x)
-fitebw(x, alphastart = 1, rhostart = 5)
+summary(fitebw(x, alphastart = 1, rhostart = 5))
 }
 \references{
 \insertRef{COR2021}{cpd}

@@ -2,26 +2,30 @@
 % Please edit documentation in R/fitctp.R
 \name{varcomp}
 \alias{varcomp}
-\title{varcomp for fitEBW object.}
+\title{Variance decomposition for a EBW fit}
 \usage{
 varcomp(object, ...)
 }
 \arguments{
-\item{object}{An object of class \code{'fitebw'}}
+\item{object}{An object of class \code{'fitEBW'}}
 
 \item{...}{Additional parameters.}
 }
 \value{
-Two data frames, with ratio of sources of variation and sources of variation in which variance is splitted.
+A data frame with the variance components (randomness, liability and proneness) in absolute and relative terms.
 }
 \description{
-Description .
+One of the main drawbacks of the Univariate Generalized Waring (UGW) distribution with parameters \eqn{a}, 
+\eqn{k} and \eqn{\rho} is that the first two parameters are interchangeable, so it is not possible to distinguish 
+the variance components 'liability' and 'proneness' without additional information. To solve this problem, 
+an EBW distribution (where these components are uniquely identifiable) can be used since, 
+given a UGW distribution, there always exists an EBW close to it.
 }
 \examples{
 
 set.seed(123)
-x <- rebw(500, 2,rho=5)
-fit<-fitebw(x, alphastart = 1, rhostart = 5)
-
+x <- rebw(500, 2, rho = 5)
+fit <- fitebw(x, alphastart = 1, rhostart = 5)
 varcomp(fit)
+
 }
